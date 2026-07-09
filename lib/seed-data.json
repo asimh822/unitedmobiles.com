@@ -1,0 +1,364 @@
+[
+  {
+    "id": "seed-s24-ultra",
+    "brand": "Samsung",
+    "model": "Galaxy S24 Ultra",
+    "price": 389999,
+    "salePrice": 364999,
+    "saleActive": true,
+    "ram": "12GB",
+    "storage": "256GB",
+    "condition": "New",
+    "ptaApproved": true,
+    "warranty": "1 Year Official Warranty",
+    "stockStatus": "in_stock",
+    "images": ["/seed/s24-ultra-titanium-black.svg", "/seed/s24-ultra-titanium-gray.svg"],
+    "specs": [
+      { "category": "Display", "items": [
+        { "label": "Size", "value": "6.8\" QHD+" },
+        { "label": "Type", "value": "Dynamic AMOLED 2X" },
+        { "label": "Refresh Rate", "value": "120Hz" }
+      ]},
+      { "category": "Camera", "items": [
+        { "label": "Main", "value": "200MP + 50MP + 12MP + 10MP" },
+        { "label": "Selfie", "value": "12MP" },
+        { "label": "Video", "value": "8K @ 30fps" }
+      ]},
+      { "category": "Memory", "items": [
+        { "label": "RAM", "value": "12GB" },
+        { "label": "Storage", "value": "256GB / 512GB" }
+      ]},
+      { "category": "Battery", "items": [
+        { "label": "Capacity", "value": "5000 mAh" },
+        { "label": "Charging", "value": "45W Fast Charge" }
+      ]},
+      { "category": "Connectivity", "items": [
+        { "label": "Network", "value": "5G" },
+        { "label": "NFC", "value": "Yes" },
+        { "label": "SIM", "value": "Dual SIM" }
+      ]}
+    ],
+    "variants": [
+      { "id": "sv-s24u-black-256", "color": "Titanium Black", "colorHex": "#3a3a3c", "storage": "256GB", "ram": "12GB", "price": null, "salePrice": null, "image": "/seed/s24-ultra-titanium-black.svg", "inStock": true },
+      { "id": "sv-s24u-gray-256", "color": "Titanium Gray", "colorHex": "#8e8e93", "storage": "256GB", "ram": "12GB", "price": null, "salePrice": null, "image": "/seed/s24-ultra-titanium-gray.svg", "inStock": true },
+      { "id": "sv-s24u-black-512", "color": "Titanium Black", "colorHex": "#3a3a3c", "storage": "512GB", "ram": "12GB", "price": 429999, "salePrice": 404999, "image": "/seed/s24-ultra-titanium-black.svg", "inStock": true }
+    ],
+    "createdAt": "2026-06-28T10:00:00Z"
+  },
+  {
+    "id": "seed-iphone-15-pro-max",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro Max",
+    "price": 449999,
+    "salePrice": null,
+    "saleActive": false,
+    "ram": "8GB",
+    "storage": "256GB",
+    "condition": "New",
+    "ptaApproved": true,
+    "warranty": "1 Year Official Warranty",
+    "stockStatus": "in_stock",
+    "images": ["/seed/iphone-15-pro-max-natural-titanium.svg", "/seed/iphone-15-pro-max-blue-titanium.svg"],
+    "specs": [
+      { "category": "Display", "items": [
+        { "label": "Size", "value": "6.7\" Super Retina XDR" },
+        { "label": "Type", "value": "OLED, ProMotion" },
+        { "label": "Refresh Rate", "value": "120Hz" }
+      ]},
+      { "category": "Camera", "items": [
+        { "label": "Main", "value": "48MP + 12MP + 12MP" },
+        { "label": "Selfie", "value": "12MP TrueDepth" },
+        { "label": "Video", "value": "4K @ 60fps ProRes" }
+      ]},
+      { "category": "Memory", "items": [
+        { "label": "RAM", "value": "8GB" },
+        { "label": "Storage", "value": "256GB" }
+      ]},
+      { "category": "Battery", "items": [
+        { "label": "Capacity", "value": "4441 mAh" },
+        { "label": "Charging", "value": "27W + MagSafe" }
+      ]},
+      { "category": "Connectivity", "items": [
+        { "label": "Network", "value": "5G" },
+        { "label": "Port", "value": "USB-C" },
+        { "label": "SIM", "value": "Dual SIM (nano + eSIM)" }
+      ]}
+    ],
+    "variants": [
+      { "id": "sv-i15pm-natural", "color": "Natural Titanium", "colorHex": "#bfb8ae", "storage": "256GB", "ram": "8GB", "price": null, "salePrice": null, "image": "/seed/iphone-15-pro-max-natural-titanium.svg", "inStock": true },
+      { "id": "sv-i15pm-blue", "color": "Blue Titanium", "colorHex": "#3d4956", "storage": "256GB", "ram": "8GB", "price": null, "salePrice": null, "image": "/seed/iphone-15-pro-max-blue-titanium.svg", "inStock": true }
+    ],
+    "createdAt": "2026-07-02T10:00:00Z"
+  },
+  {
+    "id": "seed-redmi-note-13-pro",
+    "brand": "Xiaomi",
+    "model": "Redmi Note 13 Pro",
+    "price": 79999,
+    "salePrice": 72499,
+    "saleActive": true,
+    "ram": "8GB",
+    "storage": "256GB",
+    "condition": "New",
+    "ptaApproved": true,
+    "warranty": "1 Year Official Warranty",
+    "stockStatus": "in_stock",
+    "images": ["/seed/redmi-note-13-pro-midnight-black.svg", "/seed/redmi-note-13-pro-ocean-teal.svg", "/seed/redmi-note-13-pro-lavender.svg"],
+    "specs": [
+      { "category": "Display", "items": [
+        { "label": "Size", "value": "6.67\" 1.5K" },
+        { "label": "Type", "value": "AMOLED" },
+        { "label": "Refresh Rate", "value": "120Hz" }
+      ]},
+      { "category": "Camera", "items": [
+        { "label": "Main", "value": "200MP + 8MP + 2MP" },
+        { "label": "Selfie", "value": "16MP" },
+        { "label": "Video", "value": "4K @ 30fps" }
+      ]},
+      { "category": "Memory", "items": [
+        { "label": "RAM", "value": "8GB" },
+        { "label": "Storage", "value": "256GB" }
+      ]},
+      { "category": "Battery", "items": [
+        { "label": "Capacity", "value": "5100 mAh" },
+        { "label": "Charging", "value": "67W Turbo Charge" }
+      ]},
+      { "category": "Connectivity", "items": [
+        { "label": "Network", "value": "4G LTE" },
+        { "label": "NFC", "value": "Yes" },
+        { "label": "SIM", "value": "Dual SIM" }
+      ]}
+    ],
+    "variants": [
+      { "id": "sv-rn13p-black", "color": "Midnight Black", "colorHex": "#1f2229", "storage": "256GB", "ram": "8GB", "price": null, "salePrice": null, "image": "/seed/redmi-note-13-pro-midnight-black.svg", "inStock": true },
+      { "id": "sv-rn13p-teal", "color": "Ocean Teal", "colorHex": "#12766c", "storage": "256GB", "ram": "8GB", "price": null, "salePrice": null, "image": "/seed/redmi-note-13-pro-ocean-teal.svg", "inStock": true },
+      { "id": "sv-rn13p-lavender", "color": "Lavender", "colorHex": "#b8a6d9", "storage": "256GB", "ram": "8GB", "price": null, "salePrice": null, "image": "/seed/redmi-note-13-pro-lavender.svg", "inStock": false }
+    ],
+    "createdAt": "2026-07-05T10:00:00Z"
+  },
+  {
+    "id": "seed-galaxy-a55",
+    "brand": "Samsung",
+    "model": "Galaxy A55",
+    "price": 129999,
+    "salePrice": null,
+    "saleActive": false,
+    "ram": "8GB",
+    "storage": "128GB",
+    "condition": "New",
+    "ptaApproved": true,
+    "warranty": "1 Year Official Warranty",
+    "stockStatus": "in_stock",
+    "images": ["/seed/galaxy-a55-awesome-navy.svg", "/seed/galaxy-a55-awesome-lilac.svg"],
+    "specs": [
+      { "category": "Display", "items": [
+        { "label": "Size", "value": "6.6\" FHD+" },
+        { "label": "Type", "value": "Super AMOLED" },
+        { "label": "Refresh Rate", "value": "120Hz" }
+      ]},
+      { "category": "Camera", "items": [
+        { "label": "Main", "value": "50MP + 12MP + 5MP" },
+        { "label": "Selfie", "value": "32MP" },
+        { "label": "Video", "value": "4K @ 30fps" }
+      ]},
+      { "category": "Memory", "items": [
+        { "label": "RAM", "value": "8GB" },
+        { "label": "Storage", "value": "128GB" }
+      ]},
+      { "category": "Battery", "items": [
+        { "label": "Capacity", "value": "5000 mAh" },
+        { "label": "Charging", "value": "25W Fast Charge" }
+      ]},
+      { "category": "Connectivity", "items": [
+        { "label": "Network", "value": "5G" },
+        { "label": "NFC", "value": "Yes" },
+        { "label": "SIM", "value": "Dual SIM" }
+      ]}
+    ],
+    "variants": [
+      { "id": "sv-a55-navy", "color": "Awesome Navy", "colorHex": "#2b3a55", "storage": "128GB", "ram": "8GB", "price": null, "salePrice": null, "image": "/seed/galaxy-a55-awesome-navy.svg", "inStock": true },
+      { "id": "sv-a55-lilac", "color": "Awesome Lilac", "colorHex": "#c9b6e4", "storage": "128GB", "ram": "8GB", "price": null, "salePrice": null, "image": "/seed/galaxy-a55-awesome-lilac.svg", "inStock": true }
+    ],
+    "createdAt": "2026-06-20T10:00:00Z"
+  },
+  {
+    "id": "seed-iphone-13",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "price": 154999,
+    "salePrice": 144999,
+    "saleActive": true,
+    "ram": "4GB",
+    "storage": "128GB",
+    "condition": "Used",
+    "ptaApproved": true,
+    "warranty": "6 Months Shop Warranty",
+    "stockStatus": "in_stock",
+    "images": ["/seed/iphone-13-midnight.svg", "/seed/iphone-13-starlight.svg"],
+    "specs": [
+      { "category": "Display", "items": [
+        { "label": "Size", "value": "6.1\" Super Retina XDR" },
+        { "label": "Type", "value": "OLED" },
+        { "label": "Refresh Rate", "value": "60Hz" }
+      ]},
+      { "category": "Camera", "items": [
+        { "label": "Main", "value": "12MP + 12MP" },
+        { "label": "Selfie", "value": "12MP" },
+        { "label": "Video", "value": "4K @ 60fps" }
+      ]},
+      { "category": "Memory", "items": [
+        { "label": "RAM", "value": "4GB" },
+        { "label": "Storage", "value": "128GB" }
+      ]},
+      { "category": "Battery", "items": [
+        { "label": "Capacity", "value": "3240 mAh" },
+        { "label": "Health", "value": "88%+ guaranteed" }
+      ]},
+      { "category": "Connectivity", "items": [
+        { "label": "Network", "value": "5G" },
+        { "label": "Port", "value": "Lightning" },
+        { "label": "SIM", "value": "Dual SIM (nano + eSIM)" }
+      ]}
+    ],
+    "variants": [
+      { "id": "sv-i13-midnight", "color": "Midnight", "colorHex": "#232a31", "storage": "128GB", "ram": "4GB", "price": null, "salePrice": null, "image": "/seed/iphone-13-midnight.svg", "inStock": true },
+      { "id": "sv-i13-starlight", "color": "Starlight", "colorHex": "#e8e3db", "storage": "128GB", "ram": "4GB", "price": null, "salePrice": null, "image": "/seed/iphone-13-starlight.svg", "inStock": true }
+    ],
+    "createdAt": "2026-07-06T10:00:00Z"
+  },
+  {
+    "id": "seed-pixel-8a",
+    "brand": "Google",
+    "model": "Pixel 8a",
+    "price": 119999,
+    "salePrice": null,
+    "saleActive": false,
+    "ram": "8GB",
+    "storage": "128GB",
+    "condition": "New",
+    "ptaApproved": false,
+    "warranty": "6 Months Shop Warranty",
+    "stockStatus": "in_stock",
+    "images": ["/seed/pixel-8a-obsidian.svg", "/seed/pixel-8a-bay.svg"],
+    "specs": [
+      { "category": "Display", "items": [
+        { "label": "Size", "value": "6.1\" FHD+" },
+        { "label": "Type", "value": "OLED Actua" },
+        { "label": "Refresh Rate", "value": "120Hz" }
+      ]},
+      { "category": "Camera", "items": [
+        { "label": "Main", "value": "64MP + 13MP" },
+        { "label": "Selfie", "value": "13MP" },
+        { "label": "Video", "value": "4K @ 60fps" }
+      ]},
+      { "category": "Memory", "items": [
+        { "label": "RAM", "value": "8GB" },
+        { "label": "Storage", "value": "128GB" }
+      ]},
+      { "category": "Battery", "items": [
+        { "label": "Capacity", "value": "4492 mAh" },
+        { "label": "Charging", "value": "18W + Wireless" }
+      ]},
+      { "category": "Connectivity", "items": [
+        { "label": "Network", "value": "5G" },
+        { "label": "NFC", "value": "Yes" },
+        { "label": "SIM", "value": "Dual SIM (nano + eSIM)" }
+      ]}
+    ],
+    "variants": [
+      { "id": "sv-p8a-obsidian", "color": "Obsidian", "colorHex": "#2e2e2e", "storage": "128GB", "ram": "8GB", "price": null, "salePrice": null, "image": "/seed/pixel-8a-obsidian.svg", "inStock": true },
+      { "id": "sv-p8a-bay", "color": "Bay", "colorHex": "#7fa8d9", "storage": "128GB", "ram": "8GB", "price": null, "salePrice": null, "image": "/seed/pixel-8a-bay.svg", "inStock": true }
+    ],
+    "createdAt": "2026-06-15T10:00:00Z"
+  },
+  {
+    "id": "seed-camon-30",
+    "brand": "Tecno",
+    "model": "Camon 30",
+    "price": 62999,
+    "salePrice": 57999,
+    "saleActive": true,
+    "ram": "8GB",
+    "storage": "256GB",
+    "condition": "New",
+    "ptaApproved": true,
+    "warranty": "1 Year Official Warranty",
+    "stockStatus": "in_stock",
+    "images": ["/seed/camon-30-basaltic-dark.svg", "/seed/camon-30-salt-white.svg"],
+    "specs": [
+      { "category": "Display", "items": [
+        { "label": "Size", "value": "6.78\" FHD+" },
+        { "label": "Type", "value": "AMOLED" },
+        { "label": "Refresh Rate", "value": "120Hz" }
+      ]},
+      { "category": "Camera", "items": [
+        { "label": "Main", "value": "50MP + 2MP" },
+        { "label": "Selfie", "value": "50MP" },
+        { "label": "Video", "value": "4K @ 30fps" }
+      ]},
+      { "category": "Memory", "items": [
+        { "label": "RAM", "value": "8GB (+8GB Extended)" },
+        { "label": "Storage", "value": "256GB" }
+      ]},
+      { "category": "Battery", "items": [
+        { "label": "Capacity", "value": "5000 mAh" },
+        { "label": "Charging", "value": "70W Ultra Charge" }
+      ]},
+      { "category": "Connectivity", "items": [
+        { "label": "Network", "value": "4G LTE" },
+        { "label": "NFC", "value": "Yes" },
+        { "label": "SIM", "value": "Dual SIM" }
+      ]}
+    ],
+    "variants": [
+      { "id": "sv-c30-dark", "color": "Basaltic Dark", "colorHex": "#33393f", "storage": "256GB", "ram": "8GB", "price": null, "salePrice": null, "image": "/seed/camon-30-basaltic-dark.svg", "inStock": true },
+      { "id": "sv-c30-white", "color": "Uyuni Salt White", "colorHex": "#eceae4", "storage": "256GB", "ram": "8GB", "price": null, "salePrice": null, "image": "/seed/camon-30-salt-white.svg", "inStock": true }
+    ],
+    "createdAt": "2026-07-07T10:00:00Z"
+  },
+  {
+    "id": "seed-oneplus-12r",
+    "brand": "OnePlus",
+    "model": "12R",
+    "price": 164999,
+    "salePrice": null,
+    "saleActive": false,
+    "ram": "16GB",
+    "storage": "256GB",
+    "condition": "Used",
+    "ptaApproved": true,
+    "warranty": "3 Months Shop Warranty",
+    "stockStatus": "out_of_stock",
+    "images": ["/seed/oneplus-12r-cool-blue.svg", "/seed/oneplus-12r-iron-gray.svg"],
+    "specs": [
+      { "category": "Display", "items": [
+        { "label": "Size", "value": "6.78\" 1.5K" },
+        { "label": "Type", "value": "LTPO AMOLED" },
+        { "label": "Refresh Rate", "value": "120Hz" }
+      ]},
+      { "category": "Camera", "items": [
+        { "label": "Main", "value": "50MP + 8MP + 2MP" },
+        { "label": "Selfie", "value": "16MP" },
+        { "label": "Video", "value": "4K @ 60fps" }
+      ]},
+      { "category": "Memory", "items": [
+        { "label": "RAM", "value": "16GB" },
+        { "label": "Storage", "value": "256GB" }
+      ]},
+      { "category": "Battery", "items": [
+        { "label": "Capacity", "value": "5500 mAh" },
+        { "label": "Charging", "value": "100W SUPERVOOC" }
+      ]},
+      { "category": "Connectivity", "items": [
+        { "label": "Network", "value": "5G" },
+        { "label": "NFC", "value": "Yes" },
+        { "label": "SIM", "value": "Dual SIM" }
+      ]}
+    ],
+    "variants": [
+      { "id": "sv-op12r-blue", "color": "Cool Blue", "colorHex": "#3f6fb4", "storage": "256GB", "ram": "16GB", "price": null, "salePrice": null, "image": "/seed/oneplus-12r-cool-blue.svg", "inStock": false },
+      { "id": "sv-op12r-gray", "color": "Iron Gray", "colorHex": "#4a4f55", "storage": "256GB", "ram": "16GB", "price": null, "salePrice": null, "image": "/seed/oneplus-12r-iron-gray.svg", "inStock": false }
+    ],
+    "createdAt": "2026-06-10T10:00:00Z"
+  }
+]
