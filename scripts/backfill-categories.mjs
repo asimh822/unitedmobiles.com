@@ -66,7 +66,10 @@ console.log("Category backfill:", JSON.stringify(counts));
 await supabase.from("brands").delete().eq("name", "USED");
 
 // Seed brands from distinct product brands, ordered sensibly.
-const names = [...new Set(products.map((p) => p.brand.trim()))].sort();
+// "USED" is a condition marker from the desktop CSV, never a brand.
+const names = [...new Set(products.map((p) => p.brand.trim()))]
+  .filter((n) => n.toUpperCase() !== "USED")
+  .sort();
 const rows = names.map((name) => {
   const i = BRAND_ORDER.indexOf(name.toUpperCase());
   return { name, display_order: i >= 0 ? (i + 1) * 10 : 900 };

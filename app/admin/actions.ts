@@ -45,6 +45,25 @@ async function requireAdmin(): Promise<void> {
 
 /* ---------------------------- product CRUD ---------------------------- */
 
+/**
+ * Case-insensitive brand resolution: returns the exact casing already in the
+ * brands table, inserting the brand only when it's genuinely new.
+ */
+async function canonicalBrand(
+  supabase: ReturnType<typeof getSupabaseAdmin>,
+  name: string,
+): Promise<string> {
+  const trimmed = name.trim();
+  const { data } = await supabase
+    .from("brands")
+    .select("name")
+    .ilike("name", trimmed)
+    .maybeSingle();
+  if (data?.name) return data.name;
+  await supabase.from("brands").insert({ name: trimmed });
+  return trimmed;
+}
+
 export interface ProductPayload {
   id?: string;
   brand: string;
@@ -105,13 +124,12 @@ export async function saveProduct(_prev: ActionState, formData: FormData): Promi
     images.push(data.publicUrl);
   }
 
-  // Make sure the brand exists in the brands table (new brands go last).
-  await supabase
-    .from("brands")
-    .upsert({ name: payload.brand.trim() }, { onConflict: "name", ignoreDuplicates: true });
+  // Reuse the existing brand's exact casing so "Samsung" and "SAMSUNG" never
+  // become two separate brands; only genuinely new brands get inserted.
+  const brandName = await canonicalBrand(supabase, payload.brand);
 
   const row = {
-    brand: payload.brand.trim(),
+    brand: brandName,
     model: payload.model.trim(),
     category: payload.category,
     subcategory: payload.category === "Accessories" ? payload.subcategory : null,
@@ -253,6 +271,7 @@ export async function importProducts(rows: ImportRow[]): Promise<ActionState> {
   let imported = 0;
 
   const VALID_CATEGORIES = ["New Phones", "Used", "KeyPad Phones", "Tabs", "Accessories"];
+  const brandCache = new Map<string, string>();
 
   for (const group of groups.values()) {
     const first = group[0];
@@ -262,13 +281,12 @@ export async function importProducts(rows: ImportRow[]): Promise<ActionState> {
       : first.condition === "Used"
         ? "Used"
         : "New Phones";
-    await supabase
-      .from("brands")
-      .upsert({ name: first.brand }, { onConflict: "name", ignoreDuplicates: true });
+    const brandName = brandCache.get(first.brand.toLowerCase()) ?? (await canonicalBrand(supabase, first.brand));
+    brandCache.set(first.brand.toLowerCase(), brandName);
     const { data, error } = await supabase
       .from("products")
       .insert({
-        brand: first.brand,
+        brand: brandName,
         model: first.model,
         category,
         price: first.price,

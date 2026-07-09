@@ -229,20 +229,28 @@ export async function getBrandRows(category: Category, perBrand = 16): Promise<B
     getBrands(),
     getProducts({ category, perPage: 500, sort: "newest" }),
   ]);
+  // Group case-insensitively so a stray "Samsung" still lands in SAMSUNG's row.
   const byBrand = new Map<string, Product[]>();
   for (const p of all.products) {
-    const list = byBrand.get(p.brand) ?? [];
+    const key = p.brand.trim().toUpperCase();
+    const list = byBrand.get(key) ?? [];
     if (list.length < perBrand) list.push(p);
-    byBrand.set(p.brand, list);
+    byBrand.set(key, list);
   }
   const rows: BrandRow[] = [];
+  const consumed = new Set<string>();
   for (const brand of brands) {
-    const products = byBrand.get(brand.name);
-    if (products?.length) rows.push({ brand, products });
+    const key = brand.name.trim().toUpperCase();
+    const products = byBrand.get(key);
+    if (products?.length && !consumed.has(key)) {
+      rows.push({ brand, products });
+      consumed.add(key);
+    }
   }
   // Brands present in products but missing from the brands table still show, last.
-  for (const [name, products] of byBrand) {
-    if (!brands.some((b) => b.name === name)) {
+  for (const [key, products] of byBrand) {
+    if (!consumed.has(key)) {
+      const name = products[0].brand;
       rows.push({ brand: { id: name, name, logo: null, displayOrder: 999 }, products });
     }
   }
