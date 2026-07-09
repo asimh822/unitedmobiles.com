@@ -19,7 +19,7 @@ export default function CompactProductCard({ product }: { product: Product }) {
             src={image}
             alt={`${product.brand} ${product.model}`}
             fill
-            sizes="(max-width: 640px) 22vw, (max-width: 1024px) 13vw, 8vw"
+            sizes="(max-width: 640px) 20vw, (max-width: 1024px) 12vw, 7vw"
             className="object-contain p-1 transition-transform duration-300 group-hover:scale-[1.04]"
           />
         ) : (

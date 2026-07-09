@@ -224,7 +224,7 @@ export interface BrandRow {
 }
 
 /** Brand rows for a category, grouped by brand in display_order, capped per brand. */
-export async function getBrandRows(category: Category, perBrand = 12): Promise<BrandRow[]> {
+export async function getBrandRows(category: Category, perBrand = 16): Promise<BrandRow[]> {
   const [brands, all] = await Promise.all([
     getBrands(),
     getProducts({ category, perPage: 500, sort: "newest" }),

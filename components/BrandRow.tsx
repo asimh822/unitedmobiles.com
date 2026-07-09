@@ -5,55 +5,61 @@ import type { BrandRow as BrandRowData } from "@/lib/catalog";
 
 interface Props {
   row: BrandRowData;
-  /** Where "View All" (and the vertical label) link to. */
+  /** Where the brand-name column and View All column link to. */
   viewAllHref: string;
 }
 
 /**
- * Brand block: vertical brand name (official brand color) spanning both rows,
- * half-size compact cards in a 2-row grid, capped at 12 + a View All tile.
- * On mobile the grid scrolls horizontally instead of stacking.
+ * Brand block: [vertical brand name][2 rows of small cards][View All column].
+ * The brand letters span from the middle of the first card row to the middle
+ * of the second; the View All column mirrors the brand column, covering both
+ * rows. On mobile the card grid scrolls horizontally between the two columns.
  */
 export default function BrandRow({ row, viewAllHref }: Props) {
   const { brand, products } = row;
   const color = brandColor(brand.name);
+  const letters = brand.name.replace(/\s/g, "").split("");
+
   return (
-    <section aria-label={`${brand.name} products`} className="flex gap-2">
+    <section aria-label={`${brand.name} products`} className="flex gap-1.5 sm:gap-2">
       <Link
         href={viewAllHref}
-        className="flex shrink-0 self-stretch rounded-lg border bg-white px-1.5 transition-opacity hover:opacity-75 sm:px-2"
+        className="flex shrink-0 items-center self-stretch rounded-lg border bg-white px-1.5 transition-opacity hover:opacity-75 sm:px-2"
         style={{ borderColor: `${color}44` }}
         title={`All ${brand.name} products`}
       >
-        {/* Letters distributed down the full height of both card rows.
-            Short names (MI, ZTE) stay centered so they don't look stretched. */}
+        {/* h-1/2 + justify-between: first letter sits at ~25% and last at ~75%
+            of the block height — mid of row one to mid of row two. */}
         <span
-          className={`flex flex-col items-center py-2 text-base font-extrabold uppercase leading-none sm:text-xl ${
-            brand.name.replace(/\s/g, "").length >= 4 ? "justify-between" : "justify-center gap-3"
-          }`}
+          className="flex h-1/2 min-h-16 flex-col items-center justify-between text-base font-extrabold uppercase leading-none sm:text-lg"
           style={{ color }}
           aria-label={brand.name}
         >
-          {brand.name.replace(/\s/g, "").split("").map((ch, i) => (
+          {letters.map((ch, i) => (
             <span key={i} aria-hidden="true">{ch}</span>
           ))}
         </span>
       </Link>
-      <div className="grid flex-1 auto-cols-[22%] grid-flow-col grid-rows-2 gap-1.5 overflow-x-auto pb-1 sm:auto-cols-[13%] lg:auto-cols-[calc((100%-7*0.375rem)/8)] lg:overflow-x-visible">
-        {products.slice(0, 12).map((p) => (
+
+      <div className="grid flex-1 auto-cols-[20%] grid-flow-col grid-rows-2 gap-1.5 overflow-x-auto pb-1 sm:auto-cols-[12%] lg:auto-cols-[calc((100%-7*0.375rem)/8)] lg:overflow-x-visible">
+        {products.slice(0, 16).map((p) => (
           <CompactProductCard key={p.id} product={p} />
         ))}
-        <Link
-          href={viewAllHref}
-          className="flex flex-col items-center justify-center gap-1 rounded-lg border border-dashed bg-white text-center transition-colors hover:bg-stone-50"
-          style={{ borderColor: `${color}66` }}
-        >
-          <span className="text-[11px] font-bold sm:text-xs" style={{ color }}>
-            View All
-          </span>
-          <span className="text-sm" style={{ color }} aria-hidden="true">→</span>
-        </Link>
       </div>
+
+      <Link
+        href={viewAllHref}
+        className="flex shrink-0 items-center justify-center self-stretch rounded-lg border border-dashed bg-white px-1.5 transition-colors hover:bg-stone-50 sm:px-2"
+        style={{ borderColor: `${color}66` }}
+        title={`View all ${brand.name} products`}
+      >
+        <span
+          className="text-[11px] font-bold uppercase tracking-[0.2em] [writing-mode:vertical-rl] sm:text-xs"
+          style={{ color }}
+        >
+          View All
+        </span>
+      </Link>
     </section>
   );
 }
