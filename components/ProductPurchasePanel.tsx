@@ -88,8 +88,30 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
               <div className="grid h-full place-items-center text-6xl text-stone-300">📱</div>
             )}
           </div>
+          {/* Color dots directly under the picture (Carphone Warehouse style) */}
+          {colors.length > 0 && (
+            <div className="flex flex-col items-center gap-1.5 py-1">
+              <div className="flex flex-wrap items-center justify-center gap-2.5">
+                {colors.map((c, i) => (
+                  <button
+                    key={c.color}
+                    type="button"
+                    onClick={() => selectColor(i)}
+                    aria-label={c.color}
+                    aria-pressed={i === colorIdx}
+                    title={c.color}
+                    className={`h-6 w-6 rounded-full border border-stone-300 transition-shadow ${
+                      i === colorIdx ? "ring-2 ring-brand ring-offset-2" : "hover:ring-2 hover:ring-stone-300 hover:ring-offset-1"
+                    }`}
+                    style={{ backgroundColor: c.colorHex ?? "#a8a29e" }}
+                  />
+                ))}
+              </div>
+              <p className="text-xs font-semibold text-stone-500">{selectedColor}</p>
+            </div>
+          )}
           {gallery.length > 1 && (
-            <div className="flex gap-2 overflow-x-auto pb-1">
+            <div className="flex justify-center gap-2 overflow-x-auto pb-1">
               {gallery.map((img, i) => (
                 <button
                   key={img}
@@ -129,30 +151,6 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
             <span className={`h-2 w-2 rounded-full ${inStock ? "bg-emerald-500" : "bg-stone-400"}`} />
             {inStock ? "In Stock — ready to deliver" : "Out of Stock"}
           </p>
-
-          {colors.length > 0 && (
-            <div>
-              <p className="mb-2 text-sm font-bold text-ink">
-                Color: <span className="font-medium text-stone-500">{selectedColor}</span>
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {colors.map((c, i) => (
-                  <button
-                    key={c.color}
-                    type="button"
-                    onClick={() => selectColor(i)}
-                    aria-label={c.color}
-                    aria-pressed={i === colorIdx}
-                    title={c.color}
-                    className={`h-9 w-9 rounded-full border-2 ${
-                      i === colorIdx ? "border-brand ring-2 ring-brand/30" : "border-stone-300"
-                    }`}
-                    style={{ backgroundColor: c.colorHex ?? "#a8a29e" }}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
 
           {combos.length > 0 && (
             <div>

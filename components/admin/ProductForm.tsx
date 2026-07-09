@@ -14,6 +14,24 @@ import type { Product, SpecGroup } from "@/lib/types";
 
 const SPEC_CATEGORIES = ["Display", "Camera", "Memory", "Battery", "Connectivity", "General"];
 
+const WARRANTY_PRESETS = [
+  "1 Year Official Warranty",
+  "6 Months Shop Warranty",
+  "3 Months Shop Warranty",
+  "No Warranty",
+];
+
+/** One click pre-fills the standard phone spec structure; empty rows are dropped on save. */
+function specTemplate(ram: string, storage: string): SpecGroup[] {
+  return [
+    { category: "Display", items: [{ label: "Size", value: "" }, { label: "Type", value: "" }, { label: "Refresh Rate", value: "" }] },
+    { category: "Camera", items: [{ label: "Main", value: "" }, { label: "Selfie", value: "" }] },
+    { category: "Memory", items: [{ label: "RAM", value: ram }, { label: "Storage", value: storage }] },
+    { category: "Battery", items: [{ label: "Capacity", value: "" }, { label: "Charging", value: "" }] },
+    { category: "Connectivity", items: [{ label: "Network", value: "" }, { label: "SIM", value: "" }] },
+  ];
+}
+
 interface VariantDraft {
   color: string;
   colorHex: string;
@@ -292,7 +310,12 @@ export default function ProductForm({
         </div>
         <div>
           <label className={labelClass}>Warranty</label>
-          <input value={warranty} onChange={(e) => setWarranty(e.target.value)} className={inputClass} placeholder="1 Year Official Warranty" />
+          <input value={warranty} onChange={(e) => setWarranty(e.target.value)} className={inputClass} placeholder="1 Year Official Warranty" list="warranty-presets" />
+          <datalist id="warranty-presets">
+            {WARRANTY_PRESETS.map((w) => (
+              <option key={w} value={w} />
+            ))}
+          </datalist>
         </div>
         {phoneLike && (
           <div className="flex items-end pb-2">
@@ -333,14 +356,26 @@ export default function ProductForm({
       {/* Variants */}
       <section className="space-y-3 rounded-2xl border border-stone-200 bg-white p-5">
         <div className="flex items-center justify-between">
-          <h2 className="font-extrabold text-ink">Color / Storage Variants</h2>
+          <div>
+            <h2 className="font-extrabold text-ink">Color / Storage Variants</h2>
+            <p className="text-xs text-stone-400">
+              New rows copy the previous one — usually you only change the color or storage.
+            </p>
+          </div>
           <button
             type="button"
             onClick={() =>
-              setVariants((prev) => [
-                ...prev,
-                { color: "", colorHex: "", storage: "", ram: "", price: "", salePrice: "", image: "", inStock: true },
-              ])
+              setVariants((prev) => {
+                // Prefill from the last variant (or the product's RAM/Storage)
+                // so adding one more color/storage is a one-field edit.
+                const last = prev[prev.length - 1];
+                return [
+                  ...prev,
+                  last
+                    ? { ...last, color: "", colorHex: "" }
+                    : { color: "", colorHex: "", storage: storage.trim(), ram: ram.trim(), price: "", salePrice: "", image: "", inStock: true },
+                ];
+              })
             }
             className="text-sm font-bold text-brand hover:underline"
           >
@@ -352,21 +387,39 @@ export default function ProductForm({
         )}
         {variants.map((v, i) => (
           <div key={i} className="grid gap-2 rounded-xl border border-stone-100 bg-stone-50 p-3 sm:grid-cols-4">
-            <input value={v.color} onChange={(e) => setVariants((p) => p.map((x, j) => (j === i ? { ...x, color: e.target.value } : x)))} placeholder="Color *" className={inputClass} />
-            <input value={v.colorHex} onChange={(e) => setVariants((p) => p.map((x, j) => (j === i ? { ...x, colorHex: e.target.value } : x)))} placeholder="#334155" className={inputClass} />
-            <input value={v.storage} onChange={(e) => setVariants((p) => p.map((x, j) => (j === i ? { ...x, storage: e.target.value } : x)))} placeholder="Storage" className={inputClass} />
+            <div className="flex items-center gap-2 sm:col-span-2">
+              <input
+                type="color"
+                value={/^#[0-9a-fA-F]{6}$/.test(v.colorHex) ? v.colorHex : "#a8a29e"}
+                onChange={(e) => setVariants((p) => p.map((x, j) => (j === i ? { ...x, colorHex: e.target.value } : x)))}
+                title="Pick swatch color"
+                className="h-9 w-11 shrink-0 cursor-pointer rounded-lg border border-stone-200 bg-white p-0.5"
+              />
+              <input value={v.color} onChange={(e) => setVariants((p) => p.map((x, j) => (j === i ? { ...x, color: e.target.value } : x)))} placeholder="Color name * (e.g. Midnight Black)" className={inputClass} />
+            </div>
             <input value={v.ram} onChange={(e) => setVariants((p) => p.map((x, j) => (j === i ? { ...x, ram: e.target.value } : x)))} placeholder="RAM" className={inputClass} />
+            <input value={v.storage} onChange={(e) => setVariants((p) => p.map((x, j) => (j === i ? { ...x, storage: e.target.value } : x)))} placeholder="Storage" className={inputClass} />
             <input value={v.price} onChange={(e) => setVariants((p) => p.map((x, j) => (j === i ? { ...x, price: e.target.value } : x)))} placeholder="Price (blank = base)" className={inputClass} />
             <input value={v.salePrice} onChange={(e) => setVariants((p) => p.map((x, j) => (j === i ? { ...x, salePrice: e.target.value } : x)))} placeholder="Sale price" className={inputClass} />
-            <input value={v.image} onChange={(e) => setVariants((p) => p.map((x, j) => (j === i ? { ...x, image: e.target.value } : x)))} placeholder="Image URL" className={inputClass} />
+            <input value={v.image} onChange={(e) => setVariants((p) => p.map((x, j) => (j === i ? { ...x, image: e.target.value } : x)))} placeholder="Image URL (optional)" className={inputClass} />
             <div className="flex items-center justify-between gap-2">
               <label className="flex items-center gap-2 text-sm font-semibold text-ink">
                 <input type="checkbox" checked={v.inStock} onChange={(e) => setVariants((p) => p.map((x, j) => (j === i ? { ...x, inStock: e.target.checked } : x)))} className="h-4 w-4 accent-brand" />
                 In stock
               </label>
-              <button type="button" onClick={() => setVariants((p) => p.filter((_, j) => j !== i))} className="text-sm font-semibold text-red-500 hover:underline">
-                Remove
-              </button>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setVariants((p) => [...p.slice(0, i + 1), { ...v, color: "", colorHex: "" }, ...p.slice(i + 1)])}
+                  className="text-sm font-semibold text-brand hover:underline"
+                  title="Duplicate this row"
+                >
+                  Duplicate
+                </button>
+                <button type="button" onClick={() => setVariants((p) => p.filter((_, j) => j !== i))} className="text-sm font-semibold text-red-500 hover:underline">
+                  Remove
+                </button>
+              </div>
             </div>
           </div>
         ))}
@@ -376,21 +429,32 @@ export default function ProductForm({
       <section className="space-y-3 rounded-2xl border border-stone-200 bg-white p-5">
         <div className="flex items-center justify-between">
           <h2 className="font-extrabold text-ink">Specs (grouped by category)</h2>
-          <button
-            type="button"
-            onClick={() =>
-              setSpecs((prev) => [
-                ...prev,
-                {
-                  category: SPEC_CATEGORIES.find((c) => !prev.some((g) => g.category === c)) ?? "General",
-                  items: [{ label: "", value: "" }],
-                },
-              ])
-            }
-            className="text-sm font-bold text-brand hover:underline"
-          >
-            + Add category
-          </button>
+          <div className="flex gap-3">
+            {specs.length === 0 && phoneLike && (
+              <button
+                type="button"
+                onClick={() => setSpecs(specTemplate(ram.trim(), storage.trim()))}
+                className="rounded-lg bg-teal-50 px-3 py-1 text-sm font-bold text-brand hover:bg-teal-100"
+              >
+                ⚡ Fill phone template
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() =>
+                setSpecs((prev) => [
+                  ...prev,
+                  {
+                    category: SPEC_CATEGORIES.find((c) => !prev.some((g) => g.category === c)) ?? "General",
+                    items: [{ label: "", value: "" }],
+                  },
+                ])
+              }
+              className="text-sm font-bold text-brand hover:underline"
+            >
+              + Add category
+            </button>
+          </div>
         </div>
         {specs.map((group, gi) => (
           <div key={gi} className="space-y-2 rounded-xl border border-stone-100 bg-stone-50 p-3">
