@@ -1,19 +1,19 @@
 import Link from "next/link";
+import BrandCarousel from "@/components/BrandCarousel";
 import CompactProductCard from "@/components/CompactProductCard";
 import { brandColor } from "@/lib/brand-colors";
 import type { BrandRow as BrandRowData } from "@/lib/catalog";
 
 interface Props {
   row: BrandRowData;
-  /** Where the brand-name column and View All column link to. */
+  /** Where the vertical brand-name column links to. */
   viewAllHref: string;
 }
 
 /**
- * Brand block: [vertical brand name][2 rows of small cards][View All column].
- * The brand letters span from the middle of the first card row to the middle
- * of the second; the View All column mirrors the brand column, covering both
- * rows. On mobile the card grid scrolls horizontally between the two columns.
+ * Brand block: vertical brand name on the left (links to the brand page),
+ * ONE row of small cards (8 visible on desktop) with ‹ › arrows paging
+ * through the rest of that brand's models.
  */
 export default function BrandRow({ row, viewAllHref }: Props) {
   const { brand, products } = row;
@@ -28,10 +28,10 @@ export default function BrandRow({ row, viewAllHref }: Props) {
         style={{ borderColor: `${color}44` }}
         title={`All ${brand.name} products`}
       >
-        {/* h-1/2 + justify-between: first letter sits at ~25% and last at ~75%
-            of the block height — mid of row one to mid of row two. */}
         <span
-          className="flex h-1/2 min-h-16 flex-col items-center justify-between text-base font-extrabold uppercase leading-none sm:text-lg"
+          className={`flex flex-col items-center py-2 text-sm font-extrabold uppercase leading-none sm:text-base ${
+            letters.length >= 4 ? "h-full justify-between" : "justify-center gap-2.5"
+          }`}
           style={{ color }}
           aria-label={brand.name}
         >
@@ -41,25 +41,11 @@ export default function BrandRow({ row, viewAllHref }: Props) {
         </span>
       </Link>
 
-      <div className="grid flex-1 auto-cols-[20%] grid-flow-col grid-rows-2 gap-1.5 overflow-x-auto pb-1 sm:auto-cols-[12%] lg:auto-cols-[calc((100%-7*0.375rem)/8)] lg:overflow-x-visible">
-        {products.slice(0, 16).map((p) => (
+      <BrandCarousel color={color}>
+        {products.slice(0, 24).map((p) => (
           <CompactProductCard key={p.id} product={p} />
         ))}
-      </div>
-
-      <Link
-        href={viewAllHref}
-        className="flex shrink-0 items-center justify-center self-stretch rounded-lg border border-dashed bg-white px-1.5 transition-colors hover:bg-stone-50 sm:px-2"
-        style={{ borderColor: `${color}66` }}
-        title={`View all ${brand.name} products`}
-      >
-        <span
-          className="text-[11px] font-bold uppercase tracking-[0.2em] [writing-mode:vertical-rl] sm:text-xs"
-          style={{ color }}
-        >
-          View All
-        </span>
-      </Link>
+      </BrandCarousel>
     </section>
   );
 }
