@@ -223,11 +223,11 @@ export interface BrandRow {
   products: Product[];
 }
 
-/** Homepage brand rows: New Phones only, grouped by brand in display_order. */
-export async function getHomepageBrandRows(perBrand = 12): Promise<BrandRow[]> {
+/** Brand rows for a category, grouped by brand in display_order, capped per brand. */
+export async function getBrandRows(category: Category, perBrand = 12): Promise<BrandRow[]> {
   const [brands, all] = await Promise.all([
     getBrands(),
-    getProducts({ category: "New Phones", perPage: 500, sort: "newest" }),
+    getProducts({ category, perPage: 500, sort: "newest" }),
   ]);
   const byBrand = new Map<string, Product[]>();
   for (const p of all.products) {

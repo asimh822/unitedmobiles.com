@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Analytics } from "@vercel/analytics/react";
 import NavMenu from "@/components/NavMenu";
@@ -20,21 +21,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className="min-h-screen antialiased">
+        {/* Single-row header: logo top-left, category menu beside it. */}
         <header className="sticky top-0 z-40 border-b border-stone-200 bg-cream/95 backdrop-blur">
-          <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-            <Link href="/" className="flex items-center gap-2">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand text-lg font-black text-white">
-                U
-              </span>
-              <span className="text-lg font-extrabold tracking-tight text-ink sm:text-xl">
-                United <span className="text-brand">Mobiles</span>
-              </span>
+          <div className="mx-auto flex max-w-6xl items-center gap-2 px-4 py-2 sm:gap-4">
+            <Link href="/" className="shrink-0" aria-label="United Mobiles — home">
+              <Image
+                src="/shop-logo.png"
+                alt="United Mobiles Multan"
+                width={640}
+                height={375}
+                priority
+                className="h-10 w-auto rounded-lg sm:h-11"
+              />
             </Link>
-            <span className="hidden text-sm font-medium text-stone-500 sm:block">
-              Genuine phones. Cash on delivery.
-            </span>
+            <NavMenu />
           </div>
-          <NavMenu />
         </header>
 
         <main className="mx-auto min-h-[70vh] w-full max-w-6xl px-4 pb-16">{children}</main>

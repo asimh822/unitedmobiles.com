@@ -1,30 +1,51 @@
 import Link from "next/link";
 import CompactProductCard from "@/components/CompactProductCard";
-import { slugify } from "@/lib/categories";
+import { brandColor } from "@/lib/brand-colors";
 import type { BrandRow as BrandRowData } from "@/lib/catalog";
 
+interface Props {
+  row: BrandRowData;
+  /** Where "View All" (and the vertical label) link to. */
+  viewAllHref: string;
+}
+
 /**
- * Homepage brand block: vertical rotated brand name on the left (links to the
- * brand page), 6x2 compact cards on desktop. On mobile the same 2-row grid
- * scrolls horizontally (~2.5 cards visible) instead of stacking 12 cards tall.
+ * Brand block: vertical brand name (official brand color) spanning both rows,
+ * half-size compact cards in a 2-row grid, capped at 12 + a View All tile.
+ * On mobile the grid scrolls horizontally instead of stacking.
  */
-export default function BrandRow({ row }: { row: BrandRowData }) {
+export default function BrandRow({ row, viewAllHref }: Props) {
   const { brand, products } = row;
+  const color = brandColor(brand.name);
   return (
-    <section aria-label={`${brand.name} phones`} className="flex gap-2 sm:gap-3">
+    <section aria-label={`${brand.name} products`} className="flex gap-2">
       <Link
-        href={`/brand/${slugify(brand.name)}`}
-        className="flex shrink-0 items-center justify-center rounded-xl border border-teal-100 bg-teal-50 px-1.5 transition-colors hover:bg-brand hover:text-white sm:px-2.5"
-        title={`All ${brand.name} phones`}
+        href={viewAllHref}
+        className="flex shrink-0 items-stretch justify-center self-stretch rounded-lg border bg-white px-1 transition-opacity hover:opacity-75 sm:px-1.5"
+        style={{ borderColor: `${color}44` }}
+        title={`All ${brand.name} products`}
       >
-        <span className="text-sm font-extrabold uppercase tracking-[0.2em] text-brand [writing-mode:vertical-rl] hover:text-inherit sm:text-base">
+        <span
+          className="flex items-center text-xs font-extrabold uppercase tracking-[0.18em] [writing-mode:vertical-rl] sm:text-sm"
+          style={{ color }}
+        >
           {brand.name}
         </span>
       </Link>
-      <div className="grid flex-1 auto-cols-[38%] grid-flow-col grid-rows-2 gap-2 overflow-x-auto pb-1 sm:auto-cols-[23%] lg:auto-cols-[calc((100%-5*0.5rem)/6)] lg:overflow-x-visible">
+      <div className="grid flex-1 auto-cols-[22%] grid-flow-col grid-rows-2 gap-1.5 overflow-x-auto pb-1 sm:auto-cols-[13%] lg:auto-cols-[calc((100%-7*0.375rem)/8)] lg:overflow-x-visible">
         {products.slice(0, 12).map((p) => (
           <CompactProductCard key={p.id} product={p} />
         ))}
+        <Link
+          href={viewAllHref}
+          className="flex flex-col items-center justify-center gap-1 rounded-lg border border-dashed bg-white text-center transition-colors hover:bg-stone-50"
+          style={{ borderColor: `${color}66` }}
+        >
+          <span className="text-[11px] font-bold sm:text-xs" style={{ color }}>
+            View All
+          </span>
+          <span className="text-sm" style={{ color }} aria-hidden="true">→</span>
+        </Link>
       </div>
     </section>
   );

@@ -1,21 +1,14 @@
 import type { Metadata } from "next";
-import CatalogBrowser, { type SearchParams } from "@/components/CatalogBrowser";
+import BrandRows from "@/components/BrandRows";
 
 export const metadata: Metadata = { title: "KeyPad Phones" };
+export const revalidate = 300;
 
-export default async function KeypadPhonesPage({
-  searchParams,
-}: {
-  searchParams: Promise<SearchParams>;
-}) {
+export default function KeypadPhonesPage() {
   return (
-    <CatalogBrowser
-      title="KeyPad Phones"
-      basePath="/keypad-phones"
-      fixed={{ category: "KeyPad Phones" }}
-      searchParams={await searchParams}
-      showRamStorage={false}
-      showCondition={false}
-    />
+    <div className="space-y-5 py-6">
+      <h1 className="text-2xl font-extrabold text-ink">KeyPad Phones</h1>
+      <BrandRows category="KeyPad Phones" />
+    </div>
   );
 }
