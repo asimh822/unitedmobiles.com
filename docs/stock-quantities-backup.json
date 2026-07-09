@@ -1,0 +1,718 @@
+[
+ {
+  "id": "1bebc0ff-eba2-4598-9c85-0ed2dd949c4f",
+  "brand": "VOICE",
+  "model": "THUNDER",
+  "quantity_was_in_price_field": 8,
+  "variant_quantities": []
+ },
+ {
+  "id": "68fe115b-7724-470d-b612-1bd2ea0bb886",
+  "brand": "ITEL",
+  "model": "2166IT",
+  "quantity_was_in_price_field": 3,
+  "variant_quantities": []
+ },
+ {
+  "id": "839401d1-d711-4000-8ae1-95ce25dd59dd",
+  "brand": "NOKIA",
+  "model": "105 CLASSI",
+  "quantity_was_in_price_field": 28,
+  "variant_quantities": []
+ },
+ {
+  "id": "bb247314-c999-4009-a373-5747bf53ba2c",
+  "brand": "NOKIA",
+  "model": "N106",
+  "quantity_was_in_price_field": 19,
+  "variant_quantities": []
+ },
+ {
+  "id": "bed3580d-4d4e-4671-b45a-b7bbd158184a",
+  "brand": "DIGIT",
+  "model": "C2 2.0",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "f2d43670-c7f2-4757-8871-5295cc5bd5a1",
+  "brand": "TABS",
+  "model": "VISTA",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "92db89cb-ca9b-430a-8824-56afa8ef2252",
+  "brand": "DIGIT",
+  "model": "D1 2.4",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "bfcb2c54-bf67-4b01-ab0d-40001e5e5226",
+  "brand": "E TACHI",
+  "model": "IPRO MAX",
+  "quantity_was_in_price_field": 2,
+  "variant_quantities": []
+ },
+ {
+  "id": "3a52e87e-4d93-44d9-a656-8b0ef00de59b",
+  "brand": "ITEL",
+  "model": "IT2181",
+  "quantity_was_in_price_field": 3,
+  "variant_quantities": []
+ },
+ {
+  "id": "3d14eeeb-798f-41f3-b152-c105f63d7eab",
+  "brand": "ITEL",
+  "model": "M450",
+  "quantity_was_in_price_field": 8,
+  "variant_quantities": []
+ },
+ {
+  "id": "815fff2f-e4ea-4de9-8fe0-1fee5cfb5765",
+  "brand": "Q MOBILE",
+  "model": "Q6303",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "e529b203-cba8-4a87-bbbb-a3ec3cd97ab6",
+  "brand": "NOKIA",
+  "model": "105 PURE",
+  "quantity_was_in_price_field": 3,
+  "variant_quantities": []
+ },
+ {
+  "id": "9b86ba51-fe91-4cde-8ec0-4f2e6ff5b0f2",
+  "brand": "HONOR",
+  "model": "X8D",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "e897a946-8a4f-4399-b415-ebee58d65e14",
+  "brand": "NOKIA",
+  "model": "N 110",
+  "quantity_was_in_price_field": 3,
+  "variant_quantities": []
+ },
+ {
+  "id": "8b8ea34a-4ef2-4066-93f5-a0542f6e5b5b",
+  "brand": "INFINIX",
+  "model": "HT60I",
+  "quantity_was_in_price_field": 3,
+  "variant_quantities": []
+ },
+ {
+  "id": "4693607d-f60e-47a3-99b3-1f2d6f97bef4",
+  "brand": "NOKIA",
+  "model": "N230",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "f94bdb73-b396-4610-932e-f3ff632850ca",
+  "brand": "OPPO",
+  "model": "A6C",
+  "quantity_was_in_price_field": 5,
+  "variant_quantities": []
+ },
+ {
+  "id": "f9f88c62-6b2e-40a2-a5de-aa59ca8a4820",
+  "brand": "REALME",
+  "model": "NT70",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "36d3f460-54ff-4c9c-b1d1-0b099599cf74",
+  "brand": "MI",
+  "model": "A7 PRO",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": [
+   {
+    "ram": "4GB",
+    "storage": "128GB",
+    "qty": 1
+   },
+   {
+    "ram": "4GB",
+    "storage": "64GB",
+    "qty": 1
+   }
+  ]
+ },
+ {
+  "id": "cf6bad58-8a0c-4a44-a95a-ca6cbd286533",
+  "brand": "SAMSUNG",
+  "model": "A17",
+  "quantity_was_in_price_field": 4,
+  "variant_quantities": []
+ },
+ {
+  "id": "a49d6e53-a73f-4de7-8ade-e17842c63f19",
+  "brand": "INFINIX",
+  "model": "HT60 PRO",
+  "quantity_was_in_price_field": 2,
+  "variant_quantities": []
+ },
+ {
+  "id": "b125c79f-b326-49b1-93a5-f31b9cd4e786",
+  "brand": "SEGO",
+  "model": "SG SM10",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "dedad1cf-2dcd-49b3-a29b-c0ff235985f9",
+  "brand": "HMD",
+  "model": "AURA2 4+2",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "9027566c-621c-4c5e-87c2-6be5068f346e",
+  "brand": "OPPO",
+  "model": "RENO15F",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "cc78ef28-19b7-49c6-84e7-c1eec2248fc1",
+  "brand": "ZTE",
+  "model": "A36",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "383c2aca-dc2f-4345-b3b0-bc65a06d87f6",
+  "brand": "VIVO",
+  "model": "Y05",
+  "quantity_was_in_price_field": 7,
+  "variant_quantities": [
+   {
+    "ram": "4GB",
+    "storage": "64GB",
+    "qty": 7
+   },
+   {
+    "ram": "4GB",
+    "storage": "128GB",
+    "qty": 12
+   }
+  ]
+ },
+ {
+  "id": "bc613f33-b305-48de-8a01-b7a1794bdfbc",
+  "brand": "VIVO",
+  "model": "Y500",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "08954603-e9c0-4e96-8383-8c179ce5c37d",
+  "brand": "VIVO",
+  "model": "Y21D",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "2ac9a302-dba2-4b3f-974c-d6cefc735ee5",
+  "brand": "MI",
+  "model": "R 12C",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "0c4f7d6c-c1a4-4033-a36b-335524377657",
+  "brand": "TECNO",
+  "model": "SP40 PRO",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "dddb8150-20e8-4067-af63-89e564a7de5a",
+  "brand": "REALME",
+  "model": "R C51",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "c78d9acc-45c9-435b-91cb-40c4d1293b7a",
+  "brand": "SAMSUNG",
+  "model": "S A15",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "b8ef7d07-520b-480a-8480-d9f9aa92b4e4",
+  "brand": "TECNO",
+  "model": "T CAM40",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "fee56c7b-34f3-4dc2-a640-1836dbe1487c",
+  "brand": "VOICE",
+  "model": "V BOLD",
+  "quantity_was_in_price_field": 9,
+  "variant_quantities": []
+ },
+ {
+  "id": "8348df94-a02e-4bde-8fd2-433edaeec684",
+  "brand": "VIVO",
+  "model": "V Y17S",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "05b680a3-1941-4004-9cee-ea53d21d0526",
+  "brand": "OPPO",
+  "model": "O A5 U",
+  "quantity_was_in_price_field": 3,
+  "variant_quantities": []
+ },
+ {
+  "id": "a34f7f8d-1cf7-4232-9417-4ec29289813f",
+  "brand": "INFINIX",
+  "model": "I NT30",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "b588f83a-01de-4cd9-96a5-8f717f957b51",
+  "brand": "OPPO",
+  "model": "O 11F",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "c778aee2-7721-4a33-8fa8-7de788cd78c9",
+  "brand": "REALME",
+  "model": "RL C85",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "f96a9d3b-a2cd-4a82-8675-72f56e6b02ac",
+  "brand": "SAMSUNG",
+  "model": "S A33",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "b476de4e-0f3b-4bd1-9254-1a385ec6e48c",
+  "brand": "REALME",
+  "model": "R C65",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "7562c9f6-a256-4dc8-b217-ff8e197bb623",
+  "brand": "VIVO",
+  "model": "Y31D",
+  "quantity_was_in_price_field": 2,
+  "variant_quantities": [
+   {
+    "ram": "8GB",
+    "storage": "128GB",
+    "qty": 2
+   },
+   {
+    "ram": "8GB",
+    "storage": "256GB",
+    "qty": 2
+   }
+  ]
+ },
+ {
+  "id": "44def9f2-5f94-445f-a060-33d368ecd778",
+  "brand": "VILLAON",
+  "model": "V200S",
+  "quantity_was_in_price_field": 5,
+  "variant_quantities": []
+ },
+ {
+  "id": "55ad3f0f-964e-4d89-bd24-b2d4d7541f7b",
+  "brand": "MI",
+  "model": "R 14C",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "aa14c1cf-918d-41b2-b874-689e675cd586",
+  "brand": "TECNO",
+  "model": "SP40 PRO+",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "35b78fe9-bc04-4b96-a583-a7999f4c4aa8",
+  "brand": "SAMSUNG",
+  "model": "S A04",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "3e67a440-6043-4c2f-a0cc-72c33aa436c0",
+  "brand": "SAMSUNG",
+  "model": "S A73",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "d6b8dc0c-63ca-4b30-b5c6-b0d48b6803f4",
+  "brand": "VOICE",
+  "model": "FLEXI V",
+  "quantity_was_in_price_field": 10,
+  "variant_quantities": []
+ },
+ {
+  "id": "dd748249-a283-4931-a910-7d750685230a",
+  "brand": "VOICE",
+  "model": "V GLOW",
+  "quantity_was_in_price_field": 10,
+  "variant_quantities": []
+ },
+ {
+  "id": "08f49b45-cbac-4df5-a57e-6b3b3b5b8f39",
+  "brand": "VIVO",
+  "model": "V V50LITE",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "d33ae34d-1e75-46dd-b005-ff8fbf9897aa",
+  "brand": "VIVO",
+  "model": "V Y31D",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "c825a705-182d-4284-a2e2-1772cec846a2",
+  "brand": "INFINIX",
+  "model": "I NT40 PRO",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "cd815eb7-dac3-44cc-a5a3-587ca0396b1a",
+  "brand": "OPPO",
+  "model": "O A6 PRO",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "f7a3ab72-469f-493a-b2bf-e865f888e40b",
+  "brand": "OPPO",
+  "model": "O 13F",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "0d9a7b01-81d6-49f8-b67d-23fc06d2496b",
+  "brand": "SAMSUNG",
+  "model": "S A16 U",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "db7cc5bc-9296-409a-86d7-10cd912a0990",
+  "brand": "ITEL",
+  "model": "IT5032",
+  "quantity_was_in_price_field": 6,
+  "variant_quantities": []
+ },
+ {
+  "id": "5e5e63e0-b89e-4d68-be4d-c703e95d3e19",
+  "brand": "ZTE",
+  "model": "A35E",
+  "quantity_was_in_price_field": 2,
+  "variant_quantities": []
+ },
+ {
+  "id": "2b23af1a-76ee-4abc-943a-483a410bddf9",
+  "brand": "INFINIX",
+  "model": "NT60",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "ccba49cb-e357-4bea-a250-4da005e93587",
+  "brand": "ITEL",
+  "model": "MAGIC4",
+  "quantity_was_in_price_field": 2,
+  "variant_quantities": []
+ },
+ {
+  "id": "ddd423cb-8bc5-4f71-b5db-cd4bf6372cc6",
+  "brand": "ITEL",
+  "model": "NEO X30+",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "b67ca5fb-f7ee-4bcb-ad02-adfd5316f1a3",
+  "brand": "Q MOBILE",
+  "model": "Q CLASSIC",
+  "quantity_was_in_price_field": 2,
+  "variant_quantities": []
+ },
+ {
+  "id": "60336798-b07d-4165-a8d0-53b5dfbd59f4",
+  "brand": "INFINIX",
+  "model": "SM20",
+  "quantity_was_in_price_field": 2,
+  "variant_quantities": []
+ },
+ {
+  "id": "f0c90537-33db-43ad-aa5e-c965286e0742",
+  "brand": "Q MOBILE",
+  "model": "QPRIME",
+  "quantity_was_in_price_field": 2,
+  "variant_quantities": []
+ },
+ {
+  "id": "14e17c39-af3b-482b-b558-781632ae4ef1",
+  "brand": "ITEL",
+  "model": "CITY200",
+  "quantity_was_in_price_field": 5,
+  "variant_quantities": []
+ },
+ {
+  "id": "00f9704c-2a63-463a-b662-f6fa93b8b8a6",
+  "brand": "INFINIX",
+  "model": "NT60 PRO",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "7c8bc975-16fd-4377-ad1b-6e9e09988e7f",
+  "brand": "INFINIX",
+  "model": "I S8 PRO",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "158ef5e7-08aa-4f35-bb69-38f9f5d9be25",
+  "brand": "OPPO",
+  "model": "O A5 PRO",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "8d24b09a-a071-4b0d-bd9c-c222d6845dca",
+  "brand": "OPPO",
+  "model": "O A6K",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "730724fa-09c0-4ced-8fd3-3e4f6bfdf789",
+  "brand": "SAMSUNG",
+  "model": "S A25",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "6540b590-6cb9-45c1-a362-05c25a310290",
+  "brand": "VIVO",
+  "model": "V Y400",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "5e6d4f8c-6175-4a06-8c2a-12fd8e613618",
+  "brand": "SEGO",
+  "model": "SG NT70 4+6",
+  "quantity_was_in_price_field": 2,
+  "variant_quantities": []
+ },
+ {
+  "id": "6623c2be-38a8-4fbc-bd26-84aa6e3dda12",
+  "brand": "HONOR",
+  "model": "X5C+",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "6479b670-cbd1-4ad7-b6f5-7593b9bfe474",
+  "brand": "SEGO",
+  "model": "V101 SG",
+  "quantity_was_in_price_field": 6,
+  "variant_quantities": []
+ },
+ {
+  "id": "60ba3a3b-9879-4e68-92dc-c98a11601eb4",
+  "brand": "SAMSUNG",
+  "model": "A07",
+  "quantity_was_in_price_field": 2,
+  "variant_quantities": [
+   {
+    "ram": "6GB",
+    "storage": "128GB",
+    "qty": 2
+   },
+   {
+    "ram": "4GB",
+    "storage": "128GB",
+    "qty": 4
+   },
+   {
+    "ram": "4GB",
+    "storage": "64GB",
+    "qty": 9
+   }
+  ]
+ },
+ {
+  "id": "84fdfbc0-1a28-4bb6-bd51-ee31d8cb5228",
+  "brand": "SEGO",
+  "model": "SHARK",
+  "quantity_was_in_price_field": 2,
+  "variant_quantities": []
+ },
+ {
+  "id": "7e6ae03c-03c9-44c1-b315-223c41909632",
+  "brand": "OPPO",
+  "model": "A6S",
+  "quantity_was_in_price_field": 2,
+  "variant_quantities": []
+ },
+ {
+  "id": "6e781341-6888-40ea-9c4d-aa4951cb50ba",
+  "brand": "REALME",
+  "model": "60X",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "988601cc-da33-47a4-a628-18430b494b89",
+  "brand": "REALME",
+  "model": "C100I",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "dacc192c-1991-4f23-8f46-7b9ae11ce6ee",
+  "brand": "OPPO",
+  "model": "A6S PRO",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "127f1225-6d26-4a54-993d-a521decaab7c",
+  "brand": "MI",
+  "model": "A5",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "215d4c0f-9aa4-445a-930b-99ff4d0030bd",
+  "brand": "TECNO",
+  "model": "CAM50",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "a308d37e-40db-4322-ba99-ff7b899ac50c",
+  "brand": "TECNO",
+  "model": "GO3",
+  "quantity_was_in_price_field": 4,
+  "variant_quantities": []
+ },
+ {
+  "id": "5545263f-9b5c-40bf-87d7-25dd10ed9280",
+  "brand": "TECNO",
+  "model": "CAM50 PRO",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "296eef38-282f-4609-8e56-7cbcc453987d",
+  "brand": "NOKIA",
+  "model": "130MUSIC",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "b1e5f7c9-75e6-46c2-acce-eee5e7ee1d35",
+  "brand": "NOKIA",
+  "model": "150 MUSIC",
+  "quantity_was_in_price_field": 2,
+  "variant_quantities": []
+ },
+ {
+  "id": "68046d52-2cc6-42b4-bc59-1d84394a39ab",
+  "brand": "NOKIA",
+  "model": "N5310",
+  "quantity_was_in_price_field": 2,
+  "variant_quantities": []
+ },
+ {
+  "id": "89829650-9286-45b8-bcee-53ed3f191b81",
+  "brand": "TECNO",
+  "model": "SP50",
+  "quantity_was_in_price_field": 2,
+  "variant_quantities": []
+ },
+ {
+  "id": "8641f4ad-7488-487a-8e43-2ac917e0ae4e",
+  "brand": "MI",
+  "model": "R A3",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "853ec992-b5b4-4b33-8c7d-7738667e1f5c",
+  "brand": "REALME",
+  "model": "R NT50",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "b5658c9f-37dc-4842-92e2-387818f2ffb0",
+  "brand": "SAMSUNG",
+  "model": "S A07",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "86579d30-2288-4a12-9ee8-dee3240de99e",
+  "brand": "ITEL",
+  "model": "A100C",
+  "quantity_was_in_price_field": 4,
+  "variant_quantities": [
+   {
+    "ram": "4GB",
+    "storage": "64GB",
+    "qty": 4
+   },
+   {
+    "ram": "2GB",
+    "storage": "64GB",
+    "qty": 5
+   },
+   {
+    "ram": "4GB",
+    "storage": "128GB",
+    "qty": 8
+   }
+  ]
+ },
+ {
+  "id": "58351fa4-be9a-44d1-9436-f75b6013937e",
+  "brand": "TECNO",
+  "model": "T 40PRO+",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ },
+ {
+  "id": "9050252a-c1da-4d09-8b45-2aa8db56cd40",
+  "brand": "VIVO",
+  "model": "V V60 LITE",
+  "quantity_was_in_price_field": 1,
+  "variant_quantities": []
+ }
+]
