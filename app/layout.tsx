@@ -35,6 +35,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               />
             </Link>
             <NavMenu />
+            <span className="hidden shrink-0 whitespace-nowrap text-xs font-medium text-stone-500 lg:block">
+              Genuine phones. Cash on delivery.
+            </span>
           </div>
         </header>
 

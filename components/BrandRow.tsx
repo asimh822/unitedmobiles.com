@@ -21,15 +21,22 @@ export default function BrandRow({ row, viewAllHref }: Props) {
     <section aria-label={`${brand.name} products`} className="flex gap-2">
       <Link
         href={viewAllHref}
-        className="flex shrink-0 items-stretch justify-center self-stretch rounded-lg border bg-white px-1 transition-opacity hover:opacity-75 sm:px-1.5"
+        className="flex shrink-0 self-stretch rounded-lg border bg-white px-1.5 transition-opacity hover:opacity-75 sm:px-2"
         style={{ borderColor: `${color}44` }}
         title={`All ${brand.name} products`}
       >
+        {/* Letters distributed down the full height of both card rows.
+            Short names (MI, ZTE) stay centered so they don't look stretched. */}
         <span
-          className="flex items-center text-xs font-extrabold uppercase tracking-[0.18em] [writing-mode:vertical-rl] sm:text-sm"
+          className={`flex flex-col items-center py-2 text-base font-extrabold uppercase leading-none sm:text-xl ${
+            brand.name.replace(/\s/g, "").length >= 4 ? "justify-between" : "justify-center gap-3"
+          }`}
           style={{ color }}
+          aria-label={brand.name}
         >
-          {brand.name}
+          {brand.name.replace(/\s/g, "").split("").map((ch, i) => (
+            <span key={i} aria-hidden="true">{ch}</span>
+          ))}
         </span>
       </Link>
       <div className="grid flex-1 auto-cols-[22%] grid-flow-col grid-rows-2 gap-1.5 overflow-x-auto pb-1 sm:auto-cols-[13%] lg:auto-cols-[calc((100%-7*0.375rem)/8)] lg:overflow-x-visible">
