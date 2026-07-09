@@ -29,9 +29,24 @@ const inputClass =
   "w-full rounded-xl border border-stone-200 bg-white px-3 py-2.5 text-sm text-ink focus:border-brand focus:outline-none";
 const labelClass = "mb-1 block text-sm font-bold text-ink";
 
-export default function ProductForm({ product }: { product?: Product }) {
+const NEW_BRAND = "__new__";
+
+export default function ProductForm({
+  product,
+  brandNames = [],
+}: {
+  product?: Product;
+  brandNames?: string[];
+}) {
   const [state, action, pending] = useActionState<ActionState, FormData>(saveProduct, {});
   const fileRef = useRef<HTMLInputElement>(null);
+
+  // Include the product's current brand even if it's missing from the list.
+  const brandOptions =
+    product?.brand && !brandNames.includes(product.brand)
+      ? [product.brand, ...brandNames]
+      : brandNames;
+  const [newBrandMode, setNewBrandMode] = useState(brandOptions.length === 0);
 
   const [category, setCategory] = useState<Category>(product?.category ?? "New Phones");
   const [subcategory, setSubcategory] = useState(product?.subcategory ?? "");
@@ -186,7 +201,50 @@ export default function ProductForm({ product }: { product?: Product }) {
       <section className="grid gap-4 rounded-2xl border border-stone-200 bg-white p-5 sm:grid-cols-2">
         <div>
           <label className={labelClass}>Brand *</label>
-          <input value={brand} onChange={(e) => setBrand(e.target.value)} required className={inputClass} placeholder="Samsung" />
+          {newBrandMode ? (
+            <div className="flex items-center gap-2">
+              <input
+                value={brand}
+                onChange={(e) => setBrand(e.target.value)}
+                required
+                autoFocus
+                className={inputClass}
+                placeholder="New brand name"
+              />
+              {brandOptions.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setNewBrandMode(false);
+                    setBrand(product?.brand ?? "");
+                  }}
+                  className="shrink-0 text-xs font-semibold text-stone-500 hover:text-ink"
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+          ) : (
+            <select
+              value={brand}
+              onChange={(e) => {
+                if (e.target.value === NEW_BRAND) {
+                  setNewBrandMode(true);
+                  setBrand("");
+                } else {
+                  setBrand(e.target.value);
+                }
+              }}
+              required
+              className={inputClass}
+            >
+              <option value="">— select brand —</option>
+              {brandOptions.map((b) => (
+                <option key={b} value={b}>{b}</option>
+              ))}
+              <option value={NEW_BRAND}>+ Add new brand…</option>
+            </select>
+          )}
         </div>
         <div>
           <label className={labelClass}>Model *</label>
