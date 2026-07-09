@@ -25,7 +25,7 @@ export default async function BrandRows({ category }: { category: Category }) {
   const catParam = category === "New Phones" ? "" : `?cat=${categorySlug(category)}`;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       {rows.map((row) => (
         <BrandRow
           key={row.brand.name}

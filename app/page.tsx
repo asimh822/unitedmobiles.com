@@ -7,7 +7,7 @@ export const revalidate = 300;
 
 export default function HomePage() {
   return (
-    <div className="space-y-4 pt-3">
+    <div className="space-y-3 pt-2">
       <Hero />
       <BrandRows category="New Phones" />
     </div>

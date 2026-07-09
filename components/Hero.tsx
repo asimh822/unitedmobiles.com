@@ -12,7 +12,7 @@ const TRUST_LINES = [
 /** Banner: top third of the viewport, trust-line reveal inside. */
 export default function Hero() {
   return (
-    <section className="relative flex min-h-[240px] flex-col justify-center overflow-hidden rounded-3xl bg-gradient-to-br from-brand to-brand-dark px-5 py-6 text-white sm:h-[33vh] sm:px-10">
+    <section className="relative flex min-h-[200px] flex-col justify-center overflow-hidden rounded-3xl bg-gradient-to-br from-brand to-brand-dark px-5 py-5 text-white sm:h-[28vh] sm:px-10">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/10"
@@ -23,7 +23,7 @@ export default function Hero() {
       />
 
       <div className="relative max-w-3xl">
-        <h1 className="text-2xl font-extrabold leading-tight sm:text-4xl">
+        <h1 className="text-2xl font-extrabold leading-tight sm:text-3xl">
           Your Next Phone,{" "}
           <span className="text-orange-300">Delivered to Your Door.</span>
         </h1>
@@ -31,7 +31,7 @@ export default function Hero() {
           Browse, tap Buy Now, and confirm on WhatsApp — pay cash when it arrives.
         </p>
 
-        <ul className="mt-4 grid gap-x-6 gap-y-2 sm:grid-cols-2">
+        <ul className="mt-3 grid gap-x-6 gap-y-1.5 sm:grid-cols-2">
           {TRUST_LINES.map((line, i) => (
             <li
               key={line}
