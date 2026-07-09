@@ -11,37 +11,33 @@ const TRUST_LINES = [
  */
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand to-brand-dark px-5 py-10 text-white sm:px-10 sm:py-14">
+    <section className="relative flex min-h-[240px] flex-col justify-center overflow-hidden rounded-3xl bg-gradient-to-br from-brand to-brand-dark px-5 py-6 text-white sm:h-[33vh] sm:px-10">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/10"
+        className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/10"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -bottom-24 right-24 h-48 w-48 rounded-full bg-coral/20"
+        className="pointer-events-none absolute -bottom-20 right-20 h-40 w-40 rounded-full bg-coral/20"
       />
 
-      <div className="relative max-w-2xl">
-        <p className="mb-2 inline-block rounded-full bg-white/15 px-3 py-1 text-xs font-bold uppercase tracking-wider">
-          United Mobiles
-        </p>
-        <h1 className="text-3xl font-extrabold leading-tight sm:text-5xl">
-          Your Next Phone,
-          <br />
+      <div className="relative max-w-3xl">
+        <h1 className="text-2xl font-extrabold leading-tight sm:text-4xl">
+          Your Next Phone,{" "}
           <span className="text-orange-300">Delivered to Your Door.</span>
         </h1>
-        <p className="mt-3 max-w-lg text-sm text-teal-50 sm:text-base">
+        <p className="mt-1.5 text-sm text-teal-50 sm:text-base">
           Browse, tap Buy Now, and confirm on WhatsApp — pay cash when it arrives.
         </p>
 
-        <ul className="mt-6 space-y-2.5">
+        <ul className="mt-4 grid gap-x-6 gap-y-2 sm:grid-cols-2">
           {TRUST_LINES.map((line, i) => (
             <li
               key={line}
-              className="flex items-center gap-2.5 text-sm font-medium animate-trust-in sm:text-base"
+              className="flex items-center gap-2 text-xs font-medium animate-trust-in sm:text-sm"
               style={{ animationDelay: `${0.35 + i * 0.45}s` }}
             >
-              <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-coral text-[11px] font-black text-white">
+              <span className="grid h-4.5 w-4.5 shrink-0 place-items-center rounded-full bg-coral text-[10px] font-black text-white">
                 ✓
               </span>
               {line}

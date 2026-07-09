@@ -4,19 +4,24 @@ interface Props {
   page: number;
   totalPages: number;
   searchParams: Record<string, string | undefined>;
+  basePath?: string;
 }
 
-function pageHref(searchParams: Record<string, string | undefined>, page: number): string {
+function pageHref(
+  searchParams: Record<string, string | undefined>,
+  page: number,
+  basePath: string,
+): string {
   const params = new URLSearchParams();
   for (const [k, v] of Object.entries(searchParams)) {
     if (v && k !== "page") params.set(k, v);
   }
   if (page > 1) params.set("page", String(page));
   const qs = params.toString();
-  return qs ? `/?${qs}` : "/";
+  return qs ? `${basePath}?${qs}` : basePath;
 }
 
-export default function Pagination({ page, totalPages, searchParams }: Props) {
+export default function Pagination({ page, totalPages, searchParams, basePath = "/" }: Props) {
   if (totalPages <= 1) return null;
 
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1).filter(
@@ -29,7 +34,7 @@ export default function Pagination({ page, totalPages, searchParams }: Props) {
   return (
     <nav aria-label="Pagination" className="mt-8 flex items-center justify-center gap-1.5">
       {page > 1 && (
-        <Link href={pageHref(searchParams, page - 1)} className={linkClass} aria-label="Previous page">
+        <Link href={pageHref(searchParams, page - 1, basePath)} className={linkClass} aria-label="Previous page">
           ‹
         </Link>
       )}
@@ -41,14 +46,14 @@ export default function Pagination({ page, totalPages, searchParams }: Props) {
               {p}
             </span>
           ) : (
-            <Link href={pageHref(searchParams, p)} className={linkClass}>
+            <Link href={pageHref(searchParams, p, basePath)} className={linkClass}>
               {p}
             </Link>
           )}
         </span>
       ))}
       {page < totalPages && (
-        <Link href={pageHref(searchParams, page + 1)} className={linkClass} aria-label="Next page">
+        <Link href={pageHref(searchParams, page + 1, basePath)} className={linkClass} aria-label="Next page">
           ›
         </Link>
       )}

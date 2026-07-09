@@ -49,6 +49,9 @@ export interface ProductPayload {
   id?: string;
   brand: string;
   model: string;
+  category: "New Phones" | "Used" | "KeyPad Phones" | "Tabs" | "Accessories";
+  subcategory: string | null;
+  subSubcategory: string | null;
   price: number;
   salePrice: number | null;
   saleActive: boolean;
@@ -102,9 +105,20 @@ export async function saveProduct(_prev: ActionState, formData: FormData): Promi
     images.push(data.publicUrl);
   }
 
+  // Make sure the brand exists in the brands table (new brands go last).
+  await supabase
+    .from("brands")
+    .upsert({ name: payload.brand.trim() }, { onConflict: "name", ignoreDuplicates: true });
+
   const row = {
     brand: payload.brand.trim(),
     model: payload.model.trim(),
+    category: payload.category,
+    subcategory: payload.category === "Accessories" ? payload.subcategory : null,
+    sub_subcategory:
+      payload.category === "Accessories" && payload.subcategory === "Sound"
+        ? payload.subSubcategory
+        : null,
     price: payload.price,
     sale_price: payload.salePrice,
     sale_active: payload.saleActive,
@@ -166,9 +180,46 @@ export async function deleteProduct(formData: FormData): Promise<void> {
 
 /* ------------------------------ CSV import ------------------------------ */
 
+/* ------------------------------ brands ------------------------------ */
+
+export interface BrandInput {
+  id?: string;
+  name: string;
+  logo: string | null;
+  displayOrder: number;
+}
+
+export async function saveBrands(brands: BrandInput[]): Promise<ActionState> {
+  await requireAdmin();
+  if (!isSupabaseConfigured()) return { error: NOT_CONFIGURED };
+  const supabase = getSupabaseAdmin();
+  for (const b of brands) {
+    if (!b.name.trim()) continue;
+    const row = { name: b.name.trim(), logo: b.logo?.trim() || null, display_order: b.displayOrder };
+    const { error } = b.id
+      ? await supabase.from("brands").update(row).eq("id", b.id)
+      : await supabase.from("brands").upsert(row, { onConflict: "name" });
+    if (error) return { error: `Failed to save brand ${b.name}: ${error.message}` };
+  }
+  revalidatePath("/");
+  return { success: "Brands saved. Homepage order updates within 5 minutes." };
+}
+
+export async function deleteBrand(formData: FormData): Promise<void> {
+  await requireAdmin();
+  if (!isSupabaseConfigured()) redirect("/admin/brands");
+  const id = String(formData.get("id") ?? "");
+  if (id) {
+    await getSupabaseAdmin().from("brands").delete().eq("id", id);
+    revalidatePath("/");
+  }
+  redirect("/admin/brands");
+}
+
 export interface ImportRow {
   brand: string;
   model: string;
+  category: string | null;
   price: number;
   sale_price: number | null;
   sale_active: boolean;
@@ -201,13 +252,25 @@ export async function importProducts(rows: ImportRow[]): Promise<ActionState> {
   const supabase = getSupabaseAdmin();
   let imported = 0;
 
+  const VALID_CATEGORIES = ["New Phones", "Used", "KeyPad Phones", "Tabs", "Accessories"];
+
   for (const group of groups.values()) {
     const first = group[0];
+    // Category: explicit CSV value if valid, else Used condition -> Used, else New Phones.
+    const category = VALID_CATEGORIES.includes(first.category ?? "")
+      ? (first.category as string)
+      : first.condition === "Used"
+        ? "Used"
+        : "New Phones";
+    await supabase
+      .from("brands")
+      .upsert({ name: first.brand }, { onConflict: "name", ignoreDuplicates: true });
     const { data, error } = await supabase
       .from("products")
       .insert({
         brand: first.brand,
         model: first.model,
+        category,
         price: first.price,
         sale_price: first.sale_price,
         sale_active: first.sale_active,

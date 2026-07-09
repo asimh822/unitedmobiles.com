@@ -24,12 +24,14 @@ export default function CheckoutFlow({ product, variant }: Props) {
 
   const price = effectivePrice(product, variant);
   const color = variant?.color ?? "Standard";
+  const combo = variant ? [variant.ram, variant.storage].filter(Boolean).join(" + ") : "";
   const image = variant?.image ?? product.images[0];
 
   const order = {
     brand: product.brand,
     model: product.model,
     color,
+    combo: combo || null,
     price,
     customerName: name.trim(),
     address: address.trim(),
@@ -82,7 +84,7 @@ export default function CheckoutFlow({ product, variant }: Props) {
           </p>
           <p className="text-sm text-stone-500">
             {color}
-            {variant?.storage ? ` · ${variant.storage}` : ""}
+            {combo ? ` · ${combo}` : ""}
           </p>
           <p className="font-extrabold text-coral">{formatPrice(price)}</p>
         </div>
@@ -134,7 +136,7 @@ export default function CheckoutFlow({ product, variant }: Props) {
           <h2 className="text-lg font-extrabold text-ink">Confirm your order</h2>
           <dl className="space-y-2 text-sm">
             {[
-              ["Phone", `${product.brand} ${product.model}`],
+              ["Phone", `${product.brand} ${product.model}${combo ? ` (${combo})` : ""}`],
               ["Color", color],
               ["Price", formatPrice(price)],
               ["Name", order.customerName],

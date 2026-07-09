@@ -52,6 +52,7 @@ export default function CsvImport() {
         const model = cell(row, "model");
         const price = parsePrice(cell(row, "price"));
         if (!brand || !model || price <= 0) return null;
+        const category = cell(row, "category") || null;
         const salePriceRaw = cell(row, "sale_price");
         const salePrice = salePriceRaw ? parsePrice(salePriceRaw) : null;
         const saleActiveRaw = cell(row, "sale_active");
@@ -59,6 +60,7 @@ export default function CsvImport() {
         return {
           brand,
           model,
+          category,
           price,
           sale_price: salePrice,
           sale_active: saleActiveRaw ? parseBool(saleActiveRaw) : Boolean(salePrice),

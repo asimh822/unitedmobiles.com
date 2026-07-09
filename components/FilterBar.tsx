@@ -19,7 +19,25 @@ const SORTS = [
   { label: "Price: High to Low", value: "price_desc" },
 ];
 
-export default function FilterBar({ options }: { options: FilterOptions }) {
+interface FilterBarProps {
+  options: FilterOptions;
+  /** Page the filters apply to, e.g. "/new-phones" or "/brand/vivo". */
+  basePath?: string;
+  /** Hide RAM/Storage filters on accessory pages. */
+  showRamStorage?: boolean;
+  /** Hide the condition filter where the category already implies it. */
+  showCondition?: boolean;
+  /** Hide the brand filter on brand pages. */
+  showBrand?: boolean;
+}
+
+export default function FilterBar({
+  options,
+  basePath = "/",
+  showRamStorage = true,
+  showCondition = true,
+  showBrand = true,
+}: FilterBarProps) {
   const router = useRouter();
   const params = useSearchParams();
   const [, startTransition] = useTransition();
@@ -34,7 +52,7 @@ export default function FilterBar({ options }: { options: FilterOptions }) {
     }
     next.delete("page"); // any filter change resets pagination
     startTransition(() => {
-      router.replace(next.size ? `/?${next.toString()}` : "/", { scroll: false });
+      router.replace(next.size ? `${basePath}?${next.toString()}` : basePath, { scroll: false });
     });
   }
 
@@ -79,17 +97,19 @@ export default function FilterBar({ options }: { options: FilterOptions }) {
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        <select
-          aria-label="Brand"
-          className={selectClass}
-          value={params.get("brand") ?? ""}
-          onChange={(e) => apply({ brand: e.target.value })}
-        >
-          <option value="">All Brands</option>
-          {options.brands.map((b) => (
-            <option key={b} value={b}>{b}</option>
-          ))}
-        </select>
+        {showBrand && (
+          <select
+            aria-label="Brand"
+            className={selectClass}
+            value={params.get("brand") ?? ""}
+            onChange={(e) => apply({ brand: e.target.value })}
+          >
+            <option value="">All Brands</option>
+            {options.brands.map((b) => (
+              <option key={b} value={b}>{b}</option>
+            ))}
+          </select>
+        )}
 
         <select
           aria-label="Price range"
@@ -105,40 +125,46 @@ export default function FilterBar({ options }: { options: FilterOptions }) {
           ))}
         </select>
 
-        <select
-          aria-label="RAM"
-          className={selectClass}
-          value={params.get("ram") ?? ""}
-          onChange={(e) => apply({ ram: e.target.value })}
-        >
-          <option value="">Any RAM</option>
-          {options.rams.map((r) => (
-            <option key={r} value={r}>{r}</option>
-          ))}
-        </select>
+        {showRamStorage && (
+          <>
+            <select
+              aria-label="RAM"
+              className={selectClass}
+              value={params.get("ram") ?? ""}
+              onChange={(e) => apply({ ram: e.target.value })}
+            >
+              <option value="">Any RAM</option>
+              {options.rams.map((r) => (
+                <option key={r} value={r}>{r}</option>
+              ))}
+            </select>
 
-        <select
-          aria-label="Storage"
-          className={selectClass}
-          value={params.get("storage") ?? ""}
-          onChange={(e) => apply({ storage: e.target.value })}
-        >
-          <option value="">Any Storage</option>
-          {options.storages.map((s) => (
-            <option key={s} value={s}>{s}</option>
-          ))}
-        </select>
+            <select
+              aria-label="Storage"
+              className={selectClass}
+              value={params.get("storage") ?? ""}
+              onChange={(e) => apply({ storage: e.target.value })}
+            >
+              <option value="">Any Storage</option>
+              {options.storages.map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+          </>
+        )}
 
-        <select
-          aria-label="Condition"
-          className={selectClass}
-          value={params.get("condition") ?? ""}
-          onChange={(e) => apply({ condition: e.target.value })}
-        >
-          <option value="">New & Used</option>
-          <option value="New">New</option>
-          <option value="Used">Used</option>
-        </select>
+        {showCondition && (
+          <select
+            aria-label="Condition"
+            className={selectClass}
+            value={params.get("condition") ?? ""}
+            onChange={(e) => apply({ condition: e.target.value })}
+          >
+            <option value="">New & Used</option>
+            <option value="New">New</option>
+            <option value="Used">Used</option>
+          </select>
+        )}
 
         <div className="ml-auto flex items-center gap-2">
           {hasFilters && (
@@ -146,7 +172,7 @@ export default function FilterBar({ options }: { options: FilterOptions }) {
               type="button"
               onClick={() => {
                 setSearch("");
-                startTransition(() => router.replace("/", { scroll: false }));
+                startTransition(() => router.replace(basePath, { scroll: false }));
               }}
               className="text-sm font-semibold text-coral hover:underline"
             >

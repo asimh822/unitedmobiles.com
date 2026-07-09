@@ -18,8 +18,9 @@ Until real Supabase keys are added, the site serves the built-in sample catalog
 ## Connecting Supabase (go-live checklist)
 
 1. Create a project at [supabase.com](https://supabase.com), then open **SQL Editor** and run
-   the contents of `supabase/migrations/001_init.sql` (creates tables, RLS policies, and the
-   public `product-images` storage bucket).
+   each file in `supabase/migrations/` in order (001 creates tables/RLS/storage; 002 adds
+   categories and the brands table). After 002, run `node scripts/backfill-categories.mjs`
+   to categorize existing products and seed the brands table.
 2. Copy **Settings → API** values into `.env.local` (see `.env.example`):
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`

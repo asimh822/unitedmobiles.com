@@ -1,7 +1,25 @@
 import Image from "next/image";
 import Link from "next/link";
 import PriceTag from "@/components/PriceTag";
-import { isOnSale, type Product } from "@/lib/types";
+import { formatPrice } from "@/lib/format";
+import { isOnSale, startingPrice, type Product } from "@/lib/types";
+
+/**
+ * Multiple variant prices -> "Starting from Rs. X" (lowest effective price);
+ * a single price keeps the normal sale-aware PriceTag.
+ */
+function CardPrice({ product }: { product: Product }) {
+  const { price, multiple } = startingPrice(product);
+  if (!multiple) return <PriceTag product={product} />;
+  return (
+    <p className="text-base font-bold text-ink">
+      <span className="block text-[11px] font-medium leading-tight text-stone-400">
+        Starting from
+      </span>
+      {formatPrice(price)}
+    </p>
+  );
+}
 
 export default function ProductCard({ product }: { product: Product }) {
   const inStock = product.stockStatus === "in_stock";
@@ -45,7 +63,7 @@ export default function ProductCard({ product }: { product: Product }) {
           </p>
         )}
         <div className="mt-auto pt-1">
-          <PriceTag product={product} />
+          <CardPrice product={product} />
           <p
             className={`mt-1 flex items-center gap-1.5 text-xs font-semibold ${
               inStock ? "text-emerald-600" : "text-stone-400"

@@ -1,5 +1,14 @@
+import type { Category } from "@/lib/categories";
+
 export type Condition = "New" | "Used";
 export type StockStatus = "in_stock" | "out_of_stock";
+
+export interface Brand {
+  id: string;
+  name: string;
+  logo: string | null;
+  displayOrder: number;
+}
 
 export interface SpecItem {
   label: string;
@@ -30,6 +39,9 @@ export interface Product {
   id: string;
   brand: string;
   model: string;
+  category: Category;
+  subcategory: string | null;
+  subSubcategory: string | null;
   price: number;
   salePrice: number | null;
   saleActive: boolean;
@@ -49,6 +61,9 @@ export type SortKey = "price_asc" | "price_desc" | "newest";
 
 export interface CatalogQuery {
   q?: string;
+  category?: Category;
+  subcategory?: string;
+  subSubcategory?: string;
   brand?: string;
   minPrice?: number;
   maxPrice?: number;
@@ -86,4 +101,39 @@ export function effectivePrice(p: Product, v?: Variant | null): number {
 
 export function isOnSale(p: Product): boolean {
   return p.saleActive && p.salePrice != null && p.salePrice < p.price;
+}
+
+/**
+ * Card pricing across all grids: lowest effective price over every variant,
+ * plus whether variants actually differ in price ("Starting from Rs. X").
+ */
+export function startingPrice(p: Product): { price: number; multiple: boolean } {
+  if (p.variants.length === 0) {
+    return { price: effectivePrice(p), multiple: false };
+  }
+  const prices = p.variants.map((v) => effectivePrice(p, v));
+  return { price: Math.min(...prices), multiple: new Set(prices).size > 1 };
+}
+
+/** Distinct RAM+ROM combos available on a product, e.g. "8GB + 256GB". */
+export interface RamRomCombo {
+  ram: string | null;
+  storage: string | null;
+  label: string;
+}
+
+export function ramRomCombos(p: Product): RamRomCombo[] {
+  const seen = new Map<string, RamRomCombo>();
+  for (const v of p.variants) {
+    if (!v.ram && !v.storage) continue;
+    const key = `${v.ram ?? ""}|${v.storage ?? ""}`;
+    if (!seen.has(key)) {
+      seen.set(key, {
+        ram: v.ram,
+        storage: v.storage,
+        label: [v.ram, v.storage].filter(Boolean).join(" + "),
+      });
+    }
+  }
+  return [...seen.values()];
 }

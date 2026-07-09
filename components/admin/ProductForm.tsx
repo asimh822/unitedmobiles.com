@@ -3,6 +3,13 @@
 import Image from "next/image";
 import { useRef, useState, useActionState } from "react";
 import { saveProduct, type ActionState, type ProductPayload } from "@/app/admin/actions";
+import {
+  ACCESSORY_SUBCATEGORIES,
+  CATEGORIES,
+  SOUND_SUBCATEGORIES,
+  isPhoneLike,
+  type Category,
+} from "@/lib/categories";
 import type { Product, SpecGroup } from "@/lib/types";
 
 const SPEC_CATEGORIES = ["Display", "Camera", "Memory", "Battery", "Connectivity", "General"];
@@ -26,6 +33,9 @@ export default function ProductForm({ product }: { product?: Product }) {
   const [state, action, pending] = useActionState<ActionState, FormData>(saveProduct, {});
   const fileRef = useRef<HTMLInputElement>(null);
 
+  const [category, setCategory] = useState<Category>(product?.category ?? "New Phones");
+  const [subcategory, setSubcategory] = useState(product?.subcategory ?? "");
+  const [subSubcategory, setSubSubcategory] = useState(product?.subSubcategory ?? "");
   const [brand, setBrand] = useState(product?.brand ?? "");
   const [model, setModel] = useState(product?.model ?? "");
   const [price, setPrice] = useState(product ? String(product.price) : "");
@@ -63,13 +73,18 @@ export default function ProductForm({ product }: { product?: Product }) {
       id: product?.id,
       brand,
       model,
+      category,
+      subcategory: category === "Accessories" ? subcategory || null : null,
+      subSubcategory:
+        category === "Accessories" && subcategory === "Sound" ? subSubcategory || null : null,
       price: num(price) ?? 0,
       salePrice: num(salePrice),
       saleActive,
-      ram: ram.trim() || null,
-      storage: storage.trim() || null,
-      condition,
-      ptaApproved,
+      // Accessories carry no phone-style fields regardless of stale form state.
+      ram: isPhoneLike(category) ? ram.trim() || null : null,
+      storage: isPhoneLike(category) ? storage.trim() || null : null,
+      condition: isPhoneLike(category) ? condition : "New",
+      ptaApproved: isPhoneLike(category) ? ptaApproved : false,
       warranty: warranty.trim() || null,
       stockStatus,
       existingImages,
@@ -110,8 +125,63 @@ export default function ProductForm({ product }: { product?: Product }) {
     );
   }
 
+  const phoneLike = isPhoneLike(category);
+
   return (
     <form action={submit} className="max-w-3xl space-y-8">
+      {/* Category */}
+      <section className="grid gap-4 rounded-2xl border border-stone-200 bg-white p-5 sm:grid-cols-3">
+        <div>
+          <label className={labelClass}>Category *</label>
+          <select
+            value={category}
+            onChange={(e) => {
+              setCategory(e.target.value as Category);
+              setSubcategory("");
+              setSubSubcategory("");
+            }}
+            className={inputClass}
+          >
+            {CATEGORIES.map((c) => (
+              <option key={c}>{c}</option>
+            ))}
+          </select>
+        </div>
+        {category === "Accessories" && (
+          <div>
+            <label className={labelClass}>Subcategory *</label>
+            <select
+              value={subcategory}
+              onChange={(e) => {
+                setSubcategory(e.target.value);
+                setSubSubcategory("");
+              }}
+              className={inputClass}
+            >
+              <option value="">— select —</option>
+              {ACCESSORY_SUBCATEGORIES.map((s) => (
+                <option key={s}>{s}</option>
+              ))}
+            </select>
+          </div>
+        )}
+        {category === "Accessories" && subcategory === "Sound" && (
+          <div>
+            <label className={labelClass}>Sound Type *</label>
+            <select
+              value={subSubcategory}
+              onChange={(e) => setSubSubcategory(e.target.value)}
+              className={inputClass}
+            >
+              <option value="">— select —</option>
+              {SOUND_SUBCATEGORIES.map((s) => (
+                <option key={s}>{s}</option>
+              ))}
+            </select>
+          </div>
+        )}
+      </section>
+
       {/* Basics */}
       <section className="grid gap-4 rounded-2xl border border-stone-200 bg-white p-5 sm:grid-cols-2">
         <div>
@@ -136,21 +206,25 @@ export default function ProductForm({ product }: { product?: Product }) {
             </label>
           </div>
         </div>
-        <div>
-          <label className={labelClass}>RAM</label>
-          <input value={ram} onChange={(e) => setRam(e.target.value)} className={inputClass} placeholder="12GB" />
-        </div>
-        <div>
-          <label className={labelClass}>Storage</label>
-          <input value={storage} onChange={(e) => setStorage(e.target.value)} className={inputClass} placeholder="256GB" />
-        </div>
-        <div>
-          <label className={labelClass}>Condition</label>
-          <select value={condition} onChange={(e) => setCondition(e.target.value as "New" | "Used")} className={inputClass}>
-            <option>New</option>
-            <option>Used</option>
-          </select>
-        </div>
+        {phoneLike && (
+          <>
+            <div>
+              <label className={labelClass}>RAM</label>
+              <input value={ram} onChange={(e) => setRam(e.target.value)} className={inputClass} placeholder="12GB" />
+            </div>
+            <div>
+              <label className={labelClass}>Storage</label>
+              <input value={storage} onChange={(e) => setStorage(e.target.value)} className={inputClass} placeholder="256GB" />
+            </div>
+            <div>
+              <label className={labelClass}>Condition</label>
+              <select value={condition} onChange={(e) => setCondition(e.target.value as "New" | "Used")} className={inputClass}>
+                <option>New</option>
+                <option>Used</option>
+              </select>
+            </div>
+          </>
+        )}
         <div>
           <label className={labelClass}>Stock Status</label>
           <select value={stockStatus} onChange={(e) => setStockStatus(e.target.value as "in_stock" | "out_of_stock")} className={inputClass}>
@@ -162,12 +236,14 @@ export default function ProductForm({ product }: { product?: Product }) {
           <label className={labelClass}>Warranty</label>
           <input value={warranty} onChange={(e) => setWarranty(e.target.value)} className={inputClass} placeholder="1 Year Official Warranty" />
         </div>
-        <div className="flex items-end pb-2">
-          <label className="flex items-center gap-2 text-sm font-semibold text-ink">
-            <input type="checkbox" checked={ptaApproved} onChange={(e) => setPtaApproved(e.target.checked)} className="h-4 w-4 accent-brand" />
-            PTA Approved
-          </label>
-        </div>
+        {phoneLike && (
+          <div className="flex items-end pb-2">
+            <label className="flex items-center gap-2 text-sm font-semibold text-ink">
+              <input type="checkbox" checked={ptaApproved} onChange={(e) => setPtaApproved(e.target.checked)} className="h-4 w-4 accent-brand" />
+              PTA Approved
+            </label>
+          </div>
+        )}
       </section>
 
       {/* Images */}

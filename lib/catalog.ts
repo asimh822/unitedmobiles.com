@@ -1,6 +1,7 @@
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
 import seedJson from "@/lib/seed-data.json";
 import type {
+  Brand,
   CatalogQuery,
   CatalogResult,
   Condition,
@@ -10,6 +11,7 @@ import type {
   Variant,
 } from "@/lib/types";
 import { effectivePrice } from "@/lib/types";
+import type { Category } from "@/lib/categories";
 
 export const PER_PAGE = 12;
 
@@ -38,6 +40,9 @@ export function mapProduct(row: any): Product {
     id: row.id,
     brand: row.brand,
     model: row.model,
+    category: (row.category ?? "New Phones") as Category,
+    subcategory: row.subcategory ?? null,
+    subSubcategory: row.sub_subcategory ?? row.subSubcategory ?? null,
     price: Number(row.price),
     salePrice: row.sale_price != null ? Number(row.sale_price) : null,
     saleActive: row.sale_active ?? false,
@@ -76,6 +81,9 @@ export async function getProducts(query: CatalogQuery): Promise<CatalogResult> {
     const term = query.q.trim().replace(/[%_]/g, "");
     q = q.or(`brand.ilike.%${term}%,model.ilike.%${term}%`);
   }
+  if (query.category) q = q.eq("category", query.category);
+  if (query.subcategory) q = q.eq("subcategory", query.subcategory);
+  if (query.subSubcategory) q = q.eq("sub_subcategory", query.subSubcategory);
   if (query.brand) q = q.eq("brand", query.brand);
   if (query.ram) q = q.eq("ram", query.ram);
   if (query.storage) q = q.eq("storage", query.storage);
@@ -146,13 +154,33 @@ export async function getSimilarProducts(product: Product, limit = 4): Promise<P
     .slice(0, limit);
 }
 
-export async function getFilterOptions(): Promise<FilterOptions> {
-  let products: Pick<Product, "brand" | "ram" | "storage">[];
+/** Filter-bar options, scoped to the current category/brand context. */
+export async function getFilterOptions(scope: {
+  category?: Category;
+  subcategory?: string;
+  subSubcategory?: string;
+  brand?: string;
+} = {}): Promise<FilterOptions> {
+  let products: Pick<Product, "brand" | "ram" | "storage" | "category" | "subcategory" | "subSubcategory">[];
   if (!isSupabaseConfigured()) {
     products = seedProducts;
   } else {
-    const { data } = await getSupabase().from("products").select("brand, ram, storage");
-    products = data ?? [];
+    let q = getSupabase().from("products").select("brand, ram, storage, category, subcategory, sub_subcategory");
+    if (scope.category) q = q.eq("category", scope.category);
+    if (scope.subcategory) q = q.eq("subcategory", scope.subcategory);
+    if (scope.subSubcategory) q = q.eq("sub_subcategory", scope.subSubcategory);
+    if (scope.brand) q = q.eq("brand", scope.brand);
+    const { data } = await q;
+    products = (data ?? []).map((r) => ({ ...r, subSubcategory: r.sub_subcategory }));
+  }
+  if (!isSupabaseConfigured()) {
+    products = products.filter(
+      (p) =>
+        (!scope.category || p.category === scope.category) &&
+        (!scope.subcategory || p.subcategory === scope.subcategory) &&
+        (!scope.subSubcategory || p.subSubcategory === scope.subSubcategory) &&
+        (!scope.brand || p.brand === scope.brand),
+    );
   }
   const uniq = (values: (string | null)[]) =>
     [...new Set(values.filter((v): v is string => Boolean(v)))];
@@ -164,6 +192,63 @@ export async function getFilterOptions(): Promise<FilterOptions> {
   };
 }
 
+/* ------------------------------ brands ------------------------------ */
+
+export async function getBrands(): Promise<Brand[]> {
+  if (!isSupabaseConfigured()) {
+    // Seed mode: derive from seed products, alphabetical.
+    return [...new Set(seedProducts.map((p) => p.brand))].sort().map((name, i) => ({
+      id: name,
+      name,
+      logo: null,
+      displayOrder: (i + 1) * 10,
+    }));
+  }
+  const { data, error } = await getSupabase()
+    .from("brands")
+    .select("*")
+    .order("display_order", { ascending: true })
+    .order("name", { ascending: true });
+  if (error) throw new Error(`Failed to load brands: ${error.message}`);
+  return (data ?? []).map((r) => ({
+    id: r.id,
+    name: r.name,
+    logo: r.logo ?? null,
+    displayOrder: r.display_order ?? 999,
+  }));
+}
+
+export interface BrandRow {
+  brand: Brand;
+  products: Product[];
+}
+
+/** Homepage brand rows: New Phones only, grouped by brand in display_order. */
+export async function getHomepageBrandRows(perBrand = 12): Promise<BrandRow[]> {
+  const [brands, all] = await Promise.all([
+    getBrands(),
+    getProducts({ category: "New Phones", perPage: 500, sort: "newest" }),
+  ]);
+  const byBrand = new Map<string, Product[]>();
+  for (const p of all.products) {
+    const list = byBrand.get(p.brand) ?? [];
+    if (list.length < perBrand) list.push(p);
+    byBrand.set(p.brand, list);
+  }
+  const rows: BrandRow[] = [];
+  for (const brand of brands) {
+    const products = byBrand.get(brand.name);
+    if (products?.length) rows.push({ brand, products });
+  }
+  // Brands present in products but missing from the brands table still show, last.
+  for (const [name, products] of byBrand) {
+    if (!brands.some((b) => b.name === name)) {
+      rows.push({ brand: { id: name, name, logo: null, displayOrder: 999 }, products });
+    }
+  }
+  return rows;
+}
+
 /* --------------------------- seed fallback --------------------------- */
 
 function querySeed(query: CatalogQuery, page: number, perPage: number): CatalogResult {
@@ -173,6 +258,9 @@ function querySeed(query: CatalogQuery, page: number, perPage: number): CatalogR
     const term = query.q.trim().toLowerCase();
     list = list.filter((p) => `${p.brand} ${p.model}`.toLowerCase().includes(term));
   }
+  if (query.category) list = list.filter((p) => p.category === query.category);
+  if (query.subcategory) list = list.filter((p) => p.subcategory === query.subcategory);
+  if (query.subSubcategory) list = list.filter((p) => p.subSubcategory === query.subSubcategory);
   if (query.brand) list = list.filter((p) => p.brand === query.brand);
   if (query.ram) list = list.filter((p) => p.ram === query.ram);
   if (query.storage) list = list.filter((p) => p.storage === query.storage);

@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
 import ProductPurchasePanel from "@/components/ProductPurchasePanel";
-import SpecBoxes from "@/components/SpecBoxes";
-import TrustBadges from "@/components/TrustBadges";
 import { getAllProducts, getProduct, getSimilarProducts } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { effectivePrice } from "@/lib/types";
@@ -58,9 +56,8 @@ export default async function ProductPage({ params }: Props) {
 
   return (
     <div className="space-y-10 py-6">
+      {/* Panel owns badges + spec boxes so Memory specs track the selected combo */}
       <ProductPurchasePanel product={product} />
-      <TrustBadges product={product} />
-      <SpecBoxes specs={product.specs} />
 
       {similar.length > 0 && (
         <section aria-label="Similar phones">

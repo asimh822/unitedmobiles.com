@@ -7,6 +7,8 @@ export interface OrderDetails {
   brand: string;
   model: string;
   color: string;
+  /** RAM+ROM combo label, e.g. "8GB + 256GB" — appended to the phone name. */
+  combo?: string | null;
   price: number;
   customerName: string;
   address: string;
@@ -16,7 +18,7 @@ export interface OrderDetails {
 export function buildOrderMessage(o: OrderDetails): string {
   return [
     "New Order Request \u{1F4F1}",
-    `Phone: ${o.brand} ${o.model}`,
+    `Phone: ${o.brand} ${o.model}${o.combo ? ` (${o.combo})` : ""}`,
     `Color: ${o.color}`,
     `Price: ${formatPrice(o.price)}`,
     `Customer Name: ${o.customerName}`,

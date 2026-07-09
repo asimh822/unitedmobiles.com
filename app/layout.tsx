@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Analytics } from "@vercel/analytics/react";
+import NavMenu from "@/components/NavMenu";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               Genuine phones. Cash on delivery.
             </span>
           </div>
+          <NavMenu />
         </header>
 
         <main className="mx-auto min-h-[70vh] w-full max-w-6xl px-4 pb-16">{children}</main>

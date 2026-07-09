@@ -56,6 +56,7 @@ export function toCsv(headers: string[], rows: (string | number | boolean | null
 export const IMPORT_FIELDS = [
   { key: "brand", label: "Brand", required: true },
   { key: "model", label: "Model", required: true },
+  { key: "category", label: "Category", required: false },
   { key: "price", label: "Original Price", required: true },
   { key: "sale_price", label: "Sale Price", required: false },
   { key: "sale_active", label: "Sale Active (yes/no)", required: false },
@@ -73,6 +74,7 @@ export type ImportFieldKey = (typeof IMPORT_FIELDS)[number]["key"];
 /** Synonyms seen in common desktop-app exports, matched case/punctuation-insensitively. */
 const SYNONYMS: Record<ImportFieldKey, string[]> = {
   brand: ["brand", "make", "company", "manufacturer"],
+  category: ["category", "cat", "producttype", "section", "department"],
   model: ["model", "name", "product", "productname", "title", "item", "phone"],
   price: ["price", "originalprice", "retailprice", "amount", "rate", "saleprice0", "mrp", "listprice"],
   sale_price: ["saleprice", "discountprice", "discountedprice", "offerprice", "specialprice"],

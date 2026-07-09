@@ -28,47 +28,83 @@ Business goal: minimum number of clicks from "browsing" to "order sent." Every d
 
 ---
 
+## Navigation & Category System
+
+**Top menu**: New Phones | Used | KeyPad Phones | Tabs | Accessories
+
+**Accessories has a dropdown submenu** with these subcategories:
+- Chargers
+- Watches
+- Gadgets
+- Sound (this itself expands to three items: Handsfree, Headphones, Bluetooth)
+
+**Data model implication**: Every product has:
+- `category` — one of: New Phones, Used, KeyPad Phones, Tabs, Accessories
+- `subcategory` — only applies when category = Accessories (Chargers, Watches, Gadgets, or Sound)
+- `sub_subcategory` — only applies when subcategory = Sound (Handsfree, Headphones, or Bluetooth)
+
+Accessory products use a lighter spec set than phones (no RAM/Storage/PTA required — admin form should adapt fields shown based on category selected).
+
+**Brands are a proper entity** (not just a text field) — a `Brands` table with: name, logo (optional), and a manually-set `display_order` field editable in admin. This controls the order brands appear in on the homepage.
+
+---
+
 ## Site Structure
 
 ### 1. Homepage (`/`)
-- Hero section containing:
-  - Banner/headline
-  - **Animated trust-line reveal** (checkmarks appear one after another, in this order, on load/scroll into hero view):
-    1. ✓ Genuine Products with Official Warranty
-    2. ✓ Cash on Delivery
-    3. ✓ Lowest Price Guaranteed
-    4. ✓ Physical Shop for Over a Decade
-  - Keep this animation lightweight CSS-only (staggered fade/slide-in), plays once, no looping, no heavy animation library.
-- Search bar (text search by brand/model)
-- Filter bar: **Brand**, **Price range**, **RAM/Storage**, **Condition (New/Used)**
-- Sort: Price low→high, high→low, Newest
-- Product grid:
-  - Sale badge (strikethrough original price + coral discounted price) shown ONLY when a product's sale toggle is on
-  - Stock status indicator (In Stock / Out of Stock)
-  - Paginated or infinite-scroll — never load all products in one request
+- **Banner**: covers the top 1/3 of the viewport (not full page) — headline + the animated trust-line reveal inside it:
+  1. ✓ Genuine Products with Official Warranty
+  2. ✓ Cash on Delivery
+  3. ✓ Lowest Price Guaranteed
+  4. ✓ Physical Shop for Over a Decade
+  - Lightweight CSS-only stagger animation, plays once, no heavy library.
+- **Below the banner — Brand Rows (New Phones only)**:
+  - Only products where `category = "New Phones"` appear here.
+  - Grouped by brand, in the manually-set `display_order` from the Brands table.
+  - Each brand section is a horizontal block: **6 product cards per row, 2 rows = 12 products** shown per brand on the homepage.
+  - **Left side of each brand block**: the brand name displayed **vertically** (rotated 90°, e.g. "VIVO" reading top-to-bottom), spanning the full height of that brand's 2-row block — acts as a section label.
+  - Product cards in this layout are **compact**: smaller image, model name, and price only — no specs, no badges, no full detail on this view.
+  - **When a model has multiple RAM+ROM variants at different prices, the card shows "Starting from Rs. X"** using the lowest-priced variant. This same rule applies to product cards on category and brand pages too.
+  - Clicking a product card → goes to the full Product Detail Page.
+  - **Clicking the vertical brand name** → opens a separate **Brand Page** (`/brand/[brand-slug]`) showing ALL New Phones models for that brand in a standard filterable grid (see below).
+- No search bar, filters, or sort needed directly on the homepage itself — this page is purely the brand-browsing entry point. Search/filter/sort live on category and brand pages.
 
-### 2. Product Detail Page (`/products/[id]`)
+### 2. Category Pages (`/new-phones`, `/used`, `/keypad-phones`, `/tabs`, and Accessories subpages like `/accessories/chargers`, `/accessories/sound/headphones`, etc.)
+- Standard filterable grid layout (this is the original plan, still applies here):
+  - Search bar (text search by brand/model)
+  - Filter bar: Brand, Price range, RAM/Storage (phones/tabs only), Condition (New/Used)
+  - Sort: Price low→high, high→low, Newest
+  - Product grid with sale badges and stock indicators, paginated/infinite-scroll
+
+### 3. Brand Page (`/brand/[brand-slug]`)
+- Same standard filterable grid as category pages, scoped to that brand's New Phones catalog
+
+### 4. Product Detail Page (`/products/[id]`)
 - Image gallery with thumbnails
-- Color/storage variant swatches (switch image + price on selection)
+- **Two independent variant selectors**: Color swatches AND RAM+ROM combo selector (e.g. buttons/dropdown for "4GB+64GB", "4GB+128GB", "6GB+128GB", "6GB+256GB", "8GB+128GB", "8GB+256GB" — only show combos that actually exist in stock for that model)
+- Selecting a different RAM+ROM combo updates the displayed price and the RAM/Storage values in the spec boxes
+- Selecting a different color updates the displayed image (and price if that color affects it)
+- A single model (e.g. "Y05") with multiple RAM+ROM combos is ONE product page — not separate pages per combo
 - Specs displayed as **categorized icon boxes** — NOT paragraphs or long tables. Group into categories like Display, Camera, Memory, Battery, Connectivity, matching the icon-box pattern, each spec is a small card with an icon + label + value.
 - Badges: PTA Approved, Official/Shop Warranty, "Easy Installments Available" (generic — never name a specific bank/vendor)
-- Price block (sale styling if applicable)
-- **Buy Now** button (primary CTA, coral)
+- Price block (sale styling if applicable) — reflects the currently selected variant combo
+- **Buy Now** button (primary CTA, coral) — sends the currently selected color + RAM/ROM combo + its price to checkout
 - "Similar Phones" section at bottom (same brand or similar price range)
 
-### 3. Checkout Flow
+### 5. Checkout Flow
 - Step 1: Form — **Name** and **Address** only (no phone field — WhatsApp auto-captures sender's number, no email, no payment info)
 - Step 2: **Order review/confirmation screen** — shows phone name, color, price, name, address with an Edit option before sending
 - Step 3: On confirm, generate a `wa.me/923239637000` link with a pre-filled, URL-encoded message containing: mobile name, color, price, customer name, address. Open this link (opens WhatsApp app/web with message ready to send).
 
-### 4. Admin Panel (`/admin`)
+### 6. Admin Panel (`/admin`)
 - Protected by a single password stored in an environment variable (no multi-user auth system needed for v1)
 - **Bulk CSV import** — for the initial catalog load (50–200 products). Build the import to be flexible enough to map common column names (Brand, Model, Price, RAM, Storage, Color, Condition, etc.) from a desktop-exported CSV.
 - **CSV export** — ability to export the current live catalog back to CSV (backup / reconciliation with desktop app)
-- **Single "Add/Edit Product" form** — for ongoing one-at-a-time updates when new models arrive
-- Product fields: Brand, Model, Original Price, Sale Price + on/off toggle, RAM, Storage, Color/variant, Condition (New/Used), PTA Approved (bool), Warranty info, Images (multi-upload), Specs (grouped by category), Stock status (In Stock/Out of Stock)
+- **Single "Add/Edit Product" form** — for ongoing one-at-a-time updates when new models arrive, with fields that adapt based on selected Category/Subcategory
+- **Brand management** — add/edit brands and set their `display_order` for the homepage
+- Product fields: Category, Subcategory (if applicable), Sub-subcategory (if Sound), Brand, Model, Original Price, Sale Price + on/off toggle, RAM, Storage, Color/variant, Condition (New/Used), PTA Approved (bool), Warranty info, Images (multi-upload), Specs (grouped by category), Stock status (In Stock/Out of Stock)
 
-### 5. Site-wide
+### 7. Site-wide
 - Floating WhatsApp "Chat with us" button (persistent, links to shop WhatsApp for general inquiries, separate from the checkout flow)
 
 ---

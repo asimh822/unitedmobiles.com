@@ -12,7 +12,8 @@ export async function GET(): Promise<Response> {
 
   const products = await getAllProducts();
   const headers = [
-    "Brand", "Model", "Price", "Sale Price", "Sale Active", "RAM", "Storage",
+    "Brand", "Model", "Category", "Subcategory", "Sub-subcategory",
+    "Price", "Sale Price", "Sale Active", "RAM", "Storage",
     "Color", "Condition", "PTA Approved", "Warranty", "Stock Status", "Images",
   ];
 
@@ -21,6 +22,9 @@ export async function GET(): Promise<Response> {
     const base = (color: string | null, ram: string | null, storage: string | null, price: number, sale: number | null, inStock: boolean) => [
       p.brand,
       p.model,
+      p.category,
+      p.subcategory,
+      p.subSubcategory,
       price,
       sale,
       p.saleActive ? "yes" : "no",

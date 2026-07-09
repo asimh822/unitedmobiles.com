@@ -49,8 +49,30 @@ function CategoryIcon({ category }: { category: string }) {
   );
 }
 
+export interface SpecOverrides {
+  /** Selected RAM+ROM combo values replace RAM/Storage spec box values. */
+  ram?: string | null;
+  storage?: string | null;
+}
+
+function resolveValue(label: string, value: string, overrides?: SpecOverrides): string {
+  if (!overrides) return value;
+  const l = label.trim().toLowerCase();
+  if (l === "ram" && overrides.ram) return overrides.ram;
+  if ((l === "storage" || l === "rom" || l === "internal storage") && overrides.storage) {
+    return overrides.storage;
+  }
+  return value;
+}
+
 /** Specs as categorized icon boxes — never paragraphs or long tables. */
-export default function SpecBoxes({ specs }: { specs: SpecGroup[] }) {
+export default function SpecBoxes({
+  specs,
+  overrides,
+}: {
+  specs: SpecGroup[];
+  overrides?: SpecOverrides;
+}) {
   if (!specs?.length) return null;
   return (
     <section aria-label="Specifications" className="space-y-5">
@@ -70,7 +92,9 @@ export default function SpecBoxes({ specs }: { specs: SpecGroup[] }) {
                 className="rounded-xl border border-stone-200 bg-white p-3"
               >
                 <p className="text-xs font-medium text-stone-400">{item.label}</p>
-                <p className="mt-0.5 text-sm font-semibold text-ink">{item.value}</p>
+                <p className="mt-0.5 text-sm font-semibold text-ink">
+                  {resolveValue(item.label, item.value, overrides)}
+                </p>
               </div>
             ))}
           </div>
