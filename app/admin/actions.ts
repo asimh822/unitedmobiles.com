@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { ADMIN_COOKIE, checkPassword, isAdminAuthenticated, makeToken } from "@/lib/admin-auth";
+import { parseModelConfig } from "@/lib/csv";
 import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase";
 import type { SpecGroup } from "@/lib/types";
 
@@ -259,6 +260,17 @@ export async function importProducts(rows: ImportRow[]): Promise<ActionState> {
   if (!isSupabaseConfigured()) return { error: NOT_CONFIGURED };
   if (!rows.length) return { error: "No valid rows to import." };
 
+  // Auto-merge memory configs: "A07 4+128" rows become model "A07" with
+  // RAM/storage filled, so all configs group into one product below.
+  for (const row of rows) {
+    const parsed = parseModelConfig(row.model);
+    if (parsed) {
+      row.model = parsed.base;
+      row.ram = row.ram || parsed.ram;
+      row.storage = row.storage || parsed.storage;
+    }
+  }
+
   const groups = new Map<string, ImportRow[]>();
   for (const row of rows) {
     const key = `${row.brand.toLowerCase()}|${row.model.toLowerCase()}|${row.condition}`;
@@ -283,17 +295,18 @@ export async function importProducts(rows: ImportRow[]): Promise<ActionState> {
         : "New Phones";
     const brandName = brandCache.get(first.brand.toLowerCase()) ?? (await canonicalBrand(supabase, first.brand));
     brandCache.set(first.brand.toLowerCase(), brandName);
+    const cheapest = group.reduce((a, b) => (b.price < a.price ? b : a));
     const { data, error } = await supabase
       .from("products")
       .insert({
         brand: brandName,
         model: first.model,
         category,
-        price: first.price,
-        sale_price: first.sale_price,
-        sale_active: first.sale_active,
-        ram: first.ram,
-        storage: first.storage,
+        price: cheapest.price,
+        sale_price: cheapest.sale_price,
+        sale_active: cheapest.sale_active,
+        ram: cheapest.ram,
+        storage: cheapest.storage,
         condition: first.condition,
         pta_approved: first.pta_approved,
         warranty: first.warranty,
@@ -305,16 +318,19 @@ export async function importProducts(rows: ImportRow[]): Promise<ActionState> {
       .single();
     if (error) return { error: `Import failed at ${first.brand} ${first.model}: ${error.message}` };
 
-    const colored = group.filter((r) => r.color);
-    if (colored.length > 0) {
+    // Variant rows for every distinct color AND for differing memory configs
+    // (memory-only variants use an empty color).
+    const multiConfig = new Set(group.map((r) => `${r.ram}|${r.storage}`)).size > 1;
+    const variantRows = group.filter((r) => r.color || multiConfig);
+    if (variantRows.length > 0) {
       const { error: vErr } = await supabase.from("product_variants").insert(
-        colored.map((r, i) => ({
+        variantRows.map((r, i) => ({
           product_id: data.id,
-          color: r.color as string,
+          color: r.color ?? "",
           storage: r.storage,
           ram: r.ram,
-          price: r.price !== first.price ? r.price : null,
-          sale_price: r.sale_price !== first.sale_price ? r.sale_price : null,
+          price: r.price,
+          sale_price: r.sale_active ? r.sale_price : null,
           in_stock: r.in_stock,
           sort_order: i,
         })),

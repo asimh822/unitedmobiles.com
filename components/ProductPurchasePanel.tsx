@@ -20,7 +20,8 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
 
   const colors = useMemo(() => {
     const seen = new Map<string, Variant>();
-    for (const v of variants) if (!seen.has(v.color)) seen.set(v.color, v);
+    // Memory-only variants carry an empty color — they don't get a dot.
+    for (const v of variants) if (v.color && !seen.has(v.color)) seen.set(v.color, v);
     return [...seen.values()];
   }, [variants]);
 
@@ -38,7 +39,9 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
 
   // Exact color+combo variant when it exists; otherwise fall back to the combo
   // (pricing follows RAM+ROM) and finally the color alone.
-  const exact = variants.find((v) => v.color === selectedColor && matchesCombo(v, selectedCombo));
+  const exact = variants.find(
+    (v) => (selectedColor ? v.color === selectedColor : true) && matchesCombo(v, selectedCombo),
+  );
   const variant: Variant | null =
     exact ??
     variants.find((v) => matchesCombo(v, selectedCombo)) ??

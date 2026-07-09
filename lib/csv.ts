@@ -120,3 +120,31 @@ export function parsePrice(value: string): number {
   const n = Number(value.replace(/[^0-9.]/g, ""));
   return Number.isFinite(n) ? n : 0;
 }
+
+/**
+ * Desktop-catalog model names often embed the memory config: "A07 4+128",
+ * "CAM50 8+", "Y21D 6GB", "A5 4+128MI". Split those into a clean base model
+ * plus RAM/storage so configs merge into one product as variants.
+ * Storage under 16GB (e.g. "4+2" = virtual-RAM notation) is NOT treated as a
+ * config to avoid mislabeling.
+ */
+export function parseModelConfig(
+  model: string,
+): { base: string; ram: string | null; storage: string | null } | null {
+  const trimmed = model.trim();
+
+  const plus = trimmed.match(/^(.*\S)\s+(\d+)\s*\+\s*(\d+)?\s*[A-Za-z]*$/);
+  if (plus) {
+    const ram = Number(plus[2]);
+    const rom = plus[3] ? Number(plus[3]) : null;
+    if (rom !== null && rom < 16) return null; // "4+2" style virtual-RAM suffix
+    return { base: plus[1].trim(), ram: `${ram}GB`, storage: rom ? `${rom}GB` : null };
+  }
+
+  const gb = trimmed.match(/^(.*\S)\s+(\d+)\s*GB$/i);
+  if (gb) {
+    return { base: gb[1].trim(), ram: `${Number(gb[2])}GB`, storage: null };
+  }
+
+  return null;
+}

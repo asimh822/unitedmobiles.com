@@ -23,7 +23,7 @@ export default function CheckoutFlow({ product, variant }: Props) {
   const [confirmed, setConfirmed] = useState(false);
 
   const price = effectivePrice(product, variant);
-  const color = variant?.color ?? "Standard";
+  const color = variant?.color || "Standard";
   const combo = variant ? [variant.ram, variant.storage].filter(Boolean).join(" + ") : "";
   const image = variant?.image ?? product.images[0];
 

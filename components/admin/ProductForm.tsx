@@ -128,7 +128,8 @@ export default function ProductForm({
         }))
         .filter((g) => g.category && g.items.length > 0),
       variants: variants
-        .filter((v) => v.color.trim())
+        // Keep memory-only variants (no color) as long as they carry RAM/storage.
+        .filter((v) => v.color.trim() || v.ram.trim() || v.storage.trim())
         .map((v) => ({
           color: v.color.trim(),
           colorHex: v.colorHex.trim() || null,
