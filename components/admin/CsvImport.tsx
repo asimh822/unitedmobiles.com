@@ -178,7 +178,7 @@ export default function CsvImport() {
             </p>
           )}
           {result.success && (
-            <p className="rounded-xl border border-teal-200 bg-teal-50 p-3 text-sm font-semibold text-brand">
+            <p className="rounded-xl border border-brand/25 bg-brand/5 p-3 text-sm font-semibold text-brand">
               {result.success}
             </p>
           )}
@@ -187,7 +187,7 @@ export default function CsvImport() {
             type="button"
             onClick={runImport}
             disabled={busy}
-            className="rounded-2xl bg-coral px-8 py-3.5 text-base font-extrabold text-white hover:bg-coral-dark disabled:opacity-60"
+            className="rounded-2xl bg-brand px-8 py-3.5 text-base font-extrabold text-white hover:bg-brand-dark disabled:opacity-60"
           >
             {busy ? "Importing…" : `Import ${buildRows().length} rows`}
           </button>

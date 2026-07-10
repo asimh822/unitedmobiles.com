@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Analytics } from "@vercel/analytics/react";
+import { KashiBorder } from "@/components/KashiMotifs";
 import NavMenu from "@/components/NavMenu";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import { SITE_URL } from "@/lib/site";
@@ -39,11 +40,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               Genuine phones. Cash on delivery.
             </span>
           </div>
+          <KashiBorder id="kashi-header" />
         </header>
 
         <main className="mx-auto min-h-[70vh] w-full max-w-6xl px-4 pb-16">{children}</main>
 
         <footer className="border-t border-stone-200 bg-white">
+          <KashiBorder id="kashi-footer" />
           <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-8 text-sm text-stone-500 sm:flex-row sm:items-center sm:justify-between">
             <p className="font-semibold text-ink">United Mobiles</p>
             <p>Genuine products • Official warranty • Cash on delivery</p>

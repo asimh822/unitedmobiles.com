@@ -278,7 +278,7 @@ export default function ProductForm({
           <div className="flex items-center gap-3">
             <input value={salePrice} onChange={(e) => setSalePrice(e.target.value)} inputMode="numeric" className={inputClass} placeholder="364999" />
             <label className="flex shrink-0 items-center gap-2 text-sm font-semibold text-ink">
-              <input type="checkbox" checked={saleActive} onChange={(e) => setSaleActive(e.target.checked)} className="h-4 w-4 accent-coral" />
+              <input type="checkbox" checked={saleActive} onChange={(e) => setSaleActive(e.target.checked)} className="h-4 w-4 accent-gold-dark" />
               Sale on
             </label>
           </div>
@@ -435,7 +435,7 @@ export default function ProductForm({
               <button
                 type="button"
                 onClick={() => setSpecs(specTemplate(ram.trim(), storage.trim()))}
-                className="rounded-lg bg-teal-50 px-3 py-1 text-sm font-bold text-brand hover:bg-teal-100"
+                className="rounded-lg bg-brand/5 px-3 py-1 text-sm font-bold text-brand hover:bg-brand/10"
               >
                 ⚡ Fill phone template
               </button>
@@ -510,7 +510,7 @@ export default function ProductForm({
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-2xl bg-coral px-6 py-4 text-base font-extrabold text-white hover:bg-coral-dark disabled:opacity-60 sm:w-auto sm:px-12"
+        className="w-full rounded-2xl bg-brand px-6 py-4 text-base font-extrabold text-white hover:bg-brand-dark disabled:opacity-60 sm:w-auto sm:px-12"
       >
         {pending ? "Saving…" : product ? "Save Changes" : "Create Product"}
       </button>

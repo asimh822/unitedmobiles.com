@@ -19,6 +19,7 @@ export default function CompactProductCard({
       href={`/products/${product.id}`}
       className="group flex flex-col overflow-hidden rounded-lg border border-stone-200 bg-white transition-shadow hover:shadow-md"
     >
+      <div className="tile-edge" />
       <div className="relative aspect-square bg-stone-50">
         {image ? (
           <Image

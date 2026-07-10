@@ -1,12 +1,17 @@
 @import "tailwindcss";
 
 @theme {
-  /* United Mobiles design system */
-  --color-brand: #0d9488; /* teal — primary */
-  --color-brand-dark: #0f766e;
-  --color-cream: #fafaf9; /* warm white — background */
-  --color-coral: #f97316; /* accent / CTA / sale */
-  --color-coral-dark: #ea580c;
+  /* United Mobiles design system — Multan blue pottery (kashi-kari) palette.
+     Contrast (vs white unless noted): brand 8.0:1, gold-dark 4.6:1,
+     turq-deep 6.1:1, gold-light on brand 5.0:1 — all AA for their roles. */
+  --color-brand: #1c4e9c; /* cobalt / lapis — primary */
+  --color-brand-dark: #163d80;
+  --color-turq: #2e8b99; /* turquoise — icon/border accents only (4.0:1) */
+  --color-turq-deep: #1f6b77; /* turquoise dark enough for body text */
+  --color-gold: #c08a2e; /* warm gold/terracotta — decorative, sparing */
+  --color-gold-dark: #9a6d1e; /* gold with AA-compliant white text */
+  --color-gold-light: #eec868; /* highlight on cobalt backgrounds */
+  --color-cream: #faf7f0; /* glazed-ceramic off-white — background */
   --color-ink: #1c1917; /* deep slate — text */
 
   --animate-trust-in: trust-in 0.5s ease-out both;
@@ -26,6 +31,19 @@
 body {
   background-color: var(--color-cream);
   color: var(--color-ink);
+}
+
+/* Thin blue-and-white "painted tile" edge for product cards (pure CSS). */
+.tile-edge {
+  height: 3px;
+  flex-shrink: 0;
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--color-brand) 0 10px,
+    transparent 10px 14px,
+    var(--color-turq) 14px 22px,
+    transparent 22px 26px
+  );
 }
 
 /* Skeleton shimmer (lightweight, CSS-only) */

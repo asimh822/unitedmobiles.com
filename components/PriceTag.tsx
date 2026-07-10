@@ -21,7 +21,7 @@ export default function PriceTag({ product, price, salePrice, size = "sm" }: Pro
   }
   return (
     <p className="flex flex-wrap items-baseline gap-x-2">
-      <span className={`${mainClass} text-coral`}>{formatPrice(sale)}</span>
+      <span className={`${mainClass} text-gold-dark`}>{formatPrice(sale)}</span>
       <span className={`${size === "lg" ? "text-lg" : "text-sm"} text-stone-400 line-through`}>
         {formatPrice(base)}
       </span>

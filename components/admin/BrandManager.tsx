@@ -110,7 +110,7 @@ export default function BrandManager({ brands }: { brands: Brand[] }) {
           type="button"
           onClick={save}
           disabled={busy}
-          className="rounded-xl bg-coral px-6 py-2.5 text-sm font-extrabold text-white hover:bg-coral-dark disabled:opacity-60"
+          className="rounded-xl bg-brand px-6 py-2.5 text-sm font-extrabold text-white hover:bg-brand-dark disabled:opacity-60"
         >
           {busy ? "Saving…" : "Save All"}
         </button>

@@ -21,7 +21,7 @@ const BRAND_COLORS: Record<string, string> = {
   ONEPLUS: "#eb0028",
 };
 
-const DEFAULT = "#0d9488"; // brand teal for shops/brands without a known color
+const DEFAULT = "#1c4e9c"; // cobalt brand color for brands without a known color
 
 export function brandColor(name: string): string {
   return BRAND_COLORS[name.trim().toUpperCase()] ?? DEFAULT;

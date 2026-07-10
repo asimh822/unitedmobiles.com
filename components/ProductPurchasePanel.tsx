@@ -148,7 +148,7 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
 
           <p
             className={`flex items-center gap-1.5 text-sm font-semibold ${
-              inStock ? "text-emerald-600" : "text-stone-400"
+              inStock ? "text-emerald-700" : "text-stone-400"
             }`}
           >
             <span className={`h-2 w-2 rounded-full ${inStock ? "bg-emerald-500" : "bg-stone-400"}`} />
@@ -170,7 +170,7 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
                       aria-pressed={active}
                       className={`rounded-xl border px-4 py-2 text-sm font-bold ${
                         active
-                          ? "border-brand bg-teal-50 text-brand"
+                          ? "border-brand bg-brand/5 text-brand"
                           : available
                             ? "border-stone-200 bg-white text-ink hover:border-stone-300"
                             : "border-dashed border-stone-200 bg-stone-50 text-stone-400"
@@ -188,7 +188,7 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
           {inStock ? (
             <Link
               href={checkoutHref}
-              className="block w-full rounded-2xl bg-coral px-6 py-4 text-center text-lg font-extrabold text-white shadow-md transition-colors hover:bg-coral-dark"
+              className="block w-full rounded-2xl bg-brand px-6 py-4 text-center text-lg font-extrabold text-white shadow-md transition-colors hover:bg-gold-dark"
             >
               Buy Now — Cash on Delivery
             </Link>

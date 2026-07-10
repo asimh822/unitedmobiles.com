@@ -30,6 +30,7 @@ export default function ProductCard({ product }: { product: Product }) {
       href={`/products/${product.id}`}
       className="group flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white transition-shadow hover:shadow-lg"
     >
+      <div className="tile-edge" />
       <div className="relative aspect-square bg-stone-100">
         {image ? (
           <Image
@@ -43,7 +44,7 @@ export default function ProductCard({ product }: { product: Product }) {
           <div className="grid h-full place-items-center text-4xl text-stone-300">📱</div>
         )}
         {isOnSale(product) && (
-          <span className="absolute left-3 top-3 rounded-full bg-coral px-2.5 py-1 text-xs font-bold text-white">
+          <span className="absolute left-3 top-3 rounded-full bg-gold-dark px-2.5 py-1 text-xs font-bold text-white">
             SALE
           </span>
         )}
@@ -66,7 +67,7 @@ export default function ProductCard({ product }: { product: Product }) {
           <CardPrice product={product} />
           <p
             className={`mt-1 flex items-center gap-1.5 text-xs font-semibold ${
-              inStock ? "text-emerald-600" : "text-stone-400"
+              inStock ? "text-emerald-700" : "text-stone-400"
             }`}
           >
             <span

@@ -28,7 +28,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </form>
       </div>
       {!isSupabaseConfigured() && (
-        <p className="mb-6 rounded-xl border border-orange-200 bg-orange-50 p-3 text-sm font-medium text-coral-dark">
+        <p className="mb-6 rounded-xl border border-gold/30 bg-gold/10 p-3 text-sm font-medium text-gold-dark">
           Supabase isn&apos;t connected yet — the site is showing built-in sample data. Add your real
           keys to <code className="font-mono">.env.local</code> and run the migration to enable
           saving products here.

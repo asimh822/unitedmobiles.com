@@ -1,6 +1,7 @@
 import Link from "next/link";
 import BrandCarousel from "@/components/BrandCarousel";
 import CompactProductCard from "@/components/CompactProductCard";
+import { KashiFlourish } from "@/components/KashiMotifs";
 import { brandColor } from "@/lib/brand-colors";
 import type { BrandRow as BrandRowData } from "@/lib/catalog";
 
@@ -36,9 +37,11 @@ export default function BrandRow({ row, viewAllHref }: Props) {
           style={{ color }}
           aria-label={brand.name}
         >
+          <KashiFlourish className="opacity-60" />
           {letters.map((ch, i) => (
             <span key={i} aria-hidden="true">{ch}</span>
           ))}
+          <KashiFlourish className="opacity-60" />
         </span>
       </Link>
 

@@ -1,9 +1,9 @@
 import type { Product } from "@/lib/types";
 
-function Badge({ children, tone }: { children: React.ReactNode; tone: "teal" | "coral" | "slate" }) {
+function Badge({ children, tone }: { children: React.ReactNode; tone: "turq" | "gold" | "slate" }) {
   const tones = {
-    teal: "bg-teal-50 text-brand border-teal-200",
-    coral: "bg-orange-50 text-coral-dark border-orange-200",
+    turq: "bg-turq/10 text-turq-deep border-turq/30",
+    gold: "bg-gold/10 text-gold-dark border-gold/30",
     slate: "bg-stone-100 text-stone-600 border-stone-200",
   };
   return (
@@ -18,10 +18,10 @@ function Badge({ children, tone }: { children: React.ReactNode; tone: "teal" | "
 export default function TrustBadges({ product }: { product: Product }) {
   return (
     <div className="flex flex-wrap gap-2">
-      {product.ptaApproved && <Badge tone="teal">✓ PTA Approved</Badge>}
-      {product.warranty && <Badge tone="teal">🛡 {product.warranty}</Badge>}
+      {product.ptaApproved && <Badge tone="turq">✓ PTA Approved</Badge>}
+      {product.warranty && <Badge tone="turq">🛡 {product.warranty}</Badge>}
       {/* Generic by design — never name a specific bank/vendor. */}
-      <Badge tone="coral">💳 Easy Installments Available</Badge>
+      <Badge tone="gold">💳 Easy Installments Available</Badge>
       <Badge tone="slate">{product.condition === "New" ? "Brand New" : "Pre-Owned"}</Badge>
     </div>
   );

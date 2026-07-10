@@ -86,7 +86,7 @@ export default function CheckoutFlow({ product, variant }: Props) {
             {color}
             {combo ? ` · ${combo}` : ""}
           </p>
-          <p className="font-extrabold text-coral">{formatPrice(price)}</p>
+          <p className="font-extrabold text-brand">{formatPrice(price)}</p>
         </div>
       </div>
 
@@ -124,7 +124,7 @@ export default function CheckoutFlow({ product, variant }: Props) {
           </p>
           <button
             type="submit"
-            className="w-full rounded-2xl bg-coral px-6 py-3.5 text-base font-extrabold text-white hover:bg-coral-dark"
+            className="w-full rounded-2xl bg-brand px-6 py-3.5 text-base font-extrabold text-white hover:bg-brand-dark"
           >
             Review Order
           </button>
@@ -167,7 +167,7 @@ export default function CheckoutFlow({ product, variant }: Props) {
             </a>
           </div>
           {confirmed && (
-            <p className="rounded-xl bg-teal-50 p-3 text-center text-sm font-semibold text-brand">
+            <p className="rounded-xl bg-brand/5 p-3 text-center text-sm font-semibold text-brand">
               WhatsApp opened — just press <span className="font-extrabold">Send</span> to place your
               order. Our salesman will confirm shortly.
             </p>

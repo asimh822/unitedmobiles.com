@@ -174,7 +174,7 @@ export default function FilterBar({
                 setSearch("");
                 startTransition(() => router.replace(basePath, { scroll: false }));
               }}
-              className="text-sm font-semibold text-coral hover:underline"
+              className="text-sm font-semibold text-turq-deep hover:underline"
             >
               Clear
             </button>

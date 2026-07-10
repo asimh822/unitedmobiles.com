@@ -10,7 +10,7 @@ const TOP_ITEMS = [
 ] as const;
 
 const pill =
-  "shrink-0 whitespace-nowrap rounded-full border border-stone-200 bg-white px-3.5 py-1.5 text-ink hover:border-brand/40 hover:bg-teal-50 hover:text-brand";
+  "shrink-0 whitespace-nowrap rounded-full border border-stone-200 bg-white px-3.5 py-1.5 text-ink hover:border-brand/40 hover:bg-brand/5 hover:text-brand";
 
 /**
  * Category menu, embeddable next to the logo. Accessories uses a <details>
@@ -29,14 +29,14 @@ export default function NavMenu() {
         <Link
           key={item.href}
           href={item.href}
-          className="shrink-0 whitespace-nowrap rounded-lg px-2.5 py-2 text-ink hover:bg-teal-50 hover:text-brand sm:px-3"
+          className="shrink-0 whitespace-nowrap rounded-lg px-2.5 py-2 text-ink hover:bg-brand/5 hover:text-brand sm:px-3"
         >
           {item.label}
         </Link>
       ))}
 
       <AutoCloseDetails className="group shrink-0">
-        <summary className="flex cursor-pointer list-none items-center gap-1 whitespace-nowrap rounded-lg px-2.5 py-2 text-ink hover:bg-teal-50 hover:text-brand group-open:bg-teal-50 group-open:text-brand sm:px-3 [&::-webkit-details-marker]:hidden">
+        <summary className="flex cursor-pointer list-none items-center gap-1 whitespace-nowrap rounded-lg px-2.5 py-2 text-ink hover:bg-brand/5 hover:text-brand group-open:bg-brand/5 group-open:text-brand sm:px-3 [&::-webkit-details-marker]:hidden">
           Accessories
           <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 stroke-current transition-transform group-open:rotate-180" fill="none" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
             <path d="m6 9 6 6 6-6" />
