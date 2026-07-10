@@ -147,20 +147,33 @@ export default function CheckoutFlow({ product, variant, addons = [] }: Props) {
           <h2 className="text-lg font-extrabold text-ink">Confirm your order</h2>
           <dl className="space-y-2 text-sm">
             {[
-              ["Phone", `${product.brand} ${product.model}${combo ? ` (${combo})` : ""}`],
-              ["Color", color],
-              ["Price", formatPrice(price)],
-              ...selectedAddons.map(
-                (a) => [`+ ${a.brand} ${a.model}`, formatPrice(effectivePrice(a))] as [string, string],
-              ),
-              ...(selectedAddons.length > 0 ? [["Total", formatPrice(total)] as [string, string]] : []),
-              ["Name", order.customerName],
-              ["Address", order.address],
-            ].map(([label, value]) => (
-              <div key={label} className="flex justify-between gap-4 border-b border-stone-100 pb-2">
-                <dt className="shrink-0 font-semibold text-stone-500">{label}</dt>
-                <dd className={`text-right font-semibold ${label === "Total" ? "font-extrabold text-brand" : "text-ink"}`}>
-                  {value}
+              { label: "Phone", value: `${product.brand} ${product.model}${combo ? ` (${combo})` : ""}` },
+              { label: "Color", value: color },
+              { label: "Price", value: formatPrice(price) },
+              // Add-on rows invert the usual shape: long label, short value.
+              ...selectedAddons.map((a) => ({
+                label: `+ ${a.brand} ${a.model}`,
+                value: formatPrice(effectivePrice(a)),
+                longLabel: true,
+              })),
+              ...(selectedAddons.length > 0 ? [{ label: "Total", value: formatPrice(total) }] : []),
+              { label: "Name", value: order.customerName },
+              { label: "Address", value: order.address },
+            ].map((row) => (
+              <div key={row.label} className="flex justify-between gap-4 border-b border-stone-100 pb-2">
+                <dt
+                  className={`font-semibold text-stone-500 ${
+                    "longLabel" in row && row.longLabel ? "min-w-0 break-words" : "shrink-0"
+                  }`}
+                >
+                  {row.label}
+                </dt>
+                <dd
+                  className={`text-right font-semibold ${
+                    "longLabel" in row && row.longLabel ? "shrink-0" : ""
+                  } ${row.label === "Total" ? "font-extrabold text-brand" : "text-ink"}`}
+                >
+                  {row.value}
                 </dd>
               </div>
             ))}
