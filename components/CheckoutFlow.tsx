@@ -144,7 +144,56 @@ export default function CheckoutFlow({ product, variant, addons = [] }: Props) {
         </form>
       )}
 
-      {step === 2 && (
+      {/* After WhatsApp opens: reassure the first-time COD buyer about what
+          happens next instead of leaving the review screen unchanged. */}
+      {step === 2 && confirmed && (
+        <div className="space-y-5 rounded-2xl border border-stone-200 bg-white p-6 text-center">
+          <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-[#25D366]/10 text-3xl">
+            ✓
+          </div>
+          <div>
+            <h2 className="text-lg font-extrabold text-ink">Almost done — press Send in WhatsApp</h2>
+            <p className="mt-1 text-sm text-stone-500">
+              Your order message is ready in WhatsApp. Nothing reaches us until you press Send.
+            </p>
+          </div>
+          <ol className="space-y-3 text-left text-sm">
+            {[
+              ["1", "Press Send", "The message with your order is already written for you."],
+              ["2", "We confirm on WhatsApp", "Our salesman replies to confirm your order and delivery time."],
+              ["3", "Pay at your door", "Cash on delivery — check the product before you pay."],
+            ].map(([n, title, desc]) => (
+              <li key={n} className="flex gap-3">
+                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand text-xs font-bold text-white">
+                  {n}
+                </span>
+                <p className="text-stone-500">
+                  <span className="font-bold text-ink">{title}</span> — {desc}
+                </p>
+              </li>
+            ))}
+          </ol>
+          <div className="space-y-2">
+            <a
+              href={buildOrderLink(order)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full rounded-2xl bg-[#25D366] px-4 py-3.5 text-base font-extrabold text-white hover:brightness-95"
+            >
+              WhatsApp didn&apos;t open? Tap here
+            </a>
+            <button
+              type="button"
+              onClick={() => setConfirmed(false)}
+              className="w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-sm font-bold text-ink hover:border-stone-400"
+            >
+              Change something in the order
+            </button>
+          </div>
+        </div>
+      )}
+
+      {step === 2 && !confirmed && (
         <div className="space-y-4 rounded-2xl border border-stone-200 bg-white p-5">
           <h2 className="text-lg font-extrabold text-ink">Confirm your order</h2>
           <dl className="space-y-2 text-sm">
@@ -243,12 +292,6 @@ export default function CheckoutFlow({ product, variant, addons = [] }: Props) {
               Confirm on WhatsApp
             </a>
           </div>
-          {confirmed && (
-            <p className="rounded-xl bg-brand/5 p-3 text-center text-sm font-semibold text-brand">
-              WhatsApp opened — just press <span className="font-extrabold">Send</span> to place your
-              order. Our salesman will confirm shortly.
-            </p>
-          )}
           <p className="text-center text-xs text-stone-400">
             Pressing Confirm opens WhatsApp with your order pre-filled — nothing is sent until you hit
             Send there. Cash on delivery.
