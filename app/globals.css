@@ -33,16 +33,17 @@ body {
   color: var(--color-ink);
 }
 
-/* Thin blue-and-white "painted tile" edge for product cards (pure CSS). */
+/* Mosaic tile edge for product cards: alternating cobalt/turquoise square
+   tiles with white grout lines (pure CSS, square tiles = height). */
 .tile-edge {
-  height: 3px;
+  height: 5px;
   flex-shrink: 0;
   background-image: repeating-linear-gradient(
     90deg,
-    var(--color-brand) 0 10px,
-    transparent 10px 14px,
-    var(--color-turq) 14px 22px,
-    transparent 22px 26px
+    var(--color-brand) 0 5px,
+    #fff 5px 6px,
+    var(--color-turq) 6px 11px,
+    #fff 11px 12px
   );
 }
 

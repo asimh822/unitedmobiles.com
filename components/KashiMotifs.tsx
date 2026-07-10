@@ -5,41 +5,58 @@
  */
 
 /**
- * Thin repeating "painted tile" border strip (~10px tall) — alternating
- * eight-petal florets and diamond dots over a shallow wave, like the band
- * along the rim of a glazed pot. Give each instance a unique `id`.
+ * Tile border band (~16px tall): a run of square glazed tiles with grout
+ * gaps, alternating the two classic kashi tile faces — an eight-petal
+ * rosette and an eight-point star (two overlapped squares). Give each
+ * instance a unique `id`.
  */
 export function KashiBorder({ id, className = "" }: { id: string; className?: string }) {
   return (
-    <svg aria-hidden="true" className={`block h-2.5 w-full ${className}`} role="presentation">
+    <svg aria-hidden="true" className={`block h-4 w-full ${className}`} role="presentation">
       <defs>
-        <pattern id={id} width="48" height="10" patternUnits="userSpaceOnUse">
-          {/* wave baseline */}
-          <path
-            d="M0 7 Q6 4 12 7 T24 7 T36 7 T48 7"
-            fill="none"
-            stroke="var(--color-brand)"
-            strokeWidth="1"
-            opacity="0.55"
-          />
-          {/* floret: four petals around a turquoise heart */}
-          <g transform="translate(12 4)">
-            <circle r="1.1" fill="var(--color-turq)" />
-            <circle cx="0" cy="-2.4" r="0.9" fill="var(--color-brand)" />
-            <circle cx="0" cy="2.4" r="0.9" fill="var(--color-brand)" />
-            <circle cx="-2.4" cy="0" r="0.9" fill="var(--color-brand)" />
-            <circle cx="2.4" cy="0" r="0.9" fill="var(--color-brand)" />
+        <pattern id={id} width="36" height="16" patternUnits="userSpaceOnUse">
+          {/* Tile A — eight-petal rosette: cobalt cross petals, turquoise
+              diagonals, gold heart */}
+          <rect x="1" y="1" width="14" height="14" rx="1" fill="white" stroke="var(--color-brand)" strokeWidth="0.75" />
+          <g>
+            {[0, 90, 180, 270].map((deg) => (
+              <ellipse
+                key={deg}
+                cx="8"
+                cy="4.7"
+                rx="1.7"
+                ry="3.1"
+                fill="var(--color-brand)"
+                transform={`rotate(${deg} 8 8)`}
+              />
+            ))}
+            {[45, 135, 225, 315].map((deg) => (
+              <ellipse
+                key={deg}
+                cx="8"
+                cy="5.2"
+                rx="1.3"
+                ry="2.5"
+                fill="var(--color-turq)"
+                transform={`rotate(${deg} 8 8)`}
+              />
+            ))}
+            <circle cx="8" cy="8" r="1.4" fill="var(--color-gold)" />
           </g>
-          {/* diamond dot between florets */}
-          <rect
-            x="34.6"
-            y="2.6"
-            width="2.8"
-            height="2.8"
-            transform="rotate(45 36 4)"
-            fill="var(--color-gold)"
-            opacity="0.8"
-          />
+
+          {/* Tile B — eight-point star: two overlapped squares, cobalt core */}
+          <rect x="19" y="1" width="14" height="14" rx="1" fill="white" stroke="var(--color-brand)" strokeWidth="0.75" />
+          <g>
+            <rect x="22.6" y="4.6" width="6.8" height="6.8" fill="var(--color-turq)" />
+            <rect x="22.6" y="4.6" width="6.8" height="6.8" fill="var(--color-turq)" transform="rotate(45 26 8)" />
+            <circle cx="26" cy="8" r="1.9" fill="var(--color-brand)" />
+            <circle cx="26" cy="8" r="0.8" fill="var(--color-gold)" />
+            {/* corner dots, like the pinned corners of a glazed tile */}
+            <circle cx="20.7" cy="2.7" r="0.6" fill="var(--color-brand)" />
+            <circle cx="31.3" cy="2.7" r="0.6" fill="var(--color-brand)" />
+            <circle cx="20.7" cy="13.3" r="0.6" fill="var(--color-brand)" />
+            <circle cx="31.3" cy="13.3" r="0.6" fill="var(--color-brand)" />
+          </g>
         </pattern>
       </defs>
       <rect width="100%" height="100%" fill={`url(#${id})`} />
