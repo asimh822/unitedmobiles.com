@@ -22,9 +22,10 @@ export default function BrandRow({ row, viewAllHref }: Props) {
 
   return (
     <section aria-label={`${brand.name} products`} className="flex gap-1.5 sm:gap-2">
+      {/* mb-1 mirrors the scroller's pb-1 so this box is exactly card height */}
       <Link
         href={viewAllHref}
-        className="flex shrink-0 items-center self-stretch rounded-lg border bg-white px-1.5 transition-opacity hover:opacity-75 sm:px-2"
+        className="mb-1 flex shrink-0 items-center self-stretch rounded-lg border bg-white px-1.5 transition-opacity hover:opacity-75 sm:px-2"
         style={{ borderColor: `${color}44` }}
         title={`All ${brand.name} products`}
       >
