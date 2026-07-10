@@ -3,10 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import KeyHighlights from "@/components/KeyHighlights";
 import PriceTag from "@/components/PriceTag";
 import SpecBoxes from "@/components/SpecBoxes";
 import TrustBadges from "@/components/TrustBadges";
 import { isPhoneLike } from "@/lib/categories";
+import { colorNameToHex } from "@/lib/color-names";
 import { ramRomCombos, type Product, type RamRomCombo, type Variant } from "@/lib/types";
 
 /**
@@ -74,17 +76,18 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
 
   return (
     <div className="space-y-10">
-      <div className="grid gap-8 lg:grid-cols-2">
+      {/* Gallery column stays narrow — the purchase info is the star, not the photo */}
+      <div className="grid gap-8 lg:grid-cols-[2fr_3fr]">
         {/* Gallery */}
         <div className="space-y-3">
-          <div className="relative aspect-square overflow-hidden rounded-2xl border border-stone-200 bg-stone-100">
+          <div className="relative mx-auto aspect-square w-full max-w-sm overflow-hidden rounded-2xl border border-stone-200 bg-stone-100 lg:max-w-full">
             {currentImage ? (
               <Image
                 src={currentImage}
                 alt={`${product.brand} ${product.model}${selectedColor ? ` — ${selectedColor}` : ""}`}
                 fill
                 priority
-                sizes="(max-width: 1024px) 100vw, 50vw"
+                sizes="(max-width: 1024px) 384px, 40vw"
                 className="object-contain"
               />
             ) : (
@@ -106,7 +109,7 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
                     className={`h-6 w-6 rounded-full border border-stone-300 transition-shadow ${
                       i === colorIdx ? "ring-2 ring-brand ring-offset-2" : "hover:ring-2 hover:ring-stone-300 hover:ring-offset-1"
                     }`}
-                    style={{ backgroundColor: c.colorHex ?? "#a8a29e" }}
+                    style={{ backgroundColor: c.colorHex ?? colorNameToHex(c.color) ?? "#a8a29e" }}
                   />
                 ))}
               </div>
@@ -154,6 +157,8 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
             <span className={`h-2 w-2 rounded-full ${inStock ? "bg-emerald-500" : "bg-stone-400"}`} />
             {inStock ? "In Stock — ready to deliver" : "Out of Stock"}
           </p>
+
+          <KeyHighlights specs={product.specs} />
 
           {combos.length > 0 && (
             <div>
