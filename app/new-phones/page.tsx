@@ -7,7 +7,7 @@ export const revalidate = 300;
 export default function NewPhonesPage() {
   return (
     <div className="space-y-5 py-6">
-      <h1 className="text-2xl font-extrabold text-ink">New Phones</h1>
+      <h1 className="sr-only">New Phones</h1>
       <BrandRows category="New Phones" />
     </div>
   );

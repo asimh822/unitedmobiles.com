@@ -31,7 +31,7 @@ export default async function CheckoutPage({ params, searchParams }: Props) {
       >
         ‹ Back to {product.brand} {product.model}
       </Link>
-      <h1 className="mb-5 text-2xl font-extrabold text-ink">Checkout</h1>
+      <h1 className="sr-only">Checkout</h1>
       <CheckoutFlow product={product} variant={variant} addons={addons} />
     </div>
   );

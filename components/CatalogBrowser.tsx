@@ -116,7 +116,8 @@ export default async function CatalogBrowser({
 
   return (
     <div className="space-y-4 py-6">
-      <h1 className="text-2xl font-extrabold text-ink">{title}</h1>
+      {/* sr-only: the nav already says where you are; keep the h1 for SEO/screen readers */}
+      <h1 className="sr-only">{title}</h1>
       <Suspense fallback={null}>
         <FilterBar
           options={options}
