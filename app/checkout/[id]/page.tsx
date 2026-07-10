@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import CheckoutFlow from "@/components/CheckoutFlow";
-import { getProduct } from "@/lib/catalog";
+import { getProduct, getSuggestedProducts } from "@/lib/catalog";
 
 export const metadata: Metadata = {
   title: "Checkout",
@@ -20,6 +20,8 @@ export default async function CheckoutPage({ params, searchParams }: Props) {
   if (!product || product.stockStatus === "out_of_stock") notFound();
 
   const variant = product.variants.find((v) => v.id === variantId) ?? product.variants[0] ?? null;
+  // Same "Goes with this device" picks, offered as one-tap add-ons on review.
+  const addons = await getSuggestedProducts(product);
 
   return (
     <div className="py-6">
@@ -30,7 +32,7 @@ export default async function CheckoutPage({ params, searchParams }: Props) {
         ‹ Back to {product.brand} {product.model}
       </Link>
       <h1 className="mb-5 text-2xl font-extrabold text-ink">Checkout</h1>
-      <CheckoutFlow product={product} variant={variant} />
+      <CheckoutFlow product={product} variant={variant} addons={addons} />
     </div>
   );
 }

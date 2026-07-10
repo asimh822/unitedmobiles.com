@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import ProductCard from "@/components/ProductCard";
+import CompactProductCard from "@/components/CompactProductCard";
 import ProductPurchasePanel from "@/components/ProductPurchasePanel";
 import { getAllProducts, getProduct, getSimilarProducts, getSuggestedProducts } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
@@ -65,9 +65,14 @@ export default async function ProductPage({ params }: Props) {
       {related.length > 0 && (
         <section aria-label={heading}>
           <h2 className="mb-4 text-xl font-extrabold text-ink">{heading}</h2>
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+          {/* Compact cards (homepage brand-row size) — this strip is a nudge, not a grid page */}
+          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 sm:gap-3 lg:grid-cols-6">
             {related.map((p) => (
-              <ProductCard key={p.id} product={p} />
+              <CompactProductCard
+                key={p.id}
+                product={p}
+                sizes="(max-width: 640px) 33vw, (max-width: 1024px) 25vw, 16vw"
+              />
             ))}
           </div>
         </section>

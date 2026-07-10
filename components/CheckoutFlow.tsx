@@ -9,17 +9,20 @@ import { effectivePrice, type Product, type Variant } from "@/lib/types";
 interface Props {
   product: Product;
   variant: Variant | null;
+  /** "Goes with this device" products offered as one-tap add-ons on review. */
+  addons?: Product[];
 }
 
 /**
  * Two-step checkout: (1) name + address only — WhatsApp captures the sender's
  * phone number, so no phone/email/payment fields; (2) review screen with Edit,
- * then confirm opens the pre-filled wa.me link.
+ * one-tap accessory add-ons, then confirm opens the pre-filled wa.me link.
  */
-export default function CheckoutFlow({ product, variant }: Props) {
+export default function CheckoutFlow({ product, variant, addons = [] }: Props) {
   const [step, setStep] = useState<1 | 2>(1);
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
+  const [addonIds, setAddonIds] = useState<string[]>([]);
   const [confirmed, setConfirmed] = useState(false);
 
   const price = effectivePrice(product, variant);
@@ -27,15 +30,23 @@ export default function CheckoutFlow({ product, variant }: Props) {
   const combo = variant ? [variant.ram, variant.storage].filter(Boolean).join(" + ") : "";
   const image = variant?.image ?? product.images[0];
 
+  const selectedAddons = addons.filter((a) => addonIds.includes(a.id));
+  const total = price + selectedAddons.reduce((sum, a) => sum + effectivePrice(a), 0);
+
   const order = {
     brand: product.brand,
     model: product.model,
     color,
     combo: combo || null,
     price,
+    addons: selectedAddons.map((a) => ({ name: `${a.brand} ${a.model}`, price: effectivePrice(a) })),
     customerName: name.trim(),
     address: address.trim(),
   };
+
+  function toggleAddon(id: string) {
+    setAddonIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+  }
 
   function submitDetails(e: React.FormEvent) {
     e.preventDefault();
@@ -139,15 +150,66 @@ export default function CheckoutFlow({ product, variant }: Props) {
               ["Phone", `${product.brand} ${product.model}${combo ? ` (${combo})` : ""}`],
               ["Color", color],
               ["Price", formatPrice(price)],
+              ...selectedAddons.map(
+                (a) => [`+ ${a.brand} ${a.model}`, formatPrice(effectivePrice(a))] as [string, string],
+              ),
+              ...(selectedAddons.length > 0 ? [["Total", formatPrice(total)] as [string, string]] : []),
               ["Name", order.customerName],
               ["Address", order.address],
             ].map(([label, value]) => (
               <div key={label} className="flex justify-between gap-4 border-b border-stone-100 pb-2">
                 <dt className="shrink-0 font-semibold text-stone-500">{label}</dt>
-                <dd className="text-right font-semibold text-ink">{value}</dd>
+                <dd className={`text-right font-semibold ${label === "Total" ? "font-extrabold text-brand" : "text-ink"}`}>
+                  {value}
+                </dd>
               </div>
             ))}
           </dl>
+
+          {/* One-tap add-ons — the "cart" without a cart. */}
+          {addons.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-sm font-bold text-ink">Add to your order</p>
+              {addons.map((a) => {
+                const added = addonIds.includes(a.id);
+                return (
+                  <div
+                    key={a.id}
+                    className={`flex items-center gap-3 rounded-xl border p-2 ${
+                      added ? "border-brand bg-brand/5" : "border-stone-200 bg-white"
+                    }`}
+                  >
+                    <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-stone-100">
+                      {a.images[0] ? (
+                        <Image src={a.images[0]} alt="" fill sizes="48px" className="object-contain" />
+                      ) : (
+                        <div className="grid h-full place-items-center text-lg text-stone-300">🔌</div>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold text-ink">
+                        {a.brand} {a.model}
+                      </p>
+                      <p className="text-sm font-bold text-brand">{formatPrice(effectivePrice(a))}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => toggleAddon(a.id)}
+                      aria-pressed={added}
+                      className={`shrink-0 rounded-lg px-3 py-1.5 text-sm font-bold ${
+                        added
+                          ? "bg-brand text-white"
+                          : "border border-brand/40 bg-white text-brand hover:bg-brand/5"
+                      }`}
+                    >
+                      {added ? "✓ Added" : "+ Add"}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
           <div className="flex gap-3">
             <button
               type="button"
