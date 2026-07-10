@@ -1,14 +1,21 @@
 import type { Metadata } from "next";
-import BrandRows from "@/components/BrandRows";
+import CatalogBrowser, { type SearchParams } from "@/components/CatalogBrowser";
 
 export const metadata: Metadata = { title: "Used Phones" };
-export const revalidate = 300;
 
-export default function UsedPage() {
+export default async function UsedPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
   return (
-    <div className="space-y-5 py-6">
-      <h1 className="text-2xl font-extrabold text-ink">Used Phones</h1>
-      <BrandRows category="Used" />
-    </div>
+    <CatalogBrowser
+      title="Used Phones"
+      basePath="/used"
+      fixed={{ category: "Used" }}
+      searchParams={await searchParams}
+      showCondition={false}
+      dense
+    />
   );
 }

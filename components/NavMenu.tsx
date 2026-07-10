@@ -1,4 +1,5 @@
 import Link from "next/link";
+import AutoCloseDetails from "@/components/AutoCloseDetails";
 import { ACCESSORY_SUBCATEGORIES, SOUND_SUBCATEGORIES, categoryPath } from "@/lib/categories";
 
 const TOP_ITEMS = [
@@ -13,9 +14,10 @@ const pill =
 
 /**
  * Category menu, embeddable next to the logo. Accessories uses a <details>
- * element so it works on touch and mouse without client JS; its panel is a
- * full-width horizontal strip positioned against the header (the nav is an
- * overflow-x-auto scroller, which would clip a dropdown anchored inside it).
+ * element (AutoCloseDetails closes it on outside click/link click/Escape);
+ * its panel is a full-width horizontal strip positioned against the header
+ * (the nav is an overflow-x-auto scroller, which would clip a dropdown
+ * anchored inside it).
  */
 export default function NavMenu() {
   return (
@@ -33,7 +35,7 @@ export default function NavMenu() {
         </Link>
       ))}
 
-      <details className="group shrink-0">
+      <AutoCloseDetails className="group shrink-0">
         <summary className="flex cursor-pointer list-none items-center gap-1 whitespace-nowrap rounded-lg px-2.5 py-2 text-ink hover:bg-teal-50 hover:text-brand group-open:bg-teal-50 group-open:text-brand sm:px-3 [&::-webkit-details-marker]:hidden">
           Accessories
           <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 stroke-current transition-transform group-open:rotate-180" fill="none" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
@@ -66,7 +68,7 @@ export default function NavMenu() {
             ))}
           </div>
         </div>
-      </details>
+      </AutoCloseDetails>
     </nav>
   );
 }
