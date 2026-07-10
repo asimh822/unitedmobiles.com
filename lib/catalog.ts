@@ -54,6 +54,7 @@ export function mapProduct(row: any): Product {
     stockStatus: (row.stock_status ?? "in_stock") as StockStatus,
     images: row.images ?? [],
     specs: row.specs ?? [],
+    suggestedIds: row.suggested_ids ?? row.suggestedIds ?? [],
     variants: (row.product_variants ?? [])
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
@@ -154,6 +155,80 @@ export async function getSimilarProducts(product: Product, limit = 4): Promise<P
       return Math.abs(effectivePrice(a) - price) - Math.abs(effectivePrice(b) - price);
     })
     .slice(0, limit);
+}
+
+/**
+ * "Goes with this device" strip. Admin-picked ids win (in their saved order);
+ * with no picks, phones/tabs get an automatic mix of in-stock accessories —
+ * chargers first (same brand before others; Samsung ships without one),
+ * then bluetooth earphones, then gadgets like powerbanks. Accessories
+ * themselves get no automatic suggestions (the page falls back to Similar).
+ */
+export async function getSuggestedProducts(product: Product, limit = 4): Promise<Product[]> {
+  const all = await getAllProducts();
+  const byId = new Map(all.map((p) => [p.id, p]));
+
+  const picked = (product.suggestedIds ?? [])
+    .map((id) => byId.get(id))
+    .filter((p): p is Product => Boolean(p))
+    .filter((p) => p.id !== product.id && p.stockStatus === "in_stock");
+  if (picked.length > 0) return picked.slice(0, limit);
+
+  if (product.category === "Accessories") return [];
+
+  const rank = (p: Product) => {
+    if (p.subcategory === "Chargers") return p.brand === product.brand ? 0 : 1;
+    if (p.subcategory === "Sound") return p.subSubcategory === "Bluetooth" ? 2 : 3;
+    if (p.subcategory === "Gadgets") return 4;
+    return 5;
+  };
+  const accessories = all
+    .filter((p) => p.category === "Accessories" && p.stockStatus === "in_stock")
+    .sort((a, b) => rank(a) - rank(b));
+
+  // Cap 2 per subcategory so the strip is a mix, not four chargers.
+  const out: Product[] = [];
+  const perSub = new Map<string, number>();
+  for (const p of accessories) {
+    const n = perSub.get(p.subcategory ?? "") ?? 0;
+    if (n >= 2) continue;
+    perSub.set(p.subcategory ?? "", n + 1);
+    out.push(p);
+    if (out.length === limit) return out;
+  }
+  for (const p of accessories) {
+    if (out.length === limit) break;
+    if (!out.includes(p)) out.push(p);
+  }
+  return out;
+}
+
+export interface AccessoryOption {
+  id: string;
+  brand: string;
+  model: string;
+  subcategory: string | null;
+}
+
+/** Lightweight accessory list for the admin "Goes with this device" picker. */
+export async function getAccessoryOptions(): Promise<AccessoryOption[]> {
+  if (!isSupabaseConfigured()) {
+    return seedProducts
+      .filter((p) => p.category === "Accessories")
+      .map((p) => ({ id: p.id, brand: p.brand, model: p.model, subcategory: p.subcategory }));
+  }
+  const { data } = await getSupabase()
+    .from("products")
+    .select("id, brand, model, subcategory")
+    .eq("category", "Accessories")
+    .order("brand", { ascending: true })
+    .order("model", { ascending: true });
+  return (data ?? []).map((r) => ({
+    id: r.id,
+    brand: r.brand,
+    model: r.model,
+    subcategory: r.subcategory ?? null,
+  }));
 }
 
 /** Filter-bar options, scoped to the current category/brand context. */

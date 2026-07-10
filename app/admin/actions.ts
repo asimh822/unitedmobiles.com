@@ -83,6 +83,8 @@ export interface ProductPayload {
   stockStatus: "in_stock" | "out_of_stock";
   existingImages: string[];
   specs: SpecGroup[];
+  /** "Goes with this device" product ids, in display order. */
+  suggestedIds: string[];
   variants: {
     color: string;
     colorHex: string | null;
@@ -149,6 +151,7 @@ export async function saveProduct(_prev: ActionState, formData: FormData): Promi
     stock_status: payload.stockStatus,
     images,
     specs: payload.specs,
+    suggested_ids: payload.suggestedIds ?? [],
   };
 
   let productId = payload.id;

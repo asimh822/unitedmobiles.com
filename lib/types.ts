@@ -54,6 +54,9 @@ export interface Product {
   images: string[];
   specs: SpecGroup[];
   variants: Variant[];
+  /** Admin-picked "Goes with this device" product ids (in display order).
+   * Empty/absent = automatic accessory suggestions. */
+  suggestedIds?: string[];
   createdAt: string;
 }
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
 import ProductPurchasePanel from "@/components/ProductPurchasePanel";
-import { getAllProducts, getProduct, getSimilarProducts } from "@/lib/catalog";
+import { getAllProducts, getProduct, getSimilarProducts, getSuggestedProducts } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { effectivePrice } from "@/lib/types";
 
@@ -52,18 +52,21 @@ export default async function ProductPage({ params }: Props) {
   const product = await getProduct(id);
   if (!product) notFound();
 
-  const similar = await getSimilarProducts(product);
+  // Admin-picked or automatic accessory suggestions; Similar Phones only
+  // remains as the fallback when there's nothing to suggest.
+  const suggested = await getSuggestedProducts(product);
+  const related = suggested.length > 0 ? suggested : await getSimilarProducts(product);
+  const heading = suggested.length > 0 ? "Goes With This Device" : "Similar Phones";
 
   return (
     <div className="space-y-10 py-6">
-      {/* Panel owns badges + spec boxes so Memory specs track the selected combo */}
       <ProductPurchasePanel product={product} />
 
-      {similar.length > 0 && (
-        <section aria-label="Similar phones">
-          <h2 className="mb-4 text-xl font-extrabold text-ink">Similar Phones</h2>
+      {related.length > 0 && (
+        <section aria-label={heading}>
+          <h2 className="mb-4 text-xl font-extrabold text-ink">{heading}</h2>
           <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-            {similar.map((p) => (
+            {related.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
           </div>

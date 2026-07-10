@@ -10,6 +10,7 @@ import {
   isPhoneLike,
   type Category,
 } from "@/lib/categories";
+import type { AccessoryOption } from "@/lib/catalog";
 import type { Product, SpecGroup } from "@/lib/types";
 
 const SPEC_CATEGORIES = ["Display", "Camera", "Memory", "Battery", "Connectivity", "General"];
@@ -52,9 +53,11 @@ const NEW_BRAND = "__new__";
 export default function ProductForm({
   product,
   brandNames = [],
+  accessoryOptions = [],
 }: {
   product?: Product;
   brandNames?: string[];
+  accessoryOptions?: AccessoryOption[];
 }) {
   const [state, action, pending] = useActionState<ActionState, FormData>(saveProduct, {});
   const fileRef = useRef<HTMLInputElement>(null);
@@ -84,6 +87,10 @@ export default function ProductForm({
   );
   const [existingImages, setExistingImages] = useState<string[]>(product?.images ?? []);
   const [specs, setSpecs] = useState<SpecGroup[]>(product?.specs ?? []);
+  const [suggestedIds, setSuggestedIds] = useState<string[]>(
+    (product?.suggestedIds ?? []).filter((id) => id !== product?.id),
+  );
+  const [suggestSearch, setSuggestSearch] = useState("");
   const [variants, setVariants] = useState<VariantDraft[]>(
     (product?.variants ?? []).map((v) => ({
       color: v.color,
@@ -127,6 +134,7 @@ export default function ProductForm({
           items: g.items.filter((i) => i.label.trim() && i.value.trim()),
         }))
         .filter((g) => g.category && g.items.length > 0),
+      suggestedIds,
       variants: variants
         // Keep memory-only variants (no color) as long as they carry RAM/storage.
         .filter((v) => v.color.trim() || v.ram.trim() || v.storage.trim())
@@ -499,6 +507,78 @@ export default function ProductForm({
             <option key={c} value={c} />
           ))}
         </datalist>
+      </section>
+
+      {/* Goes with this device */}
+      <section className="space-y-3 rounded-2xl border border-stone-200 bg-white p-5">
+        <div>
+          <h2 className="font-extrabold text-ink">Goes with this device</h2>
+          <p className="text-xs text-stone-400">
+            Accessories shown under this product — e.g. a charger for a Samsung that ships without
+            one, bluetooth earphones, a powerbank. Leave empty for automatic suggestions.
+          </p>
+        </div>
+        {suggestedIds.length > 0 && (
+          <ul className="space-y-1.5">
+            {suggestedIds.map((id) => {
+              const opt = accessoryOptions.find((o) => o.id === id);
+              return (
+                <li
+                  key={id}
+                  className="flex items-center justify-between gap-2 rounded-xl border border-stone-100 bg-stone-50 px-3 py-2 text-sm"
+                >
+                  <span className="min-w-0 truncate font-semibold text-ink">
+                    {opt ? `${opt.brand} ${opt.model}` : "(product no longer exists)"}
+                    {opt?.subcategory && (
+                      <span className="ml-2 font-medium text-stone-400">{opt.subcategory}</span>
+                    )}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setSuggestedIds((p) => p.filter((x) => x !== id))}
+                    className="shrink-0 text-sm font-semibold text-red-500 hover:underline"
+                  >
+                    Remove
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+        {accessoryOptions.length === 0 ? (
+          <p className="text-sm text-stone-400">
+            No accessories in the catalog yet — add some under Category → Accessories first.
+          </p>
+        ) : (
+          <div className="space-y-2">
+            <input
+              value={suggestSearch}
+              onChange={(e) => setSuggestSearch(e.target.value)}
+              placeholder="Search accessories to add (e.g. charger, buds)…"
+              className={inputClass}
+            />
+            <div className="flex flex-wrap gap-1.5">
+              {accessoryOptions
+                .filter((o) => o.id !== product?.id && !suggestedIds.includes(o.id))
+                .filter((o) =>
+                  `${o.brand} ${o.model} ${o.subcategory ?? ""}`
+                    .toLowerCase()
+                    .includes(suggestSearch.trim().toLowerCase()),
+                )
+                .slice(0, 12)
+                .map((o) => (
+                  <button
+                    key={o.id}
+                    type="button"
+                    onClick={() => setSuggestedIds((p) => [...p, o.id])}
+                    className="rounded-full border border-stone-200 bg-white px-3 py-1.5 text-sm font-semibold text-ink hover:border-brand/40 hover:bg-brand/5 hover:text-brand"
+                  >
+                    + {o.brand} {o.model}
+                  </button>
+                ))}
+            </div>
+          </div>
+        )}
       </section>
 
       {state.error && (

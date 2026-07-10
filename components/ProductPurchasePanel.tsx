@@ -5,17 +5,15 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import KeyHighlights from "@/components/KeyHighlights";
 import PriceTag from "@/components/PriceTag";
-import SpecBoxes from "@/components/SpecBoxes";
 import TrustBadges from "@/components/TrustBadges";
-import { isPhoneLike } from "@/lib/categories";
 import { colorNameToHex } from "@/lib/color-names";
 import { ramRomCombos, type Product, type RamRomCombo, type Variant } from "@/lib/types";
 
 /**
  * Client island for the product page: gallery + TWO independent selectors
- * (Color, RAM+ROM combo) + variant-aware price/stock/Buy Now, plus the spec
- * boxes so the Memory values track the selected combo. One model with many
- * RAM+ROM combos is ONE page — never duplicate listings.
+ * (Color, RAM+ROM combo) + variant-aware price/stock/Buy Now, plus the key
+ * spec highlights. One model with many RAM+ROM combos is ONE page — never
+ * duplicate listings.
  */
 export default function ProductPurchasePanel({ product }: { product: Product }) {
   const variants = product.variants;
@@ -213,18 +211,6 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
       </div>
 
       <TrustBadges product={product} />
-
-      <SpecBoxes
-        specs={product.specs}
-        overrides={
-          isPhoneLike(product.category)
-            ? {
-                ram: selectedCombo?.ram ?? variant?.ram ?? null,
-                storage: selectedCombo?.storage ?? variant?.storage ?? null,
-              }
-            : undefined
-        }
-      />
     </div>
   );
 }
