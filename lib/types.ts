@@ -90,14 +90,16 @@ export interface FilterOptions {
   storages: string[];
 }
 
-/** Price the customer actually pays right now. */
+/** Price the customer actually pays right now. A "sale" price only counts
+ * when it's genuinely below the base price (mirrors isOnSale), so corrupt
+ * sale data can never raise the displayed price. */
 export function effectivePrice(p: Product, v?: Variant | null): number {
   if (v) {
     const base = v.price ?? p.price;
     const sale = v.salePrice ?? p.salePrice;
-    return p.saleActive && sale != null ? sale : base;
+    return p.saleActive && sale != null && sale < base ? sale : base;
   }
-  return p.saleActive && p.salePrice != null ? p.salePrice : p.price;
+  return p.saleActive && p.salePrice != null && p.salePrice < p.price ? p.salePrice : p.price;
 }
 
 export function isOnSale(p: Product): boolean {
