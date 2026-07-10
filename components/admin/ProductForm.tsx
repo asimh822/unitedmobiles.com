@@ -44,6 +44,107 @@ interface VariantDraft {
   inStock: boolean;
 }
 
+/* ---- simple variant editor: colors × options, combined on save ---- */
+
+interface ColorDraft {
+  color: string;
+  colorHex: string;
+  image: string;
+}
+
+interface ConfigDraft {
+  ram: string;
+  storage: string;
+  price: string;
+  salePrice: string;
+  inStock: boolean;
+}
+
+/** Every color × every RAM/Storage option; either list may be empty. */
+function crossVariants(colors: ColorDraft[], configs: ConfigDraft[]): VariantDraft[] {
+  const cs = colors.filter((c) => c.color.trim());
+  const ms = configs.filter((m) => m.ram.trim() || m.storage.trim());
+  if (cs.length === 0)
+    return ms.map((m) => ({
+      color: "",
+      colorHex: "",
+      storage: m.storage,
+      ram: m.ram,
+      price: m.price,
+      salePrice: m.salePrice,
+      image: "",
+      inStock: m.inStock,
+    }));
+  if (ms.length === 0)
+    return cs.map((c) => ({
+      color: c.color,
+      colorHex: c.colorHex,
+      storage: "",
+      ram: "",
+      price: "",
+      salePrice: "",
+      image: c.image,
+      inStock: true,
+    }));
+  return cs.flatMap((c) =>
+    ms.map((m) => ({
+      color: c.color,
+      colorHex: c.colorHex,
+      storage: m.storage,
+      ram: m.ram,
+      price: m.price,
+      salePrice: m.salePrice,
+      image: c.image,
+      inStock: m.inStock,
+    })),
+  );
+}
+
+/**
+ * Splits flat variant rows back into colors + options — or null when the rows
+ * aren't a clean cross-product (e.g. per-color pricing), in which case the
+ * row-by-row editor is the only faithful view.
+ */
+function decomposeVariants(
+  vs: VariantDraft[],
+  basePrice: string,
+): { colors: ColorDraft[]; configs: ConfigDraft[] } | null {
+  const colors: ColorDraft[] = [];
+  const configs: ConfigDraft[] = [];
+  const seenColor = new Set<string>();
+  const seenCfg = new Set<string>();
+  for (const v of vs) {
+    const name = v.color.trim();
+    if (name && !seenColor.has(name)) {
+      seenColor.add(name);
+      colors.push({ color: name, colorHex: v.colorHex.trim(), image: v.image.trim() });
+    }
+    if (v.ram.trim() || v.storage.trim()) {
+      const key = `${v.ram.trim()}|${v.storage.trim()}`;
+      if (!seenCfg.has(key)) {
+        seenCfg.add(key);
+        configs.push({
+          ram: v.ram.trim(),
+          storage: v.storage.trim(),
+          price: v.price.trim(),
+          salePrice: v.salePrice.trim(),
+          inStock: v.inStock,
+        });
+      }
+    }
+  }
+  // Color-only rows may store the base price explicitly; treat it as blank.
+  const colorsOnly = configs.length === 0;
+  const normPrice = (p: string) =>
+    colorsOnly && (p.trim() === "" || Number(p) === Number(basePrice)) ? "" : p.trim();
+  const sig = (v: VariantDraft) =>
+    [v.color.trim(), v.colorHex.trim(), v.ram.trim(), v.storage.trim(), normPrice(v.price), v.salePrice.trim(), v.image.trim(), v.inStock].join("§");
+  const rebuilt = crossVariants(colors, configs).map(sig).sort();
+  const actual = vs.map(sig).sort();
+  if (rebuilt.length !== actual.length) return null;
+  return rebuilt.every((x, i) => x === actual[i]) ? { colors, configs } : null;
+}
+
 const inputClass =
   "w-full rounded-xl border border-stone-200 bg-white px-3 py-2.5 text-sm text-ink focus:border-brand focus:outline-none";
 const labelClass = "mb-1 block text-sm font-bold text-ink";
@@ -91,18 +192,25 @@ export default function ProductForm({
     (product?.suggestedIds ?? []).filter((id) => id !== product?.id),
   );
   const [suggestSearch, setSuggestSearch] = useState("");
-  const [variants, setVariants] = useState<VariantDraft[]>(
-    (product?.variants ?? []).map((v) => ({
-      color: v.color,
-      colorHex: v.colorHex ?? "",
-      storage: v.storage ?? "",
-      ram: v.ram ?? "",
-      price: v.price != null ? String(v.price) : "",
-      salePrice: v.salePrice != null ? String(v.salePrice) : "",
-      image: v.image ?? "",
-      inStock: v.inStock,
-    })),
+  const initialVariants: VariantDraft[] = (product?.variants ?? []).map((v) => ({
+    color: v.color,
+    colorHex: v.colorHex ?? "",
+    storage: v.storage ?? "",
+    ram: v.ram ?? "",
+    price: v.price != null ? String(v.price) : "",
+    salePrice: v.salePrice != null ? String(v.salePrice) : "",
+    image: v.image ?? "",
+    inStock: v.inStock,
+  }));
+  // Simple mode (colors × options) whenever the stored rows form a clean grid;
+  // otherwise fall back to row-by-row editing.
+  const initialSimple = decomposeVariants(initialVariants, product ? String(product.price) : "");
+  const [editorMode, setEditorMode] = useState<"simple" | "advanced">(
+    initialSimple ? "simple" : "advanced",
   );
+  const [colors, setColors] = useState<ColorDraft[]>(initialSimple?.colors ?? []);
+  const [configs, setConfigs] = useState<ConfigDraft[]>(initialSimple?.configs ?? []);
+  const [variants, setVariants] = useState<VariantDraft[]>(initialVariants);
 
   function buildPayload(): ProductPayload {
     const num = (s: string) => {
@@ -135,7 +243,7 @@ export default function ProductForm({
         }))
         .filter((g) => g.category && g.items.length > 0),
       suggestedIds,
-      variants: variants
+      variants: (editorMode === "simple" ? crossVariants(colors, configs) : variants)
         // Keep memory-only variants (no color) as long as they carry RAM/storage.
         .filter((v) => v.color.trim() || v.ram.trim() || v.storage.trim())
         .map((v) => ({
@@ -363,33 +471,163 @@ export default function ProductForm({
       </section>
 
       {/* Variants */}
+      {editorMode === "simple" ? (
+        <section className="space-y-5 rounded-2xl border border-stone-200 bg-white p-5">
+          <div className="flex items-center justify-between gap-2">
+            <div>
+              <h2 className="font-extrabold text-ink">Colors & Options</h2>
+              <p className="text-xs text-stone-400">
+                Enter each color once and each RAM/Storage option once — every combination is
+                created automatically on save.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setVariants(crossVariants(colors, configs));
+                setEditorMode("advanced");
+              }}
+              className="shrink-0 text-xs font-semibold text-stone-400 hover:text-ink"
+            >
+              Edit rows individually
+            </button>
+          </div>
+
+          {/* Colors */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold text-ink">Colors</h3>
+              <button
+                type="button"
+                onClick={() => setColors((p) => [...p, { color: "", colorHex: "", image: "" }])}
+                className="text-sm font-bold text-brand hover:underline"
+              >
+                + Add color
+              </button>
+            </div>
+            {colors.length === 0 && (
+              <p className="text-sm text-stone-400">No colors — the page shows no color swatches.</p>
+            )}
+            {colors.map((c, i) => (
+              <div key={i} className="flex items-center gap-2 rounded-xl border border-stone-100 bg-stone-50 p-2">
+                <input
+                  type="color"
+                  value={/^#[0-9a-fA-F]{6}$/.test(c.colorHex) ? c.colorHex : "#a8a29e"}
+                  onChange={(e) => setColors((p) => p.map((x, j) => (j === i ? { ...x, colorHex: e.target.value } : x)))}
+                  title="Pick swatch color"
+                  className="h-9 w-11 shrink-0 cursor-pointer rounded-lg border border-stone-200 bg-white p-0.5"
+                />
+                <input value={c.color} onChange={(e) => setColors((p) => p.map((x, j) => (j === i ? { ...x, color: e.target.value } : x)))} placeholder="Color name * (e.g. Midnight Black)" className={inputClass} />
+                <input value={c.image} onChange={(e) => setColors((p) => p.map((x, j) => (j === i ? { ...x, image: e.target.value } : x)))} placeholder="Image URL (optional)" className={inputClass} />
+                <button type="button" onClick={() => setColors((p) => p.filter((_, j) => j !== i))} className="shrink-0 text-sm font-semibold text-red-500 hover:underline">
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {/* RAM/Storage options */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold text-ink">RAM + Storage & Price</h3>
+              <button
+                type="button"
+                onClick={() =>
+                  setConfigs((prev) => {
+                    const last = prev[prev.length - 1];
+                    return [
+                      ...prev,
+                      last
+                        ? { ...last, price: "", salePrice: "" }
+                        : { ram: ram.trim(), storage: storage.trim(), price: "", salePrice: "", inStock: true },
+                    ];
+                  })
+                }
+                className="text-sm font-bold text-brand hover:underline"
+              >
+                + Add option
+              </button>
+            </div>
+            {configs.length === 0 && (
+              <p className="text-sm text-stone-400">No options — every color sells at the base price.</p>
+            )}
+            {configs.map((m, i) => (
+              <div key={i} className="grid gap-2 rounded-xl border border-stone-100 bg-stone-50 p-2 sm:grid-cols-5">
+                <input value={m.ram} onChange={(e) => setConfigs((p) => p.map((x, j) => (j === i ? { ...x, ram: e.target.value } : x)))} placeholder="RAM (e.g. 8GB)" className={inputClass} />
+                <input value={m.storage} onChange={(e) => setConfigs((p) => p.map((x, j) => (j === i ? { ...x, storage: e.target.value } : x)))} placeholder="Storage (e.g. 256GB)" className={inputClass} />
+                <input value={m.price} onChange={(e) => setConfigs((p) => p.map((x, j) => (j === i ? { ...x, price: e.target.value } : x)))} placeholder="Price (blank = base)" inputMode="numeric" className={inputClass} />
+                <input value={m.salePrice} onChange={(e) => setConfigs((p) => p.map((x, j) => (j === i ? { ...x, salePrice: e.target.value } : x)))} placeholder="Sale price" inputMode="numeric" className={inputClass} />
+                <div className="flex items-center justify-between gap-2">
+                  <label className="flex items-center gap-2 text-sm font-semibold text-ink">
+                    <input type="checkbox" checked={m.inStock} onChange={(e) => setConfigs((p) => p.map((x, j) => (j === i ? { ...x, inStock: e.target.checked } : x)))} className="h-4 w-4 accent-brand" />
+                    In stock
+                  </label>
+                  <button type="button" onClick={() => setConfigs((p) => p.filter((_, j) => j !== i))} className="text-sm font-semibold text-red-500 hover:underline">
+                    Remove
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <p className="text-xs font-semibold text-stone-500">
+            {(() => {
+              const nc = colors.filter((c) => c.color.trim()).length;
+              const nm = configs.filter((m) => m.ram.trim() || m.storage.trim()).length;
+              if (nc && nm) return `${nc} color${nc > 1 ? "s" : ""} × ${nm} option${nm > 1 ? "s" : ""} → ${nc * nm} variants will be saved.`;
+              if (nc) return `${nc} color-only variant${nc > 1 ? "s" : ""} will be saved.`;
+              if (nm) return `${nm} option variant${nm > 1 ? "s" : ""} will be saved.`;
+              return "No variants — the product sells as a single option.";
+            })()}
+          </p>
+        </section>
+      ) : (
       <section className="space-y-3 rounded-2xl border border-stone-200 bg-white p-5">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="font-extrabold text-ink">Color / Storage Variants</h2>
             <p className="text-xs text-stone-400">
-              New rows copy the previous one — usually you only change the color or storage.
+              Row-by-row editing (this product&apos;s variants don&apos;t form a simple colors ×
+              options grid, or you switched manually). New rows copy the previous one.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() =>
-              setVariants((prev) => {
-                // Prefill from the last variant (or the product's RAM/Storage)
-                // so adding one more color/storage is a one-field edit.
-                const last = prev[prev.length - 1];
-                return [
-                  ...prev,
-                  last
-                    ? { ...last, color: "", colorHex: "" }
-                    : { color: "", colorHex: "", storage: storage.trim(), ram: ram.trim(), price: "", salePrice: "", image: "", inStock: true },
-                ];
-              })
-            }
-            className="text-sm font-bold text-brand hover:underline"
-          >
-            + Add variant
-          </button>
+          <div className="flex shrink-0 items-center gap-3">
+            {decomposeVariants(variants, price) && (
+              <button
+                type="button"
+                onClick={() => {
+                  const d = decomposeVariants(variants, price);
+                  if (d) {
+                    setColors(d.colors);
+                    setConfigs(d.configs);
+                    setEditorMode("simple");
+                  }
+                }}
+                className="text-xs font-semibold text-stone-400 hover:text-ink"
+              >
+                Simple editor
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() =>
+                setVariants((prev) => {
+                  // Prefill from the last variant (or the product's RAM/Storage)
+                  // so adding one more color/storage is a one-field edit.
+                  const last = prev[prev.length - 1];
+                  return [
+                    ...prev,
+                    last
+                      ? { ...last, color: "", colorHex: "" }
+                      : { color: "", colorHex: "", storage: storage.trim(), ram: ram.trim(), price: "", salePrice: "", image: "", inStock: true },
+                  ];
+                })
+              }
+              className="text-sm font-bold text-brand hover:underline"
+            >
+              + Add variant
+            </button>
+          </div>
         </div>
         {variants.length === 0 && (
           <p className="text-sm text-stone-400">No variants — the product sells as a single option.</p>
@@ -433,6 +671,7 @@ export default function ProductForm({
           </div>
         ))}
       </section>
+      )}
 
       {/* Specs */}
       <section className="space-y-3 rounded-2xl border border-stone-200 bg-white p-5">
