@@ -29,7 +29,8 @@ export function toQuery(sp: SearchParams): CatalogQuery {
     ram: first(sp.ram) || undefined,
     storage: first(sp.storage) || undefined,
     condition: condition === "New" || condition === "Used" ? (condition as Condition) : undefined,
-    sort: sort === "price_asc" || sort === "price_desc" ? (sort as SortKey) : "newest",
+    // Cheapest first everywhere by default — shoppers here hunt by budget.
+    sort: sort === "newest" || sort === "price_desc" ? (sort as SortKey) : "price_asc",
     page: num(first(sp.page)) ?? 1,
   };
 }

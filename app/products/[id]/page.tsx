@@ -12,8 +12,10 @@ export const dynamicParams = true;
 
 export async function generateStaticParams() {
   try {
+    // Prebuild phones/tabs only — thousands of accessory pages would bloat
+    // the build; they render on first visit instead (dynamicParams).
     const products = await getAllProducts();
-    return products.map((p) => ({ id: p.id }));
+    return products.filter((p) => p.category !== "Accessories").map((p) => ({ id: p.id }));
   } catch {
     return [];
   }
@@ -56,7 +58,12 @@ export default async function ProductPage({ params }: Props) {
   // remains as the fallback when there's nothing to suggest.
   const suggested = await getSuggestedProducts(product);
   const related = suggested.length > 0 ? suggested : await getSimilarProducts(product);
-  const heading = suggested.length > 0 ? "Goes With This Device" : "Similar Phones";
+  const heading =
+    suggested.length > 0
+      ? "Goes With This Device"
+      : product.category === "Accessories"
+        ? "You May Also Like"
+        : "Similar Phones";
 
   return (
     <div className="space-y-10 py-6">

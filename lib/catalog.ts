@@ -132,22 +132,49 @@ export async function getProduct(id: string): Promise<Product | null> {
   return mapProduct(data);
 }
 
+/** Full catalog (sitemap, CSV export). Pages through PostgREST's 1000-row
+ * cap — a single un-ranged select silently truncates at 1000. */
 export async function getAllProducts(): Promise<Product[]> {
   if (!isSupabaseConfigured()) return seedProducts;
-  const { data, error } = await getSupabase()
-    .from("products")
-    .select("*, product_variants(*)")
-    .order("created_at", { ascending: false });
-  if (error) throw new Error(`Failed to load products: ${error.message}`);
-  return (data ?? []).map(mapProduct);
+  const supabase = getSupabase();
+  const all: Product[] = [];
+  const CHUNK = 1000;
+  for (let from = 0; ; from += CHUNK) {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*, product_variants(*)")
+      .order("created_at", { ascending: false })
+      .range(from, from + CHUNK - 1);
+    if (error) throw new Error(`Failed to load products: ${error.message}`);
+    all.push(...(data ?? []).map(mapProduct));
+    if (!data || data.length < CHUNK) return all;
+  }
 }
 
-/** Same brand first, then closest in price. */
+/**
+ * Same brand first, then closest in price — scoped to the product's own
+ * category (and subcategory for accessories) so a charger never suggests
+ * a phone, and without scanning the whole catalog.
+ */
 export async function getSimilarProducts(product: Product, limit = 4): Promise<Product[]> {
-  const all = await getAllProducts();
+  const scope = {
+    category: product.category,
+    subcategory: product.subcategory ?? undefined,
+  };
+  const [sameBrand, byCategory] = await Promise.all([
+    getProducts({ ...scope, brand: product.brand, perPage: limit + 1, sort: "price_asc" }),
+    getProducts({ ...scope, perPage: 60, sort: "price_asc" }),
+  ]);
   const price = effectivePrice(product);
-  return all
-    .filter((p) => p.id !== product.id)
+  const seen = new Set<string>([product.id]);
+  const pool: Product[] = [];
+  for (const p of [...sameBrand.products, ...byCategory.products]) {
+    if (!seen.has(p.id)) {
+      seen.add(p.id);
+      pool.push(p);
+    }
+  }
+  return pool
     .sort((a, b) => {
       const aBrand = a.brand === product.brand ? 0 : 1;
       const bBrand = b.brand === product.brand ? 0 : 1;
@@ -165,40 +192,56 @@ export async function getSimilarProducts(product: Product, limit = 4): Promise<P
  * themselves get no automatic suggestions (the page falls back to Similar).
  */
 export async function getSuggestedProducts(product: Product, limit = 4): Promise<Product[]> {
-  const all = await getAllProducts();
-  const byId = new Map(all.map((p) => [p.id, p]));
-
-  const picked = (product.suggestedIds ?? [])
-    .map((id) => byId.get(id))
-    .filter((p): p is Product => Boolean(p))
-    .filter((p) => p.id !== product.id && p.stockStatus === "in_stock");
-  if (picked.length > 0) return picked.slice(0, limit);
+  // Manual picks: fetch exactly those ids, keep the admin's order.
+  const ids = (product.suggestedIds ?? []).filter((id) => id !== product.id);
+  if (ids.length > 0) {
+    let candidates: Product[];
+    if (!isSupabaseConfigured()) {
+      candidates = seedProducts.filter((p) => ids.includes(p.id));
+    } else {
+      const { data } = await getSupabase()
+        .from("products")
+        .select("*, product_variants(*)")
+        .in("id", ids);
+      candidates = (data ?? []).map(mapProduct);
+    }
+    const byId = new Map(candidates.map((p) => [p.id, p]));
+    const picked = ids
+      .map((id) => byId.get(id))
+      .filter((p): p is Product => Boolean(p) && p!.stockStatus === "in_stock");
+    if (picked.length > 0) return picked.slice(0, limit);
+  }
 
   if (product.category === "Accessories") return [];
 
-  const rank = (p: Product) => {
-    if (p.subcategory === "Chargers") return p.brand === product.brand ? 0 : 1;
-    if (p.subcategory === "Sound") return p.subSubcategory === "Bluetooth" ? 2 : 3;
-    if (p.subcategory === "Gadgets") return 4;
-    return 5;
-  };
-  const accessories = all
-    .filter((p) => p.category === "Accessories" && p.stockStatus === "in_stock")
-    .sort((a, b) => rank(a) - rank(b));
+  // Automatic fallback: small scoped pools instead of scanning the catalog.
+  const pool = (query: Partial<CatalogQuery>) =>
+    getProducts({
+      category: "Accessories",
+      stock: "in_stock",
+      sort: "newest",
+      perPage: limit,
+      ...query,
+    }).then((r) => r.products);
+  const ranked = await Promise.all([
+    pool({ subcategory: "Chargers", brand: product.brand }),
+    pool({ subcategory: "Chargers" }),
+    pool({ subcategory: "Sound", subSubcategory: "Bluetooth" }),
+    pool({ subcategory: "Gadgets" }),
+  ]);
 
   // Cap 2 per subcategory so the strip is a mix, not four chargers.
   const out: Product[] = [];
+  const seen = new Set<string>([product.id]);
   const perSub = new Map<string, number>();
-  for (const p of accessories) {
+  for (const p of ranked.flat()) {
+    if (seen.has(p.id)) continue;
+    seen.add(p.id);
     const n = perSub.get(p.subcategory ?? "") ?? 0;
     if (n >= 2) continue;
     perSub.set(p.subcategory ?? "", n + 1);
     out.push(p);
-    if (out.length === limit) return out;
-  }
-  for (const p of accessories) {
     if (out.length === limit) break;
-    if (!out.includes(p)) out.push(p);
   }
   return out;
 }
@@ -304,7 +347,8 @@ export interface BrandRow {
 export async function getBrandRows(category: Category, perBrand = 24): Promise<BrandRow[]> {
   const [brands, all] = await Promise.all([
     getBrands(),
-    getProducts({ category, perPage: 500, sort: "newest" }),
+    // Cheapest first inside each brand block, matching the grid pages.
+    getProducts({ category, perPage: 500, sort: "price_asc" }),
   ]);
   // Group case-insensitively so a stray "Samsung" still lands in SAMSUNG's row.
   const byBrand = new Map<string, Product[]>();

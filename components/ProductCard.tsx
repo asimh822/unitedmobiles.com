@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import PriceTag from "@/components/PriceTag";
-import { formatPrice } from "@/lib/format";
+import { formatGb, formatPrice } from "@/lib/format";
 import { isOnSale, startingPrice, type Product } from "@/lib/types";
 
 /**
@@ -60,7 +60,7 @@ export default function ProductCard({ product }: { product: Product }) {
         <h3 className="line-clamp-2 text-sm font-semibold text-ink sm:text-base">{product.model}</h3>
         {(product.ram || product.storage) && (
           <p className="text-xs text-stone-500">
-            {[product.ram, product.storage].filter(Boolean).join(" · ")}
+            {[product.ram, product.storage].filter((v): v is string => Boolean(v)).map(formatGb).join(" · ")}
           </p>
         )}
         <div className="mt-auto pt-1">

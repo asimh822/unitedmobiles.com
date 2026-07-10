@@ -14,9 +14,9 @@ const PRICE_RANGES = [
 ];
 
 const SORTS = [
-  { label: "Newest", value: "newest" },
   { label: "Price: Low to High", value: "price_asc" },
   { label: "Price: High to Low", value: "price_desc" },
+  { label: "Newest", value: "newest" },
 ];
 
 interface FilterBarProps {
@@ -182,8 +182,8 @@ export default function FilterBar({
           <select
             aria-label="Sort"
             className={selectClass}
-            value={params.get("sort") ?? "newest"}
-            onChange={(e) => apply({ sort: e.target.value === "newest" ? "" : e.target.value })}
+            value={params.get("sort") ?? "price_asc"}
+            onChange={(e) => apply({ sort: e.target.value === "price_asc" ? "" : e.target.value })}
           >
             {SORTS.map((s) => (
               <option key={s.value} value={s.value}>{s.label}</option>

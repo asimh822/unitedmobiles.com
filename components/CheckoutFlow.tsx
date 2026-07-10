@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { formatPrice } from "@/lib/format";
+import { formatGb, formatPrice } from "@/lib/format";
 import { buildOrderLink } from "@/lib/whatsapp";
 import { effectivePrice, type Product, type Variant } from "@/lib/types";
 
@@ -27,7 +27,9 @@ export default function CheckoutFlow({ product, variant, addons = [] }: Props) {
 
   const price = effectivePrice(product, variant);
   const color = variant?.color || "Standard";
-  const combo = variant ? [variant.ram, variant.storage].filter(Boolean).join(" + ") : "";
+  const combo = variant
+    ? [variant.ram, variant.storage].filter((v): v is string => Boolean(v)).map(formatGb).join(" + ")
+    : "";
   const image = variant?.image ?? product.images[0];
 
   const selectedAddons = addons.filter((a) => addonIds.includes(a.id));

@@ -1,4 +1,5 @@
 import type { Category } from "@/lib/categories";
+import { formatGb } from "@/lib/format";
 
 export type Condition = "New" | "Used";
 export type StockStatus = "in_stock" | "out_of_stock";
@@ -137,7 +138,7 @@ export function ramRomCombos(p: Product): RamRomCombo[] {
       seen.set(key, {
         ram: v.ram,
         storage: v.storage,
-        label: [v.ram, v.storage].filter(Boolean).join(" + "),
+        label: [v.ram, v.storage].filter((x): x is string => Boolean(x)).map(formatGb).join(" + "),
       });
     }
   }

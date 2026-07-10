@@ -1,3 +1,4 @@
+import { isPhoneLike } from "@/lib/categories";
 import type { Product } from "@/lib/types";
 
 function Badge({ children, tone }: { children: React.ReactNode; tone: "turq" | "gold" | "slate" }) {
@@ -16,13 +17,17 @@ function Badge({ children, tone }: { children: React.ReactNode; tone: "turq" | "
 }
 
 export default function TrustBadges({ product }: { product: Product }) {
+  const phoneLike = isPhoneLike(product.category);
   return (
     <div className="flex flex-wrap gap-2">
       {product.ptaApproved && <Badge tone="turq">✓ PTA Approved</Badge>}
       {product.warranty && <Badge tone="turq">🛡 {product.warranty}</Badge>}
-      {/* Generic by design — never name a specific bank/vendor. */}
-      <Badge tone="gold">💳 Easy Installments Available</Badge>
-      <Badge tone="slate">{product.condition === "New" ? "Brand New" : "Pre-Owned"}</Badge>
+      {/* Phones/tabs only — installment talk on a Rs. 500 cable reads silly.
+          Generic by design — never name a specific bank/vendor. */}
+      {phoneLike && <Badge tone="gold">💳 Easy Installments Available</Badge>}
+      {phoneLike && (
+        <Badge tone="slate">{product.condition === "New" ? "Brand New" : "Pre-Owned"}</Badge>
+      )}
     </div>
   );
 }
