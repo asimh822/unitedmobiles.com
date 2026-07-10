@@ -70,6 +70,7 @@ export interface CatalogQuery {
   ram?: string;
   storage?: string;
   condition?: Condition;
+  stock?: StockStatus;
   sort?: SortKey;
   page?: number;
   perPage?: number;

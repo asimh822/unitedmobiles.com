@@ -78,8 +78,9 @@ export async function getProducts(query: CatalogQuery): Promise<CatalogResult> {
     .select("*, product_variants(*)", { count: "exact" });
 
   if (query.q) {
-    const term = query.q.trim().replace(/[%_]/g, "");
-    q = q.or(`brand.ilike.%${term}%,model.ilike.%${term}%`);
+    // Strip ILIKE wildcards and PostgREST .or() syntax characters.
+    const term = query.q.trim().replace(/[%_,()]/g, " ").trim();
+    if (term) q = q.or(`brand.ilike.%${term}%,model.ilike.%${term}%`);
   }
   if (query.category) q = q.eq("category", query.category);
   if (query.subcategory) q = q.eq("subcategory", query.subcategory);
@@ -88,6 +89,7 @@ export async function getProducts(query: CatalogQuery): Promise<CatalogResult> {
   if (query.ram) q = q.eq("ram", query.ram);
   if (query.storage) q = q.eq("storage", query.storage);
   if (query.condition) q = q.eq("condition", query.condition);
+  if (query.stock) q = q.eq("stock_status", query.stock);
   if (query.minPrice != null) q = q.gte("effective_price", query.minPrice);
   if (query.maxPrice != null) q = q.lte("effective_price", query.maxPrice);
 
@@ -273,6 +275,7 @@ function querySeed(query: CatalogQuery, page: number, perPage: number): CatalogR
   if (query.ram) list = list.filter((p) => p.ram === query.ram);
   if (query.storage) list = list.filter((p) => p.storage === query.storage);
   if (query.condition) list = list.filter((p) => p.condition === query.condition);
+  if (query.stock) list = list.filter((p) => p.stockStatus === query.stock);
   if (query.minPrice != null) list = list.filter((p) => effectivePrice(p) >= query.minPrice!);
   if (query.maxPrice != null) list = list.filter((p) => effectivePrice(p) <= query.maxPrice!);
 
