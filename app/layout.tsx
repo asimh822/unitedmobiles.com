@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className="min-h-screen antialiased">
         {/* Single-row header: logo top-left, category menu beside it. */}
-        <header className="sticky top-0 z-40 border-b border-stone-200 bg-cream/95 backdrop-blur">
+        <header className="sticky top-0 z-40 border-b border-stone-200 bg-cream/95 backdrop-blur relative">
           <div className="mx-auto flex max-w-6xl items-center gap-2 px-4 py-2 sm:gap-4">
             <Link href="/" className="shrink-0" aria-label="United Mobiles — home">
               <Image
