@@ -51,6 +51,7 @@ export default async function AccessoriesPage({ params, searchParams }: Props) {
       searchParams={sp}
       showRamStorage={false}
       showCondition={false}
+      dense
     />
   );
 }

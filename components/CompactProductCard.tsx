@@ -4,7 +4,13 @@ import { formatPrice } from "@/lib/format";
 import { startingPrice, type Product } from "@/lib/types";
 
 /** Brand-row card: image, model name, price only — compact, half-size. */
-export default function CompactProductCard({ product }: { product: Product }) {
+export default function CompactProductCard({
+  product,
+  sizes = "(max-width: 640px) 20vw, (max-width: 1024px) 12vw, 7vw",
+}: {
+  product: Product;
+  sizes?: string;
+}) {
   const { price, multiple } = startingPrice(product);
   const image = product.images[0];
 
@@ -19,7 +25,7 @@ export default function CompactProductCard({ product }: { product: Product }) {
             src={image}
             alt={`${product.brand} ${product.model}`}
             fill
-            sizes="(max-width: 640px) 20vw, (max-width: 1024px) 12vw, 7vw"
+            sizes={sizes}
             className="object-contain p-1 transition-transform duration-300 group-hover:scale-[1.04]"
           />
         ) : (
