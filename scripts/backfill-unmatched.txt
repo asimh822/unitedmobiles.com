@@ -1,0 +1,27 @@
+KeyPad Phones: NOKIA N 110
+KeyPad Phones: NOKIA 105 CLASSI
+KeyPad Phones: DIGIT C2 2.0
+KeyPad Phones: NOKIA N106
+KeyPad Phones: NOKIA 105 PURE
+KeyPad Phones: DIGIT D1 2.4
+KeyPad Phones: VOICE THUNDER
+KeyPad Phones: ITEL M450
+KeyPad Phones: ITEL 2166IT
+KeyPad Phones: Q MOBILE Q6303
+KeyPad Phones: VOICE V GLOW
+KeyPad Phones: VOICE V BOLD
+KeyPad Phones: SEGO V101 SG
+KeyPad Phones: NOKIA N230
+KeyPad Phones: VOICE FLEXI V
+KeyPad Phones: NOKIA 150 MUSIC
+New Phones: ZTE A36
+New Phones: ZTE V60D
+KeyPad Phones: ITEL MAGIC4
+New Phones: SAMSUNG A77
+New Phones: SAMSUNG A27
+New Phones: SAMSUNG A37
+New Phones: REALME 60X
+Tabs: TABS VISTA
+Used: OPPO O 11F
+Used: INFINIX I S8 PRO
+Used: OPPO O 13F
