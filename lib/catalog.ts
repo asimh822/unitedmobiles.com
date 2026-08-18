@@ -11,7 +11,7 @@ import type {
   Variant,
 } from "@/lib/types";
 import { effectivePrice } from "@/lib/types";
-import type { Category } from "@/lib/categories";
+import { ACCESSORIES_ENABLED, type Category } from "@/lib/categories";
 
 export const PER_PAGE = 12;
 
@@ -192,6 +192,8 @@ export async function getSimilarProducts(product: Product, limit = 4): Promise<P
  * themselves get no automatic suggestions (the page falls back to Similar).
  */
 export async function getSuggestedProducts(product: Product, limit = 4): Promise<Product[]> {
+  // Suggestions are all accessories — nothing to show while the section is hidden.
+  if (!ACCESSORIES_ENABLED) return [];
   // Manual picks: fetch exactly those ids, keep the admin's order.
   const ids = (product.suggestedIds ?? []).filter((id) => id !== product.id);
   if (ids.length > 0) {

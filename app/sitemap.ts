@@ -1,9 +1,15 @@
 import type { MetadataRoute } from "next";
 import { getAllProducts, getBrands } from "@/lib/catalog";
-import { slugify } from "@/lib/categories";
+import { ACCESSORIES_ENABLED, slugify } from "@/lib/categories";
 import { SITE_URL } from "@/lib/site";
 
-const CATEGORY_PATHS = ["/new-phones", "/used", "/keypad-phones", "/tabs", "/accessories"];
+const CATEGORY_PATHS = [
+  "/new-phones",
+  "/used",
+  "/keypad-phones",
+  "/tabs",
+  ...(ACCESSORIES_ENABLED ? ["/accessories"] : []),
+];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let products: Awaited<ReturnType<typeof getAllProducts>> = [];
@@ -30,7 +36,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly" as const,
       priority: 0.7,
     })),
-    ...products.map((p) => ({
+    ...products
+      .filter((p) => ACCESSORIES_ENABLED || p.category !== "Accessories")
+      .map((p) => ({
       url: `${SITE_URL}/products/${p.id}`,
       lastModified: new Date(p.createdAt),
       changeFrequency: "weekly" as const,

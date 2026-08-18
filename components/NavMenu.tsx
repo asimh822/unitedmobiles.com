@@ -1,6 +1,11 @@
 import Link from "next/link";
 import AutoCloseDetails from "@/components/AutoCloseDetails";
-import { ACCESSORY_SUBCATEGORIES, SOUND_SUBCATEGORIES, categoryPath } from "@/lib/categories";
+import {
+  ACCESSORIES_ENABLED,
+  ACCESSORY_SUBCATEGORIES,
+  SOUND_SUBCATEGORIES,
+  categoryPath,
+} from "@/lib/categories";
 
 const TOP_ITEMS = [
   { label: "New Phones", href: "/new-phones" },
@@ -35,6 +40,7 @@ export default function NavMenu() {
         </Link>
       ))}
 
+      {ACCESSORIES_ENABLED && (
       <AutoCloseDetails className="group shrink-0">
         <summary className="flex cursor-pointer list-none items-center gap-1 whitespace-nowrap rounded-lg px-2.5 py-2 text-ink hover:bg-brand/5 hover:text-brand group-open:bg-brand/5 group-open:text-brand sm:px-3 [&::-webkit-details-marker]:hidden">
           Accessories
@@ -69,6 +75,7 @@ export default function NavMenu() {
           </div>
         </div>
       </AutoCloseDetails>
+      )}
     </nav>
   );
 }

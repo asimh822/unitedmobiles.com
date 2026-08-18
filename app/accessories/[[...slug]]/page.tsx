@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import CatalogBrowser, { type SearchParams } from "@/components/CatalogBrowser";
 import {
+  ACCESSORIES_ENABLED,
   ACCESSORY_SUBCATEGORIES,
   SOUND_SUBCATEGORIES,
   slugify,
@@ -34,6 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function AccessoriesPage({ params, searchParams }: Props) {
   const [{ slug }, sp] = await Promise.all([params, searchParams]);
+  if (!ACCESSORIES_ENABLED) notFound();
   const resolved = resolve(slug);
   if (!resolved) notFound();
 

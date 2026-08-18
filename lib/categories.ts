@@ -1,4 +1,9 @@
 export const CATEGORIES = ["New Phones", "Used", "KeyPad Phones", "Tabs", "Accessories"] as const;
+
+/** Temporarily hides the Accessories section storefront-wide (nav, /accessories
+ * pages, suggestion strips, sitemap). Admin still manages accessory products.
+ * Flip to true to bring the section back. */
+export const ACCESSORIES_ENABLED = false;
 export type Category = (typeof CATEGORIES)[number];
 
 export const ACCESSORY_SUBCATEGORIES = ["Chargers", "Watches", "Gadgets", "Sound"] as const;
