@@ -40,6 +40,8 @@ const BRAND_ALIASES = {
   xiaomi: "MI",
   mi: "MI",
   qmobile: "Q MOBILE",
+  hmd: "NOKIA", // HMD is the Nokia successor; the shop files these under NOKIA
+
   "e-tachi": "E TACHI",
   etachi: "E TACHI",
   jbl: "JBL",
@@ -60,7 +62,8 @@ function norm(model, brand) {
     if (w) s = s.replaceAll(` ${w} `, " ");
   }
   for (const [re, rep] of EXPANSIONS) s = s.replace(re, rep);
-  return s.replace(/[^a-z0-9]/g, "");
+  // "+" means "Plus" ("X5C+" vs "X5c Plus" are the same phone)
+  return s.replace(/\+/g, "plus").replace(/[^a-z0-9]/g, "");
 }
 function sameModel(a, b) {
   if (!a || !b) return false;
@@ -175,15 +178,30 @@ for (const f of readdirSync(dir).filter((f) => f.startsWith("po-") && f.endsWith
 }
 console.log(`loaded ${items.length} crawled products`);
 
-const { data: existing } = await supabase.from("products").select("id, brand, model, category");
+// Page through all rows — a single select is capped at 1000 by PostgREST,
+// which would silently truncate the dedupe index.
+const existing = [];
+for (let from = 0; ; from += 1000) {
+  const { data, error } = await supabase
+    .from("products")
+    .select("id, brand, model, category")
+    .order("id")
+    .range(from, from + 999);
+  if (error) { console.error(error.message); process.exit(1); }
+  existing.push(...data);
+  if (data.length < 1000) break;
+}
 const { data: brandRows } = await supabase.from("brands").select("id, name");
 const brandByLower = new Map(brandRows.map((b) => [b.name.toLowerCase(), b.name]));
 
-const existingNorms = new Map(); // category -> [{norm, label}]
+// brand|category -> [{norm, label}] — brand-scoped so e.g. a ZTE "A36" can't
+// swallow the Samsung Galaxy A36 as a duplicate.
+const existingNorms = new Map();
 for (const p of existing) {
-  const list = existingNorms.get(p.category) ?? [];
+  const key = `${p.brand.toLowerCase()}|${p.category}`;
+  const list = existingNorms.get(key) ?? [];
   list.push({ norm: norm(p.model, p.brand), label: `${p.brand} ${p.model}` });
-  existingNorms.set(p.category, list);
+  existingNorms.set(key, list);
 }
 
 async function canonicalBrand(name) {
@@ -223,7 +241,7 @@ for (const item of items) {
   if (seen.has(seenKey)) { deduped++; continue; }
   seen.add(seenKey);
 
-  const clash = (existingNorms.get(category) ?? []).find((e) => sameModel(e.norm, n));
+  const clash = (existingNorms.get(`${brand.toLowerCase()}|${category}`) ?? []).find((e) => sameModel(e.norm, n));
   if (clash) { deduped++; skippedDupes.push(`${item.title} == ${clash.label}`); continue; }
 
   // Variants: in-stock color x size combos, crawl (color-major) order.
