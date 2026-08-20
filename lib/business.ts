@@ -19,7 +19,7 @@ export const BUSINESS_ADDRESS = {
   country: "PK",
 } as const;
 
-/** Shop opens 11:00 and closes 21:00, Saturday through Thursday. Closed Friday. */
+/** Shop opens 10:30 and closes 21:00, Saturday through Thursday. Closed Friday. Matches the Google Business Profile (confirmed 20 Aug 2026). */
 export const OPENING_DAYS = [
   "Saturday",
   "Sunday",
@@ -29,5 +29,5 @@ export const OPENING_DAYS = [
   "Thursday",
 ] as const;
 
-export const OPENS = "11:00";
+export const OPENS = "10:30";
 export const CLOSES = "21:00";
