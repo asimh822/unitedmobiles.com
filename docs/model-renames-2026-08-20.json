@@ -1,0 +1,485 @@
+[
+ {
+  "id": "bb247314-c999-4009-a373-5747bf53ba2c",
+  "brand": "NOKIA",
+  "category": "KeyPad Phones",
+  "old": "N106",
+  "new": "106"
+ },
+ {
+  "id": "a6c8084e-2542-4b91-b011-9ae1bdcd8ca0",
+  "brand": "SAMSUNG",
+  "category": "New Phones",
+  "old": "A27",
+  "new": "Galaxy A27"
+ },
+ {
+  "id": "e897a946-8a4f-4399-b415-ebee58d65e14",
+  "brand": "NOKIA",
+  "category": "KeyPad Phones",
+  "old": "N 110",
+  "new": "110"
+ },
+ {
+  "id": "4693607d-f60e-47a3-99b3-1f2d6f97bef4",
+  "brand": "NOKIA",
+  "category": "KeyPad Phones",
+  "old": "N230",
+  "new": "230"
+ },
+ {
+  "id": "2c553220-875d-4fb5-aa5a-e0cc9964846e",
+  "brand": "SAMSUNG",
+  "category": "New Phones",
+  "old": "A37",
+  "new": "Galaxy A37"
+ },
+ {
+  "id": "8348df94-a02e-4bde-8fd2-433edaeec684",
+  "brand": "VIVO",
+  "category": "Used",
+  "old": "V Y17S",
+  "new": "Y17s"
+ },
+ {
+  "id": "2ac9a302-dba2-4b3f-974c-d6cefc735ee5",
+  "brand": "MI",
+  "category": "Used",
+  "old": "R 12C",
+  "new": "Redmi 12C"
+ },
+ {
+  "id": "1e85bbf6-ac12-49f4-9378-d6cd585f658d",
+  "brand": "SAMSUNG",
+  "category": "New Phones",
+  "old": "A57",
+  "new": "Galaxy A57"
+ },
+ {
+  "id": "23e742b0-1163-4492-874d-c74d1322c72d",
+  "brand": "SAMSUNG",
+  "category": "New Phones",
+  "old": "A77",
+  "new": "Galaxy A77"
+ },
+ {
+  "id": "55ad3f0f-964e-4d89-bd24-b2d4d7541f7b",
+  "brand": "MI",
+  "category": "Used",
+  "old": "R 14C",
+  "new": "Redmi 14C"
+ },
+ {
+  "id": "60336798-b07d-4165-a8d0-53b5dfbd59f4",
+  "brand": "INFINIX",
+  "category": "New Phones",
+  "old": "SM20",
+  "new": "Smart 20"
+ },
+ {
+  "id": "35b78fe9-bc04-4b96-a583-a7999f4c4aa8",
+  "brand": "SAMSUNG",
+  "category": "Used",
+  "old": "S A04",
+  "new": "Galaxy A04"
+ },
+ {
+  "id": "7c8bc975-16fd-4377-ad1b-6e9e09988e7f",
+  "brand": "INFINIX",
+  "category": "Used",
+  "old": "I S8 PRO",
+  "new": "Smart 8 Pro"
+ },
+ {
+  "id": "8d24b09a-a071-4b0d-bd9c-c222d6845dca",
+  "brand": "OPPO",
+  "category": "Used",
+  "old": "O A6K",
+  "new": "A6K"
+ },
+ {
+  "id": "215d4c0f-9aa4-445a-930b-99ff4d0030bd",
+  "brand": "TECNO",
+  "category": "New Phones",
+  "old": "CAM50",
+  "new": "Camon 50"
+ },
+ {
+  "id": "3f372f8c-58af-41d2-a969-603367d99696",
+  "brand": "SAMSUNG",
+  "category": "New Phones",
+  "old": "Z Flip 6",
+  "new": "Galaxy Z Flip 6"
+ },
+ {
+  "id": "6bdb6e52-8da3-43a2-9464-01b502dcebfa",
+  "brand": "Apple",
+  "category": "New Phones",
+  "old": "Iphone 17 Air",
+  "new": "iPhone 17 Air"
+ },
+ {
+  "id": "f3be3075-12f3-4343-af3d-4b6c59559dae",
+  "brand": "Apple",
+  "category": "New Phones",
+  "old": "Iphone 17",
+  "new": "iPhone 17"
+ },
+ {
+  "id": "68046d52-2cc6-42b4-bc59-1d84394a39ab",
+  "brand": "NOKIA",
+  "category": "KeyPad Phones",
+  "old": "N5310",
+  "new": "5310"
+ },
+ {
+  "id": "8b8ea34a-4ef2-4066-93f5-a0542f6e5b5b",
+  "brand": "INFINIX",
+  "category": "New Phones",
+  "old": "HT60I",
+  "new": "Hot 60i"
+ },
+ {
+  "id": "a49d6e53-a73f-4de7-8ade-e17842c63f19",
+  "brand": "INFINIX",
+  "category": "New Phones",
+  "old": "HT60 PRO",
+  "new": "Hot 60 Pro"
+ },
+ {
+  "id": "0c4f7d6c-c1a4-4033-a36b-335524377657",
+  "brand": "TECNO",
+  "category": "New Phones",
+  "old": "SP40 PRO",
+  "new": "Spark 40 Pro"
+ },
+ {
+  "id": "aa14c1cf-918d-41b2-b874-689e675cd586",
+  "brand": "TECNO",
+  "category": "New Phones",
+  "old": "SP40 PRO+",
+  "new": "Spark 40 Pro+"
+ },
+ {
+  "id": "c778aee2-7721-4a33-8fa8-7de788cd78c9",
+  "brand": "REALME",
+  "category": "Used",
+  "old": "RL C85",
+  "new": "C85"
+ },
+ {
+  "id": "dacc192c-1991-4f23-8f46-7b9ae11ce6ee",
+  "brand": "OPPO",
+  "category": "New Phones",
+  "old": "A6S PRO",
+  "new": "A6s Pro"
+ },
+ {
+  "id": "730724fa-09c0-4ced-8fd3-3e4f6bfdf789",
+  "brand": "SAMSUNG",
+  "category": "Used",
+  "old": "S A25",
+  "new": "Galaxy A25"
+ },
+ {
+  "id": "60ba3a3b-9879-4e68-92dc-c98a11601eb4",
+  "brand": "SAMSUNG",
+  "category": "New Phones",
+  "old": "A07",
+  "new": "Galaxy A07"
+ },
+ {
+  "id": "89829650-9286-45b8-bcee-53ed3f191b81",
+  "brand": "TECNO",
+  "category": "New Phones",
+  "old": "SP50",
+  "new": "Spark 50"
+ },
+ {
+  "id": "b5658c9f-37dc-4842-92e2-387818f2ffb0",
+  "brand": "SAMSUNG",
+  "category": "Used",
+  "old": "S A07",
+  "new": "Galaxy A07"
+ },
+ {
+  "id": "b476de4e-0f3b-4bd1-9254-1a385ec6e48c",
+  "brand": "REALME",
+  "category": "Used",
+  "old": "R C65",
+  "new": "C65"
+ },
+ {
+  "id": "2b23af1a-76ee-4abc-943a-483a410bddf9",
+  "brand": "INFINIX",
+  "category": "New Phones",
+  "old": "NT60",
+  "new": "Note 60"
+ },
+ {
+  "id": "d33ae34d-1e75-46dd-b005-ff8fbf9897aa",
+  "brand": "VIVO",
+  "category": "Used",
+  "old": "V Y31D",
+  "new": "Y31d"
+ },
+ {
+  "id": "c78d9acc-45c9-435b-91cb-40c4d1293b7a",
+  "brand": "SAMSUNG",
+  "category": "Used",
+  "old": "S A15",
+  "new": "Galaxy A15"
+ },
+ {
+  "id": "a34f7f8d-1cf7-4232-9417-4ec29289813f",
+  "brand": "INFINIX",
+  "category": "Used",
+  "old": "I NT30",
+  "new": "Note 30"
+ },
+ {
+  "id": "dddb8150-20e8-4067-af63-89e564a7de5a",
+  "brand": "REALME",
+  "category": "Used",
+  "old": "R C51",
+  "new": "C51"
+ },
+ {
+  "id": "cd815eb7-dac3-44cc-a5a3-587ca0396b1a",
+  "brand": "OPPO",
+  "category": "Used",
+  "old": "O A6 PRO",
+  "new": "A6 Pro"
+ },
+ {
+  "id": "c825a705-182d-4284-a2e2-1772cec846a2",
+  "brand": "INFINIX",
+  "category": "Used",
+  "old": "I NT40 PRO",
+  "new": "Note 40 Pro"
+ },
+ {
+  "id": "08f49b45-cbac-4df5-a57e-6b3b3b5b8f39",
+  "brand": "VIVO",
+  "category": "Used",
+  "old": "V V50LITE",
+  "new": "V50 Lite"
+ },
+ {
+  "id": "9050252a-c1da-4d09-8b45-2aa8db56cd40",
+  "brand": "VIVO",
+  "category": "Used",
+  "old": "V V60 LITE",
+  "new": "V60 Lite"
+ },
+ {
+  "id": "0d9a7b01-81d6-49f8-b67d-23fc06d2496b",
+  "brand": "SAMSUNG",
+  "category": "Used",
+  "old": "S A16 U",
+  "new": "Galaxy A16 U"
+ },
+ {
+  "id": "f96a9d3b-a2cd-4a82-8675-72f56e6b02ac",
+  "brand": "SAMSUNG",
+  "category": "Used",
+  "old": "S A33",
+  "new": "Galaxy A33"
+ },
+ {
+  "id": "8641f4ad-7488-487a-8e43-2ac917e0ae4e",
+  "brand": "MI",
+  "category": "Used",
+  "old": "R A3",
+  "new": "Redmi A3"
+ },
+ {
+  "id": "3e67a440-6043-4c2f-a0cc-72c33aa436c0",
+  "brand": "SAMSUNG",
+  "category": "Used",
+  "old": "S A73",
+  "new": "Galaxy A73"
+ },
+ {
+  "id": "6540b590-6cb9-45c1-a362-05c25a310290",
+  "brand": "VIVO",
+  "category": "Used",
+  "old": "V Y400",
+  "new": "Y400"
+ },
+ {
+  "id": "b8ef7d07-520b-480a-8480-d9f9aa92b4e4",
+  "brand": "TECNO",
+  "category": "Used",
+  "old": "T CAM40",
+  "new": "Camon 40"
+ },
+ {
+  "id": "158ef5e7-08aa-4f35-bb69-38f9f5d9be25",
+  "brand": "OPPO",
+  "category": "Used",
+  "old": "O A5 PRO",
+  "new": "A5 Pro"
+ },
+ {
+  "id": "853ec992-b5b4-4b33-8c7d-7738667e1f5c",
+  "brand": "REALME",
+  "category": "Used",
+  "old": "R NT50",
+  "new": "Note 50"
+ },
+ {
+  "id": "296eef38-282f-4609-8e56-7cbcc453987d",
+  "brand": "NOKIA",
+  "category": "KeyPad Phones",
+  "old": "130MUSIC",
+  "new": "130 Music"
+ },
+ {
+  "id": "f9f88c62-6b2e-40a2-a5de-aa59ca8a4820",
+  "brand": "REALME",
+  "category": "New Phones",
+  "old": "NT70",
+  "new": "Note 70"
+ },
+ {
+  "id": "5545263f-9b5c-40bf-87d7-25dd10ed9280",
+  "brand": "TECNO",
+  "category": "New Phones",
+  "old": "CAM50 PRO",
+  "new": "Camon 50 Pro"
+ },
+ {
+  "id": "8a2cffb5-be54-4946-84a6-0ead5654c289",
+  "brand": "Apple",
+  "category": "New Phones",
+  "old": "Iphone 17 Pro Max",
+  "new": "iPhone 17 Pro Max"
+ },
+ {
+  "id": "45dbf3fb-4c8f-4886-95f5-3016937c26f8",
+  "brand": "SAMSUNG",
+  "category": "New Phones",
+  "old": "A56 5G",
+  "new": "Galaxy A56 5G"
+ },
+ {
+  "id": "af95855e-1738-4ee3-9586-e725525b2810",
+  "brand": "SAMSUNG",
+  "category": "New Phones",
+  "old": "S25 Ultra (12GB-256GB)",
+  "new": "Galaxy S25 Ultra (12GB-256GB)"
+ },
+ {
+  "id": "62e9e3d2-913f-4fb8-b5e8-63adb1b099b8",
+  "brand": "SAMSUNG",
+  "category": "New Phones",
+  "old": "S26 Ultra",
+  "new": "Galaxy S26 Ultra"
+ },
+ {
+  "id": "9027566c-621c-4c5e-87c2-6be5068f346e",
+  "brand": "OPPO",
+  "category": "New Phones",
+  "old": "RENO15F",
+  "new": "Reno 15F"
+ },
+ {
+  "id": "e1e112ef-4279-4f8d-b21f-2682a4919696",
+  "brand": "Apple",
+  "category": "New Phones",
+  "old": "Iphone 17e",
+  "new": "iPhone 17e"
+ },
+ {
+  "id": "e66a05c8-75a4-4f3e-b7a4-cf7b055d7b85",
+  "brand": "SAMSUNG",
+  "category": "New Phones",
+  "old": "A36 5G",
+  "new": "Galaxy A36 5G"
+ },
+ {
+  "id": "277d7202-84c5-44df-a1a1-b353e1f2f10d",
+  "brand": "SAMSUNG",
+  "category": "New Phones",
+  "old": "S26 Plus",
+  "new": "Galaxy S26 Plus"
+ },
+ {
+  "id": "8dfbc147-ae12-4314-99f1-fc2c4b7258a4",
+  "brand": "SAMSUNG",
+  "category": "New Phones",
+  "old": "Z Fold 5",
+  "new": "Galaxy Z Fold 5"
+ },
+ {
+  "id": "78cb1c95-637d-4ddb-ae6d-a197fbda6cc2",
+  "brand": "SAMSUNG",
+  "category": "New Phones",
+  "old": "Z Flip 5",
+  "new": "Galaxy Z Flip 5"
+ },
+ {
+  "id": "50366ce2-dbaa-4a12-87b1-55e06b23dd06",
+  "brand": "SAMSUNG",
+  "category": "New Phones",
+  "old": "Z Fold 6",
+  "new": "Galaxy Z Fold 6"
+ },
+ {
+  "id": "81f44a7e-2ae3-4c2c-8b69-ba2f95a4818b",
+  "brand": "SAMSUNG",
+  "category": "New Phones",
+  "old": "S24 Ultra",
+  "new": "Galaxy S24 Ultra"
+ },
+ {
+  "id": "f3b74309-3ead-4313-a002-7e182c24f7a2",
+  "brand": "Apple",
+  "category": "New Phones",
+  "old": "Iphone 17 Pro",
+  "new": "iPhone 17 Pro"
+ },
+ {
+  "id": "c90ef99f-caf6-46c8-b912-ea76bfbf0138",
+  "brand": "SAMSUNG",
+  "category": "New Phones",
+  "old": "Z Fold 4",
+  "new": "Galaxy Z Fold 4"
+ },
+ {
+  "id": "a3eda76b-07d2-4c5d-9500-7c82a438ec8c",
+  "brand": "SAMSUNG",
+  "category": "New Phones",
+  "old": "S24 Ultra (12GB-1TB)",
+  "new": "Galaxy S24 Ultra (12GB-1TB)"
+ },
+ {
+  "id": "b03344ae-6d27-4295-b5f1-283cf9aef6c9",
+  "brand": "SAMSUNG",
+  "category": "New Phones",
+  "old": "S26",
+  "new": "Galaxy S26"
+ },
+ {
+  "id": "cf0d3063-8bb4-4878-a0f6-55ebb0b6ea26",
+  "brand": "SAMSUNG",
+  "category": "New Phones",
+  "old": "S23 Ultra",
+  "new": "Galaxy S23 Ultra"
+ },
+ {
+  "id": "25a867f1-fe09-408e-b7d0-efa47dc1485f",
+  "brand": "SAMSUNG",
+  "category": "New Phones",
+  "old": "S22 Ultra",
+  "new": "Galaxy S22 Ultra"
+ },
+ {
+  "id": "cf6bad58-8a0c-4a44-a95a-ca6cbd286533",
+  "brand": "SAMSUNG",
+  "category": "New Phones",
+  "old": "A17",
+  "new": "Galaxy A17"
+ }
+]
