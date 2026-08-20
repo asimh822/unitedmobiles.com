@@ -94,7 +94,7 @@ Accessory products use a lighter spec set than phones (no RAM/Storage/PTA requir
 ### 5. Checkout Flow
 - Step 1: Form — **Name** and **Address** only (no phone field — WhatsApp auto-captures sender's number, no email, no payment info)
 - Step 2: **Order review/confirmation screen** — shows phone name, color, price, name, address with an Edit option before sending
-- Step 3: On confirm, generate a `wa.me/923239637000` link with a pre-filled, URL-encoded message containing: mobile name, color, price, customer name, address. Open this link (opens WhatsApp app/web with message ready to send).
+- Step 3: On confirm, generate a `wa.me/923109627000` link with a pre-filled, URL-encoded message containing: mobile name, color, price, customer name, address. Open this link (opens WhatsApp app/web with message ready to send).
 
 ### 6. Admin Panel (`/admin`)
 - Protected by a single password stored in an environment variable (no multi-user auth system needed for v1)
@@ -145,7 +145,7 @@ All secrets/config values must live in `.env` — never hardcoded in source:
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `ADMIN_PASSWORD`
-- `NEXT_PUBLIC_WHATSAPP_NUMBER` (currently `923239637000`)
+- `NEXT_PUBLIC_WHATSAPP_NUMBER` (currently `923109627000` = 0310 9627000; changed 20 Aug 2026 to match the Google Business Profile)
 
 ---
 

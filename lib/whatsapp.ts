@@ -1,7 +1,7 @@
 import { formatPrice } from "@/lib/format";
 
 export const WHATSAPP_NUMBER =
-  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "923239637000";
+  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "923109627000";
 
 export interface OrderAddon {
   name: string;
