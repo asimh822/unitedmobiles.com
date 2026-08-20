@@ -81,7 +81,7 @@ export function extractHighlights(specs: SpecGroup[]): Highlight[] {
 }
 
 function HighlightIcon({ k }: { k: HighlightKey }) {
-  const cls = "h-5 w-5 shrink-0 stroke-brand";
+  const cls = "mt-0.5 h-5 w-5 shrink-0 stroke-brand";
   const common = { fill: "none", strokeWidth: 1.8, strokeLinecap: "round", strokeLinejoin: "round" } as const;
   switch (k) {
     case "screen":
@@ -131,12 +131,12 @@ export default function KeyHighlights({ specs }: { specs: SpecGroup[] }) {
       {highlights.map((h) => (
         <div
           key={h.key}
-          className="flex items-start gap-2 rounded-xl border border-stone-200 bg-white p-2.5"
+          className="flex items-start gap-2.5 rounded-xl border border-stone-200 bg-white p-3"
         >
           <HighlightIcon k={h.key} />
           <div className="min-w-0">
-            <p className="text-[11px] font-medium text-stone-400">{h.label}</p>
-            <p className="mt-0.5 line-clamp-2 text-[13px] font-semibold leading-snug text-ink">
+            <p className="text-xs font-semibold text-stone-500">{h.label}</p>
+            <p className="mt-0.5 line-clamp-2 text-[15px] font-bold leading-snug text-ink">
               {h.value}
             </p>
           </div>

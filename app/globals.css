@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
 @theme {
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
   /* United Mobiles design system — Multan blue pottery (kashi-kari) palette.
      Contrast (vs white unless noted): brand 8.0:1, gold-dark 4.6:1,
      turq-deep 6.1:1, gold-light on brand 5.0:1 — all AA for their roles. */

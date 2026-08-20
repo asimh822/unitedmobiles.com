@@ -5,15 +5,20 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import KeyHighlights from "@/components/KeyHighlights";
 import PriceTag from "@/components/PriceTag";
+import SpecsTable from "@/components/SpecsTable";
 import TrustBadges from "@/components/TrustBadges";
 import { colorNameToHex } from "@/lib/color-names";
 import { ramRomCombos, type Product, type RamRomCombo, type Variant } from "@/lib/types";
 
 /**
  * Client island for the product page: gallery + TWO independent selectors
- * (Color, RAM+ROM combo) + variant-aware price/stock/Buy Now, plus the key
- * spec highlights. One model with many RAM+ROM combos is ONE page — never
- * duplicate listings.
+ * (Color, RAM+ROM combo) + variant-aware price/stock/Buy Now, the key spec
+ * highlights and the full spec sheet. One model with many RAM+ROM combos is
+ * ONE page — never duplicate listings.
+ *
+ * Layout: on a phone the order is title/price → picture → options → buy →
+ * specs, so the first screen says what the phone is and what it costs. On
+ * desktop the picture takes the left column and everything else the right.
  */
 export default function ProductPurchasePanel({ product }: { product: Product }) {
   const variants = product.variants;
@@ -48,18 +53,20 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
     variants.find((v) => v.color === selectedColor) ??
     null;
 
+  // Gallery = the picture of the SELECTED colour + the product's own photos.
+  // Showing every colour's photo in the strip duplicated the swatches and put
+  // five thumbnails under the word "Black".
   const gallery = useMemo(() => {
-    const all = [...product.images, ...variants.map((v) => v.image).filter((i): i is string => Boolean(i))];
-    return [...new Set(all)];
-  }, [product.images, variants]);
+    const own = variants
+      .filter((v) => v.color === selectedColor)
+      .map((v) => v.image)
+      .filter((i): i is string => Boolean(i));
+    return [...new Set([...own, ...product.images])];
+  }, [product.images, variants, selectedColor]);
 
   function selectColor(i: number) {
     setColorIdx(i);
-    const img = colors[i]?.image;
-    if (img) {
-      const idx = gallery.indexOf(img);
-      if (idx >= 0) setImageIdx(idx);
-    }
+    setImageIdx(0); // the colour's own photo leads the gallery
   }
 
   const currentImage = gallery[imageIdx] ?? gallery[0];
@@ -72,126 +79,138 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
     ? `/checkout/${product.id}?variant=${encodeURIComponent(variant.id)}`
     : `/checkout/${product.id}`;
 
+  const hasSpecs = product.specs.some((g) => g.items.some((i) => i.value.trim()));
+
   return (
-    <div className="space-y-10">
-      {/* Gallery column stays narrow — the purchase info is the star, not the photo */}
-      <div className="grid gap-8 lg:grid-cols-[2fr_3fr]">
-        {/* Gallery */}
-        <div className="space-y-3">
-          <div className="relative mx-auto aspect-square w-full max-w-sm overflow-hidden rounded-2xl border border-stone-200 bg-stone-100 lg:max-w-full">
-            {currentImage ? (
-              <Image
-                src={currentImage}
-                alt={`${product.brand} ${product.model}${selectedColor ? ` — ${selectedColor}` : ""}`}
-                fill
-                priority
-                sizes="(max-width: 1024px) 384px, 40vw"
-                className="object-contain"
-              />
-            ) : (
-              <div className="grid h-full place-items-center text-6xl text-stone-300">📱</div>
-            )}
-          </div>
-          {/* Color dots directly under the picture (Carphone Warehouse style) */}
-          {colors.length > 0 && (
-            <div className="flex flex-col items-center gap-1.5 py-1">
-              <div className="flex flex-wrap items-center justify-center gap-2.5">
-                {colors.map((c, i) => (
-                  <button
-                    key={c.color}
-                    type="button"
-                    onClick={() => selectColor(i)}
-                    aria-label={c.color}
-                    aria-pressed={i === colorIdx}
-                    title={c.color}
-                    className={`h-6 w-6 rounded-full border border-stone-300 transition-shadow ${
-                      i === colorIdx ? "ring-2 ring-brand ring-offset-2" : "hover:ring-2 hover:ring-stone-300 hover:ring-offset-1"
-                    }`}
-                    style={{ backgroundColor: c.colorHex ?? colorNameToHex(c.color) ?? "#a8a29e" }}
-                  />
-                ))}
-              </div>
-              <p className="text-xs font-semibold text-stone-500">{selectedColor}</p>
-            </div>
-          )}
-          {gallery.length > 1 && (
-            <div className="flex justify-center gap-2 overflow-x-auto pb-1">
-              {gallery.map((img, i) => (
-                <button
-                  key={img}
-                  type="button"
-                  onClick={() => setImageIdx(i)}
-                  aria-label={`View image ${i + 1}`}
-                  className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 ${
-                    i === imageIdx ? "border-brand" : "border-transparent"
-                  }`}
-                >
-                  <Image src={img} alt="" fill sizes="64px" className="object-contain" />
-                </button>
-              ))}
-            </div>
-          )}
+    <div className="grid gap-6 lg:grid-cols-[2fr_3fr] lg:grid-rows-[auto_1fr] lg:gap-x-10 lg:gap-y-5">
+      {/* 1. Title + price — first on mobile, top of the right column on desktop */}
+      <div className="space-y-3 lg:col-start-2 lg:row-start-1">
+        <div>
+          <p className="text-[13px] font-bold uppercase tracking-[0.14em] text-brand">{product.brand}</p>
+          <h1 className="mt-1 text-[1.65rem] font-extrabold leading-tight tracking-tight text-ink sm:text-3xl">
+            {product.model}
+          </h1>
         </div>
-
-        {/* Purchase column */}
-        <div className="space-y-5">
-          <div>
-            <p className="text-sm font-bold uppercase tracking-wide text-brand">{product.brand}</p>
-            <h1 className="mt-1 text-2xl font-extrabold text-ink sm:text-3xl">{product.model}</h1>
-          </div>
-
+        <div className="flex flex-wrap items-end gap-x-4 gap-y-1">
           <PriceTag
             product={product}
             price={variant?.price ?? product.price}
             salePrice={variant?.salePrice ?? product.salePrice}
             size="lg"
           />
-
           <p
-            className={`flex items-center gap-1.5 text-sm font-semibold ${
+            className={`mb-0.5 flex items-center gap-1.5 text-sm font-semibold ${
               inStock ? "text-emerald-700" : "text-stone-400"
             }`}
           >
             <span className={`h-2 w-2 rounded-full ${inStock ? "bg-emerald-500" : "bg-stone-400"}`} />
-            {inStock ? "In Stock — ready to deliver" : "Out of Stock"}
+            {inStock ? "In stock — ready to deliver" : "Out of stock"}
           </p>
+        </div>
+        <TrustBadges product={product} />
+      </div>
 
-          <KeyHighlights specs={product.specs} />
-
-          {combos.length > 0 && (
-            <div>
-              <p className="mb-2 text-sm font-bold text-ink">RAM + Storage</p>
-              <div className="flex flex-wrap gap-2">
-                {combos.map((c, i) => {
-                  const available = comboAvailable(c);
-                  const active = i === comboIdx;
-                  return (
-                    <button
-                      key={c.label}
-                      type="button"
-                      onClick={() => setComboIdx(i)}
-                      aria-pressed={active}
-                      className={`rounded-xl border px-4 py-2 text-sm font-bold ${
-                        active
-                          ? "border-brand bg-brand/5 text-brand"
-                          : available
-                            ? "border-stone-200 bg-white text-ink hover:border-stone-300"
-                            : "border-dashed border-stone-200 bg-stone-50 text-stone-400"
-                      }`}
-                    >
-                      {c.label}
-                      {!available && <span className="ml-1.5 text-[10px] font-semibold">(out of stock)</span>}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+      {/* 2. Gallery — left column on desktop, spanning both rows */}
+      <div className="space-y-3 lg:col-start-1 lg:row-start-1 lg:row-span-2">
+        <div className="relative mx-auto aspect-square w-full max-w-sm overflow-hidden rounded-2xl border border-stone-200 bg-white lg:max-w-full">
+          {currentImage ? (
+            <Image
+              src={currentImage}
+              alt={`${product.brand} ${product.model}${selectedColor ? ` — ${selectedColor}` : ""}`}
+              fill
+              priority
+              sizes="(max-width: 1024px) 384px, 40vw"
+              className="object-contain p-4"
+            />
+          ) : (
+            <div className="grid h-full place-items-center text-6xl text-stone-300">📱</div>
           )}
+        </div>
 
+        {/* Colour dots directly under the picture */}
+        {colors.length > 0 && (
+          <div className="flex flex-col items-center gap-1.5 py-1">
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              {colors.map((c, i) => (
+                <button
+                  key={c.color}
+                  type="button"
+                  onClick={() => selectColor(i)}
+                  aria-label={c.color}
+                  aria-pressed={i === colorIdx}
+                  title={c.color}
+                  className={`h-7 w-7 rounded-full border border-stone-300 transition-shadow ${
+                    i === colorIdx ? "ring-2 ring-brand ring-offset-2" : "hover:ring-2 hover:ring-stone-300 hover:ring-offset-1"
+                  }`}
+                  style={{ backgroundColor: c.colorHex ?? colorNameToHex(c.color) ?? "#a8a29e" }}
+                />
+              ))}
+            </div>
+            <p className="text-sm font-semibold text-stone-600">
+              Colour: <span className="text-ink">{selectedColor}</span>
+            </p>
+          </div>
+        )}
+
+        {/* Other angles of the selected colour (only when there is more than one) */}
+        {gallery.length > 1 && (
+          <div className="flex justify-center gap-2 overflow-x-auto pb-1">
+            {gallery.map((img, i) => (
+              <button
+                key={img}
+                type="button"
+                onClick={() => setImageIdx(i)}
+                aria-label={`View image ${i + 1}`}
+                className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-white ${
+                  i === imageIdx ? "border-brand" : "border-stone-200"
+                }`}
+              >
+                <Image src={img} alt="" fill sizes="64px" className="object-contain p-1" />
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* 3. Highlights, options, buy, full specs — right column under the title */}
+      <div className="space-y-6 lg:col-start-2 lg:row-start-2">
+        <KeyHighlights specs={product.specs} />
+
+        {combos.length > 0 && (
+          <div>
+            <p className="mb-2 text-sm font-bold text-ink">RAM + Storage</p>
+            <div className="flex flex-wrap gap-2">
+              {combos.map((c, i) => {
+                const available = comboAvailable(c);
+                const active = i === comboIdx;
+                return (
+                  <button
+                    key={c.label}
+                    type="button"
+                    onClick={() => setComboIdx(i)}
+                    aria-pressed={active}
+                    className={`rounded-xl border px-4 py-2.5 text-[15px] font-bold ${
+                      active
+                        ? "border-brand bg-brand/5 text-brand"
+                        : available
+                          ? "border-stone-200 bg-white text-ink hover:border-stone-300"
+                          : "border-dashed border-stone-200 bg-stone-50 text-stone-400"
+                    }`}
+                  >
+                    {c.label}
+                    {!available && <span className="ml-1.5 text-[11px] font-semibold">(out of stock)</span>}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        <div className="space-y-2">
           {inStock ? (
             <Link
               href={checkoutHref}
-              className="block w-full rounded-2xl bg-brand px-6 py-4 text-center text-lg font-extrabold text-white shadow-md transition-colors hover:bg-gold-dark"
+              className="block w-full rounded-2xl bg-brand px-6 py-4 text-center text-lg font-extrabold text-white shadow-md transition-colors hover:bg-brand-dark"
             >
               Buy Now — Cash on Delivery
             </Link>
@@ -204,13 +223,13 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
               Out of Stock
             </button>
           )}
-          <p className="text-center text-xs text-stone-400">
+          <p className="text-center text-[13px] text-stone-500">
             No online payment — confirm your order on WhatsApp and pay on delivery.
           </p>
         </div>
-      </div>
 
-      <TrustBadges product={product} />
+        {hasSpecs && <SpecsTable specs={product.specs} />}
+      </div>
     </div>
   );
 }

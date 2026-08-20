@@ -14,10 +14,10 @@ export default function PriceTag({ product, price, salePrice, size = "sm" }: Pro
   const sale = product.saleActive ? (salePrice ?? product.salePrice) : null;
   const onSale = sale != null && sale < base;
   const mainClass =
-    size === "lg" ? "text-2xl sm:text-3xl font-extrabold" : "text-base font-bold";
+    size === "lg" ? "text-[2rem] leading-none sm:text-4xl font-extrabold tracking-tight" : "text-base font-bold";
 
   if (!onSale) {
-    return <p className={`${mainClass} text-ink`}>{formatPrice(base)}</p>;
+    return <p className={`${mainClass} ${size === "lg" ? "text-brand" : "text-ink"}`}>{formatPrice(base)}</p>;
   }
   return (
     <p className="flex flex-wrap items-baseline gap-x-2">

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Manrope } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { Analytics } from "@vercel/analytics/react";
@@ -8,6 +9,10 @@ import NavMenu from "@/components/NavMenu";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
+
+// One typeface for the whole shop. The system default looked different on every
+// device and flat everywhere; Manrope is clean, a little warm, and reads at 13px.
+const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -21,7 +26,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={manrope.variable}>
       <body className="min-h-screen antialiased">
         {/* Single-row header: logo top-left, category menu beside it. */}
         <header className="sticky top-0 z-40 border-b border-stone-200 bg-cream/95 backdrop-blur relative">
