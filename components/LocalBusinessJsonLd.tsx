@@ -24,6 +24,10 @@ export default function LocalBusinessJsonLd() {
     "@type": "MobilePhoneStore",
     "@id": `${SITE_URL}/#shop`,
     name: BUSINESS_NAME,
+    description:
+      "Official Vivo outlet on Katchehry Road, Multan. Genuine mobile phones " +
+      "with official warranty, plus used phones, keypad phones and tablets. " +
+      "Same-day delivery across Multan, cash on delivery.",
     url: SITE_URL,
     image: `${SITE_URL}/shop-logo.png`,
     telephone: BUSINESS_PHONE,

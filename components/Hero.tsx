@@ -1,6 +1,7 @@
 import { KashiWatermark } from "@/components/KashiMotifs";
 
 const TRUST_LINES = [
+  "Official Vivo Outlet",
   "Genuine Products with Official Warranty",
   "Cash on Delivery",
   "Lowest Price Guaranteed",

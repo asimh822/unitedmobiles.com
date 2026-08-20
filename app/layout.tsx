@@ -12,11 +12,11 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "United Mobiles — Genuine Phones, Best Prices in Pakistan",
+    default: "United Mobiles — Official Vivo Outlet & Genuine Phones in Multan",
     template: "%s | United Mobiles",
   },
   description:
-    "United Mobiles — genuine mobile phones with official warranty, lowest price guaranteed, cash on delivery. A trusted physical shop for over a decade.",
+    "United Mobiles is an official Vivo outlet on Katchehry Road, Multan — genuine phones with official warranty, lowest price guaranteed, same-day delivery in Multan, cash on delivery. A trusted physical shop for over a decade.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
