@@ -1,4 +1,6 @@
-/** Canonical site origin for sitemap/OG URLs. Set NEXT_PUBLIC_SITE_URL after deploying. */
+/** Canonical site origin for sitemap/OG URLs. NEXT_PUBLIC_SITE_URL overrides if set. */
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+  (process.env.NODE_ENV === "production"
+    ? "https://www.unitedmobiles.net"
+    : "http://localhost:3000");
