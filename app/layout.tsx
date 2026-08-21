@@ -6,6 +6,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { KashiBorder } from "@/components/KashiMotifs";
 import LocalBusinessJsonLd from "@/components/LocalBusinessJsonLd";
 import NavMenu from "@/components/NavMenu";
+import PriceNotice from "@/components/PriceNotice";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
@@ -61,6 +62,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </footer>
 
         <LocalBusinessJsonLd />
+        <PriceNotice />
         <WhatsAppFloat />
         <Analytics />
       </body>

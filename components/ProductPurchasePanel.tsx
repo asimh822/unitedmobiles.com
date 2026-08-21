@@ -8,6 +8,7 @@ import PriceTag from "@/components/PriceTag";
 import SpecsTable from "@/components/SpecsTable";
 import TrustBadges from "@/components/TrustBadges";
 import { colorNameToHex } from "@/lib/color-names";
+import { PRICE_NOTICE, PRICE_NOTICE_ENABLED } from "@/lib/price-notice";
 import { ramRomCombos, type Product, type RamRomCombo, type Variant } from "@/lib/types";
 
 /**
@@ -107,6 +108,7 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
             {inStock ? "In stock — ready to deliver" : "Out of stock"}
           </p>
         </div>
+        {PRICE_NOTICE_ENABLED && <p className="text-xs text-stone-500">{PRICE_NOTICE.productInline}</p>}
         <TrustBadges product={product} />
       </div>
 
@@ -224,7 +226,7 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
             </button>
           )}
           <p className="text-center text-[13px] text-stone-500">
-            No online payment — confirm your order on WhatsApp and pay on delivery.
+            No online payment — confirm your order and final price on WhatsApp, pay on delivery.
           </p>
         </div>
 

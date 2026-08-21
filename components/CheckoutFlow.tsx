@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { formatGb, formatPrice } from "@/lib/format";
+import { PRICE_NOTICE, PRICE_NOTICE_ENABLED } from "@/lib/price-notice";
 import { buildOrderLink } from "@/lib/whatsapp";
 import { effectivePrice, type Product, type Variant } from "@/lib/types";
 
@@ -160,7 +161,7 @@ export default function CheckoutFlow({ product, variant, addons = [] }: Props) {
           <ol className="space-y-3 text-left text-sm">
             {[
               ["1", "Press Send", "The message with your order is already written for you."],
-              ["2", "We confirm on WhatsApp", "Our salesman replies to confirm your order and delivery time."],
+              ["2", "We confirm on WhatsApp", PRICE_NOTICE.confirmStep],
               ["3", "Pay at your door", "Cash on delivery — check the product before you pay."],
             ].map(([n, title, desc]) => (
               <li key={n} className="flex gap-3">
@@ -272,6 +273,12 @@ export default function CheckoutFlow({ product, variant, addons = [] }: Props) {
                 );
               })}
             </div>
+          )}
+
+          {PRICE_NOTICE_ENABLED && (
+            <p className="rounded-xl bg-gold/10 px-3 py-2 text-xs font-semibold text-gold-dark">
+              {PRICE_NOTICE.checkoutNote}
+            </p>
           )}
 
           <div className="flex gap-3">
