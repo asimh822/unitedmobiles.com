@@ -1,6 +1,6 @@
 /**
- * Price-fluctuation disclaimer — one source of copy for the delayed bottom
- * notice and every inline note, so the wording never drifts.
+ * Price-fluctuation disclaimer — one source of copy for the first-visit modal
+ * and every inline note, so the wording never drifts.
  *
  * Why it exists: website prices and the physical counter price can differ in
  * either direction while the worldwide chip shortage keeps moving phone prices
@@ -8,15 +8,20 @@
  * before delivery, and payment is cash on delivery.
  *
  * Flip PRICE_NOTICE_ENABLED to false once shop and site prices are aligned —
- * that hides the notice card and every inline note in one go.
+ * that hides the modal and every inline note in one go.
  */
 export const PRICE_NOTICE_ENABLED = true;
 
-/** Delay before the notice card slides in — long enough not to feel like a landing popup. */
-export const PRICE_NOTICE_DELAY_MS = 8000;
+/**
+ * Delay before the modal opens. Not a "don't nag them" delay any more — just
+ * long enough for the page behind it to paint, so the customer sees what they
+ * landed on before the dialog covers it.
+ */
+export const PRICE_NOTICE_DELAY_MS = 600;
 
-/** sessionStorage key: the card shows once per browser session. */
-export const PRICE_NOTICE_STORAGE_KEY = "um-price-notice-v1";
+/** sessionStorage key: the modal shows once per browser session. Bump the
+ *  version suffix to re-show it to everyone mid-session after a copy change. */
+export const PRICE_NOTICE_STORAGE_KEY = "um-price-notice-v2";
 
 export const PRICE_NOTICE = {
   headline: "A quick note on prices",
