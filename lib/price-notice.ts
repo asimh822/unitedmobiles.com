@@ -21,12 +21,19 @@ export const PRICE_NOTICE_DELAY_MS = 600;
 
 /** sessionStorage key: the modal shows once per browser session. Bump the
  *  version suffix to re-show it to everyone mid-session after a copy change. */
-export const PRICE_NOTICE_STORAGE_KEY = "um-price-notice-v2";
+export const PRICE_NOTICE_STORAGE_KEY = "um-price-notice-v3";
 
 export const PRICE_NOTICE = {
-  headline: "A quick note on prices",
+  /** Plain and factual on purpose: a shop notice, not an offer. */
+  headline: "About our prices",
+  /** Modal, first paragraph — the honest bit. */
   body:
-    "Phone prices are moving week to week because of the worldwide chip shortage, so the price shown here may differ a little from today's shop price — up or down. When you order on WhatsApp we confirm the final price with you before delivery, and you pay cash at your door.",
+    "Phone prices are moving week to week because of the worldwide chip shortage, so the price you see here may be a little different from today's counter price — up or down.",
+  /** Modal, second paragraph — the reassurance. */
+  bodyConfirm:
+    "When you order on WhatsApp we confirm the exact price with you before anything is delivered, and you pay cash at your door.",
+  /** Signs the modal off, so it reads as a note from the shop. */
+  signature: "United Mobiles, Multan",
   cta: "Got it",
   dismissLabel: "Dismiss price notice",
   /** Under the price on the product page. */

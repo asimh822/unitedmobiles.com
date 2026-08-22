@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -15,6 +16,12 @@ import {
  * never on /admin. The customer taps "Got it" to carry on — one extra tap, and
  * only ever one per session, so browsing to "order sent" is otherwise
  * untouched. Dismiss: Got it / ✕ / Escape / tapping the backdrop.
+ *
+ * Styled to read as a note from the shop rather than an ad: the shop logo signs
+ * it, the kashi tile-edge motif from the product cards runs along the top, the
+ * text is left-aligned at a readable measure, and it fades in without a bounce.
+ * No offer, no urgency, no exclamation marks — the moment this looks like a
+ * promo popup, customers dismiss it without reading and the honesty is wasted.
  *
  * Hydration-safe: the server and the first client render both emit nothing;
  * the dialog is injected after mount + timer.
@@ -94,7 +101,7 @@ export default function PriceNotice() {
 
   return (
     <div
-      className="fixed inset-0 z-[60] grid place-items-center overflow-y-auto bg-ink/60 p-4 animate-fade-in motion-reduce:animate-none"
+      className="fixed inset-0 z-[60] grid place-items-center overflow-y-auto bg-ink/45 p-4 backdrop-blur-[2px] animate-fade-in motion-reduce:animate-none"
       onClick={close}
     >
       <div
@@ -104,32 +111,54 @@ export default function PriceNotice() {
         aria-labelledby="price-notice-title"
         aria-describedby="price-notice-body"
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-sm rounded-2xl border-t-4 border-t-gold bg-white p-6 pr-10 text-center shadow-2xl animate-modal-in motion-reduce:animate-none"
+        className="relative w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-xl animate-modal-in motion-reduce:animate-none"
       >
+        {/* Same mosaic strip as the product cards — ties the notice to the site. */}
+        <div className="tile-edge" />
         <button
           type="button"
           onClick={close}
           aria-label={PRICE_NOTICE.dismissLabel}
-          className="absolute right-2 top-2 grid h-9 w-9 place-items-center rounded-full text-stone-400 hover:bg-stone-100 hover:text-ink"
+          className="absolute right-2 top-4 grid h-9 w-9 place-items-center rounded-full text-stone-400 hover:bg-stone-100 hover:text-ink"
         >
           <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
             <path d="M5 5l10 10M15 5L5 15" strokeLinecap="round" />
           </svg>
         </button>
-        <p id="price-notice-title" className="text-lg font-extrabold text-ink">
-          {PRICE_NOTICE.headline}
-        </p>
-        <p id="price-notice-body" className="mt-2 text-sm leading-relaxed text-stone-600">
-          {PRICE_NOTICE.body}
-        </p>
-        <button
-          ref={confirmRef}
-          type="button"
-          onClick={close}
-          className="mt-5 w-full rounded-xl bg-brand px-4 py-3 font-bold text-white hover:bg-brand-dark"
-        >
-          {PRICE_NOTICE.cta}
-        </button>
+
+        <div className="p-5 pr-12 sm:p-6 sm:pr-14">
+          <div className="flex items-center gap-3">
+            <Image
+              src="/shop-logo.png"
+              alt=""
+              width={640}
+              height={375}
+              aria-hidden="true"
+              className="h-9 w-auto shrink-0 rounded-md"
+            />
+            <h2 id="price-notice-title" className="text-base font-extrabold text-ink sm:text-lg">
+              {PRICE_NOTICE.headline}
+            </h2>
+          </div>
+
+          <div id="price-notice-body" className="mt-4 space-y-3 text-sm leading-relaxed text-stone-600">
+            <p>{PRICE_NOTICE.body}</p>
+            <p>{PRICE_NOTICE.bodyConfirm}</p>
+          </div>
+
+          <p className="mt-4 border-t border-stone-200 pt-3 text-xs font-semibold text-stone-500">
+            — {PRICE_NOTICE.signature}
+          </p>
+
+          <button
+            ref={confirmRef}
+            type="button"
+            onClick={close}
+            className="mt-4 w-full rounded-xl bg-brand px-4 py-3 text-sm font-bold text-white hover:bg-brand-dark sm:w-auto sm:px-8"
+          >
+            {PRICE_NOTICE.cta}
+          </button>
+        </div>
       </div>
     </div>
   );

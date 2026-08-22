@@ -41,14 +41,15 @@
     }
   }
 
+  /* A small rise only — no scale "pop", which is what reads as an ad. */
   @keyframes modal-in {
     from {
       opacity: 0;
-      transform: translateY(12px) scale(0.96);
+      transform: translateY(8px);
     }
     to {
       opacity: 1;
-      transform: translateY(0) scale(1);
+      transform: translateY(0);
     }
   }
 }
