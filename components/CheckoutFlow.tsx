@@ -5,7 +5,7 @@ import { useState } from "react";
 import { formatGb, formatPrice } from "@/lib/format";
 import { PRICE_NOTICE, PRICE_NOTICE_ENABLED } from "@/lib/price-notice";
 import { buildOrderLink } from "@/lib/whatsapp";
-import { effectivePrice, type Product, type Variant } from "@/lib/types";
+import { cardImage, effectivePrice, type Product, type Variant } from "@/lib/types";
 
 interface Props {
   product: Product;
@@ -31,7 +31,7 @@ export default function CheckoutFlow({ product, variant, addons = [] }: Props) {
   const combo = variant
     ? [variant.ram, variant.storage].filter((v): v is string => Boolean(v)).map(formatGb).join(" + ")
     : "";
-  const image = variant?.image ?? product.images[0];
+  const image = variant?.image ?? cardImage(product);
 
   const selectedAddons = addons.filter((a) => addonIds.includes(a.id));
   const total = price + selectedAddons.reduce((sum, a) => sum + effectivePrice(a), 0);

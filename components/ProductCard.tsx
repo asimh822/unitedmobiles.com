@@ -3,6 +3,7 @@ import Link from "next/link";
 import PriceTag from "@/components/PriceTag";
 import { formatGb, formatPrice } from "@/lib/format";
 import {
+  cardImage,
   formatConditionScore,
   isOnSale,
   startingPrice,
@@ -29,7 +30,7 @@ function CardPrice({ product }: { product: Product }) {
 
 export default function ProductCard({ product }: { product: Product }) {
   const inStock = product.stockStatus === "in_stock";
-  const image = product.images[0];
+  const image = cardImage(product);
 
   return (
     <Link

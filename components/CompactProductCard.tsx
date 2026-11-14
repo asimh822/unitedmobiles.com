@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { formatPrice } from "@/lib/format";
-import { startingPrice, type Product } from "@/lib/types";
+import { cardImage, startingPrice, type Product } from "@/lib/types";
 
 /** Brand-row card: image, model name, price only — compact, half-size. */
 export default function CompactProductCard({
@@ -12,7 +12,7 @@ export default function CompactProductCard({
   sizes?: string;
 }) {
   const { price, multiple } = startingPrice(product);
-  const image = product.images[0];
+  const image = cardImage(product);
 
   return (
     <Link

@@ -96,6 +96,21 @@ export function formatConditionScore(score: number | null | undefined): string |
   return score == null ? null : `${Number(score)}/10`;
 }
 
+/** Image for a list card or checkout thumbnail.
+ *
+ * Images are served exactly as stored (next.config.ts: unoptimized), so a
+ * card showing a used phone's full ~190 KB photo costs that much per card per
+ * visit. The EPOS sync (E:\ShopSoftware\website_sync.py _push_one) uploads a
+ * ~26 KB 480px copy of photo 1 beside it, named by convention:
+ *   .../used/<id>/1-<hash>.webp  ->  .../used/<id>/t1-<hash>.webp
+ * Change one side and you must change the other. Every other product keeps
+ * its first image. */
+export function cardImage(p: Product): string | undefined {
+  const first = p.images[0];
+  if (!first || p.source !== "epos") return first;
+  return first.replace(/\/1-([0-9a-f]+)\.webp$/, "/t1-$1.webp");
+}
+
 export type SortKey = "price_asc" | "price_desc" | "newest";
 
 export interface CatalogQuery {
