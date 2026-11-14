@@ -160,9 +160,9 @@ export default function FilterBar({
             value={params.get("condition") ?? ""}
             onChange={(e) => apply({ condition: e.target.value })}
           >
-            <option value="">New & Used</option>
+            <option value="">New & Pre-Owned</option>
             <option value="New">New</option>
-            <option value="Used">Used</option>
+            <option value="Used">Pre-Owned</option>
           </select>
         )}
 

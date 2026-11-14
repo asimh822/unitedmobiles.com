@@ -1,18 +1,12 @@
 import Link from "next/link";
 import AutoCloseDetails from "@/components/AutoCloseDetails";
+import NavLinks from "@/components/NavLinks";
 import {
   ACCESSORIES_ENABLED,
   ACCESSORY_SUBCATEGORIES,
   SOUND_SUBCATEGORIES,
   categoryPath,
 } from "@/lib/categories";
-
-const TOP_ITEMS = [
-  { label: "New Phones", href: "/new-phones" },
-  { label: "Used", href: "/used" },
-  { label: "KeyPad Phones", href: "/keypad-phones" },
-  { label: "Tabs", href: "/tabs" },
-] as const;
 
 const pill =
   "shrink-0 whitespace-nowrap rounded-full border border-stone-200 bg-white px-3.5 py-1.5 text-ink hover:border-brand/40 hover:bg-brand/5 hover:text-brand";
@@ -28,17 +22,9 @@ export default function NavMenu() {
   return (
     <nav
       aria-label="Categories"
-      className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto text-sm font-semibold sm:gap-1"
+      className="flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto py-1 pr-6 text-sm font-semibold [mask-image:linear-gradient(to_right,black_80%,transparent)] [scrollbar-width:none] sm:gap-2 sm:pr-0 sm:[mask-image:none] [&::-webkit-scrollbar]:hidden"
     >
-      {TOP_ITEMS.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
-          className="shrink-0 whitespace-nowrap rounded-lg px-2.5 py-2 text-ink hover:bg-brand/5 hover:text-brand sm:px-3"
-        >
-          {item.label}
-        </Link>
-      ))}
+      <NavLinks />
 
       {ACCESSORIES_ENABLED && (
       <AutoCloseDetails className="group shrink-0">

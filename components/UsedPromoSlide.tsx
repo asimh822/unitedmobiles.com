@@ -52,10 +52,10 @@ export default function UsedPromoSlide({ total, from, photos }: UsedPromo) {
 
       <div className="relative min-w-0 flex-1">
         <span className="inline-block rounded-full bg-gold-light px-2.5 py-0.5 text-[11px] font-extrabold uppercase tracking-wide text-ink">
-          New · Used Phones
+          New · Pre-Owned
         </span>
         <h2 className="mt-2 text-2xl font-extrabold leading-tight sm:text-3xl">
-          Used Phones.{" "}
+          Pre-Owned Phones.{" "}
           <span className="text-gold-light">Real Photos. Real Prices.</span>
         </h2>
         <p className="mt-1 text-sm text-white/80 sm:text-base">

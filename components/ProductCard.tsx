@@ -58,8 +58,8 @@ export default function ProductCard({ product }: { product: Product }) {
         {product.condition === "Used" && (
           <span className="absolute right-3 top-3 rounded-full bg-ink/80 px-2.5 py-1 text-xs font-semibold text-white">
             {formatConditionScore(product.conditionScore)
-              ? `Used · ${formatConditionScore(product.conditionScore)}`
-              : "Used"}
+              ? `Pre-Owned · ${formatConditionScore(product.conditionScore)}`
+              : "Pre-Owned"}
           </span>
         )}
         {product.condition === "Used" && warrantyLabel(product) && (
