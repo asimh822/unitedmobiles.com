@@ -166,7 +166,9 @@ All secrets/config values must live in `.env` — never hardcoded in source:
 - Supabase schema changes are SQL files in `supabase/migrations/` that the owner runs by hand in the Supabase SQL editor. There is no DB password here, so a migration is not applied until he says so. Applied so far: 001 to 006.
 
 ## Current state (Nov 2026)
-- Homepage: hero promo carousel (`components/HeroCarousel.tsx`, `PromoSlide.tsx`, images in `public/promo/`), then the brand rows.
+- Homepage carousel (`components/HeroCarousel.tsx`): Used slide first (`UsedPromoSlide.tsx`, live data, hidden when no used stock), trust banner (`Hero.tsx`), vivo V80 launch slide (`LaunchSlide.tsx`, `saleDate` flips "Pre-book" to "Now in stock" by itself). `PromoSlide.tsx` is kept for manufacturer key-visual promos (images in `public/promo/`). Then the brand rows.
+- **Payment is no longer pure COD (since 14/11/2026): 10% advance by bank transfer, rest cash on delivery.** All wording and the rupee split come from `lib/payment.ts` (`ADVANCE_PERCENT`); never hardcode "Cash on Delivery" again. The WhatsApp order message template is unchanged.
+- No "Easy Installments" badge on used phones.
 - Admin: Quick Prices (`/admin/quick-prices`) and Quick Add panels besides the normal product form.
 - `price_locked` (migration 005): a shop-set price the PriceOye scripts (`scripts/*priceoye*.mjs`) must leave alone. Those scripts only touch New Phones, KeyPad Phones and Tabs, never Used.
 - Images: `next.config.ts` has `images.unoptimized: true` (Vercel Hobby image quota), so **an image's stored file size IS what every visitor downloads**. Keep stored images small; never put a multi-hundred-KB photo on a list card.
