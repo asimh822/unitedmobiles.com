@@ -1,96 +1,25 @@
 // Updates prices of EXISTING catalog products from a PriceOye crawl
 // (po-*.json from scripts/crawl-priceoye.mjs). Matches on brand + normalized
 // model within New Phones / KeyPad Phones / Tabs (condition New), then sets
-// product.price to the cheapest in-stock crawl price and refreshes matching
-// variant-row prices (by RAM+storage combo, or by color for color-only
-// variants). Never touches sale prices, stock, images, or specs, and never
-// inserts anything — new models are scripts/import-priceoye.mjs's job.
-// Usage: node scripts/update-prices-priceoye.mjs <crawl-dir> [--dry]
+// product.price to the cheapest in-stock crawl price (+ --markup) and refreshes
+// matching variant-row prices (by RAM+storage combo, or by color for
+// color-only variants). Never touches sale prices, stock, images, or specs, and
+// never inserts anything — new models are scripts/import-priceoye.mjs's job.
+// Usage: node scripts/update-prices-priceoye.mjs <crawl-dir> [--dry] [--markup=1000] [--phones-only]
+//   --markup=N      add N rupees on top of every PriceOye price
+//   --phones-only   only touch New Phones + KeyPad Phones (skip Tabs)
+// Products flagged price_locked are skipped entirely — those prices are set by
+// hand in the admin panel and must not be pulled back to the market rate.
 import { readFileSync, readdirSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
-import { createClient } from "@supabase/supabase-js";
-
-const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-for (const line of readFileSync(join(root, ".env.local"), "utf8").split(/\r?\n/)) {
-  const m = line.match(/^([A-Z0-9_]+)=(.*)$/);
-  if (m && !process.env[m[1]]) process.env[m[1]] = m[2].trim();
-}
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
-  { auth: { persistSession: false } },
-);
+import { join } from "node:path";
+import { bucketsFor, crawlIdentity, fetchAll, parseSize, sameModel, serviceClient, titleCase, norm } from "./priceoye-match.mjs";
 
 const dir = process.argv[2];
-if (!dir) { console.error("usage: node scripts/update-prices-priceoye.mjs <crawl-dir> [--dry]"); process.exit(1); }
+if (!dir) { console.error("usage: node scripts/update-prices-priceoye.mjs <crawl-dir> [--dry] [--markup=N] [--phones-only]"); process.exit(1); }
 const dry = process.argv.includes("--dry");
-
-/* ---------- shared with import-priceoye.mjs (model/brand matching) ---------- */
-
-const BRAND_ALIASES = {
-  xiaomi: "MI",
-  mi: "MI",
-  qmobile: "Q MOBILE",
-  "e-tachi": "E TACHI",
-  etachi: "E TACHI",
-};
-
-const SERIES = ["note", "hot", "smart", "spark", "camon", "reno", "blade", "redmi", "galaxy", "pova", "pop", "iphone"];
-const EXPANSIONS = [
-  [/\bht\s?(\d)/g, "hot$1"],
-  [/\bnt\s?(\d)/g, "note$1"],
-  [/\bsm\s?(\d)/g, "smart$1"],
-  [/\bsp\s?(\d)/g, "spark$1"],
-  [/\bcam\s?(\d)/g, "camon$1"],
-];
-function norm(model, brand) {
-  let s = ` ${model.toLowerCase()} `;
-  for (const w of [brand.toLowerCase(), ...brand.toLowerCase().split(/\s+/), "galaxy", "4g", "5g"]) {
-    if (w) s = s.replaceAll(` ${w} `, " ");
-  }
-  for (const [re, rep] of EXPANSIONS) s = s.replace(re, rep);
-  // "+" means "Plus" ("X5C+" vs "X5c Plus" are the same phone)
-  return s.replace(/\+/g, "plus").replace(/[^a-z0-9]/g, "");
-}
-function sameModel(a, b) {
-  if (!a || !b) return false;
-  if (a === b) return true;
-  const [short, long] = a.length <= b.length ? [a, b] : [b, a];
-  return long.endsWith(short) && SERIES.includes(long.slice(0, long.length - short.length));
-}
-
-function titleCase(s) {
-  return s.replace(/[_-]+/g, " ").trim().replace(/\b[a-z]/g, (c) => c.toUpperCase());
-}
-
-function parseSize(size) {
-  const s = size.toLowerCase().trim();
-  if (!s || s === "standard") return { storage: null, ram: null, extra: null };
-  const ram = s.match(/(\d+)\s*gb\s*ram/);
-  const storage = s.match(/(\d+)\s*(gb|tb)(?!\s*ram)/);
-  if (!ram && !storage) return { storage: null, ram: null, extra: titleCase(s) };
-  return {
-    storage: storage ? `${storage[1]}${storage[2].toUpperCase()}` : null,
-    ram: ram ? `${ram[1]}GB` : null,
-    extra: null,
-  };
-}
-
-function isKeypadPhone(item) {
-  const flat = Object.values(item.specs ?? {}).flat();
-  for (const obj of flat) {
-    for (const [k, v] of Object.entries(obj ?? {})) {
-      const key = k.toLowerCase(), val = String(v).toLowerCase();
-      if (key === "operating system" && /proprietary|feature/.test(val)) return true;
-      if (key === "screen size") {
-        const inches = parseFloat(val);
-        if (Number.isFinite(inches) && inches > 0 && inches < 3.2) return true;
-      }
-    }
-  }
-  return false;
-}
+const markup = parseInt((process.argv.find((a) => a.startsWith("--markup=")) ?? "--markup=0").slice(9), 10) || 0;
+const categories = process.argv.includes("--phones-only") ? ["New Phones", "KeyPad Phones"] : ["New Phones", "KeyPad Phones", "Tabs"];
+const supabase = serviceClient();
 
 /* ------------------------------ load crawl ------------------------------ */
 
@@ -99,68 +28,68 @@ for (const f of readdirSync(dir).filter((f) => f.startsWith("po-") && f.endsWith
   items.push(...JSON.parse(readFileSync(join(dir, f), "utf8")));
 }
 
-// brand|category -> [{norm, combos, colors, minPrice, title}]
+// brand|category -> [{norm, combos, colors, colorCombos, minPrice, title}]
+// every price already includes the markup
 const crawlIndex = new Map();
 for (const item of items) {
   if (item.section !== "phone" && item.section !== "tablet") continue;
   const inStock = (item.variants ?? []).filter((v) => v.inStock && Number.isFinite(v.price) && v.price >= 200);
   if (!item.title || inStock.length === 0) continue;
-
-  const category = item.section === "tablet" ? "Tabs" : isKeypadPhone(item) ? "KeyPad Phones" : "New Phones";
-  const brandKey = (BRAND_ALIASES[(item.brand ?? "").trim().toLowerCase()] ?? item.brand ?? "").trim().toLowerCase();
-
-  let model = item.title.replace(new RegExp(`^\\s*${item.brand}\\s+`, "i"), "").trim();
-  if (brandKey === "samsung") model = model.replace(/^galaxy\s+/i, "").trim();
-  if (!model) model = item.title;
+  const id = crawlIdentity(item);
 
   const combos = new Map(); // "ram|storage" -> min price across colors
   const colors = new Map(); // color label (lower) -> min price across sizes
   const colorCombos = new Map(); // "color|ram|storage" -> exact price
   for (const v of inStock) {
+    const price = v.price + markup;
     const { ram, storage, extra } = parseSize(v.size);
     const colorLabel = [titleCase(v.color || ""), extra].filter(Boolean).join(" ").trim().toLowerCase();
     if (ram || storage) {
       const key = `${ram ?? ""}|${storage ?? ""}`;
-      combos.set(key, Math.min(combos.get(key) ?? Infinity, v.price));
-      if (colorLabel) colorCombos.set(`${colorLabel}|${key}`, v.price);
+      combos.set(key, Math.min(combos.get(key) ?? Infinity, price));
+      if (colorLabel) colorCombos.set(`${colorLabel}|${key}`, price);
     }
-    if (colorLabel) colors.set(colorLabel, Math.min(colors.get(colorLabel) ?? Infinity, v.price));
+    if (colorLabel) colors.set(colorLabel, Math.min(colors.get(colorLabel) ?? Infinity, price));
   }
 
-  const list = crawlIndex.get(`${brandKey}|${category}`) ?? [];
+  const list = crawlIndex.get(id.bucket) ?? [];
   list.push({
-    norm: norm(model, item.brand ?? ""),
+    norm: id.norm,
     combos,
     colors,
     colorCombos,
-    minPrice: Math.min(...inStock.map((v) => v.price)),
+    minPrice: Math.min(...inStock.map((v) => v.price)) + markup,
     title: item.title,
   });
-  crawlIndex.set(`${brandKey}|${category}`, list);
+  crawlIndex.set(id.bucket, list);
 }
-console.log(`crawl: ${items.length} items indexed under ${crawlIndex.size} brand/category buckets`);
+console.log(`crawl: ${items.length} items indexed under ${crawlIndex.size} brand/category buckets; markup Rs. ${markup.toLocaleString()}`);
 
 /* ------------------------------ match + update ------------------------------ */
 
-const { data: products, error: pe } = await supabase
-  .from("products")
-  .select("id, brand, model, category, price, product_variants ( id, color, ram, storage, price )")
-  .in("category", ["New Phones", "KeyPad Phones", "Tabs"])
-  .eq("condition", "New");
-if (pe) { console.error(pe.message); process.exit(1); }
-console.log(`catalog: ${products.length} New-condition phones/keypads/tabs loaded`);
+const products = await fetchAll(() =>
+  supabase
+    .from("products")
+    .select("id, brand, model, category, price, sale_price, sale_active, price_locked, product_variants ( id, color, ram, storage, price )")
+    .in("category", categories)
+    .eq("condition", "New")
+    .order("id"),
+);
+console.log(`catalog: ${products.length} New-condition products loaded (${categories.join(", ")})`);
 
 const changes = [];
 const unmatched = [];
+const locked = [];
+const saleWarnings = [];
 let productUpdates = 0, variantUpdates = 0, unchangedCount = 0;
 
 for (const p of products) {
+  if (p.price_locked) { locked.push(`${p.brand} ${p.model} (Rs. ${Number(p.price).toLocaleString()})`); continue; }
   // numeric columns can arrive as strings from PostgREST
   p.price = Number(p.price);
   for (const v of p.product_variants ?? []) v.price = v.price == null ? null : Number(v.price);
-  const brandKey = p.brand.trim().toLowerCase();
   const n = norm(p.model, p.brand);
-  const candidates = crawlIndex.get(`${brandKey}|${p.category}`) ?? [];
+  const candidates = bucketsFor(p.brand, p.category).flatMap((b) => crawlIndex.get(b) ?? []);
   const hit = candidates.find((c) => sameModel(c.norm, n));
   if (!hit) { unmatched.push(`${p.brand} ${p.model} (${p.category})`); continue; }
 
@@ -172,6 +101,9 @@ for (const p of products) {
       `${p.brand} ${p.model}: Rs. ${p.price.toLocaleString()} -> Rs. ${hit.minPrice.toLocaleString()}` +
         (swing > 0.3 ? `  [BIG SWING ${(swing * 100).toFixed(0)}% — matched "${hit.title}"]` : ""),
     );
+    if (p.sale_active && p.sale_price != null && Number(p.sale_price) >= hit.minPrice) {
+      saleWarnings.push(`${p.brand} ${p.model}: sale price Rs. ${Number(p.sale_price).toLocaleString()} is not below new price Rs. ${hit.minPrice.toLocaleString()}`);
+    }
     if (!dry) {
       const { error } = await supabase.from("products").update({ price: hit.minPrice }).eq("id", p.id);
       if (error) { console.error(`FAIL ${p.brand} ${p.model}: ${error.message}`); continue; }
@@ -210,7 +142,12 @@ for (const p of products) {
   if (!touched) unchangedCount++;
 }
 
-console.log(`\n${dry ? "[DRY] " : ""}price updates: ${productUpdates} products, ${variantUpdates} variant rows; unchanged: ${unchangedCount}; unmatched: ${unmatched.length}`);
-writeFileSync(join(dir, "price-update-log.txt"), changes.join("\n"));
+console.log(`\n${dry ? "[DRY] " : ""}price updates: ${productUpdates} products, ${variantUpdates} variant rows; unchanged: ${unchangedCount}; unmatched: ${unmatched.length}; price-locked (skipped): ${locked.length}`);
+if (saleWarnings.length) console.log(`sale-price warnings: ${saleWarnings.length} (see price-update-log.txt)`);
+writeFileSync(
+  join(dir, "price-update-log.txt"),
+  [...changes, ...(saleWarnings.length ? ["", "# active sale prices that are no longer below the new price:", ...saleWarnings] : [])].join("\n"),
+);
 writeFileSync(join(dir, "price-update-unmatched.txt"), unmatched.join("\n"));
+if (locked.length) writeFileSync(join(dir, "price-update-locked.txt"), locked.join("\n"));
 console.log("change log -> price-update-log.txt, unmatched -> price-update-unmatched.txt");

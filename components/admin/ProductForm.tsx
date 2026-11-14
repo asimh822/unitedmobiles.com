@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useRef, useState, useActionState } from "react";
 import { saveProduct, type ActionState, type ProductPayload } from "@/app/admin/actions";
+import QuickAddPanel from "@/components/admin/QuickAddPanel";
+import type { QuickAddFields } from "@/lib/quick-text";
 import {
   ACCESSORY_SUBCATEGORIES,
   CATEGORIES,
@@ -182,6 +184,7 @@ export default function ProductForm({
   const [storage, setStorage] = useState(product?.storage ?? "");
   const [condition, setCondition] = useState<"New" | "Used">(product?.condition ?? "New");
   const [ptaApproved, setPtaApproved] = useState(product?.ptaApproved ?? true);
+  const [priceLocked, setPriceLocked] = useState(product?.priceLocked ?? false);
   const [warranty, setWarranty] = useState(product?.warranty ?? "");
   const [stockStatus, setStockStatus] = useState<"in_stock" | "out_of_stock">(
     product?.stockStatus ?? "in_stock",
@@ -235,6 +238,7 @@ export default function ProductForm({
       ptaApproved: isPhoneLike(category) ? ptaApproved : false,
       warranty: warranty.trim() || null,
       stockStatus,
+      priceLocked,
       existingImages,
       specs: specs
         .map((g) => ({
@@ -264,6 +268,47 @@ export default function ProductForm({
     action(formData);
   }
 
+  /** Pre-fill from the Quick Add panel; screen size and network live in Specs. */
+  function applyQuickAdd(fields: QuickAddFields) {
+    if (fields.brand) {
+      const existing = brandOptions.find(
+        (b) => b.toLowerCase() === fields.brand!.toLowerCase(),
+      );
+      setBrand(existing ?? fields.brand);
+      setNewBrandMode(!existing);
+    }
+    if (fields.model) setModel(fields.model);
+    if (fields.price != null) setPrice(String(fields.price));
+    if (fields.ram) setRam(fields.ram);
+    if (fields.storage) setStorage(fields.storage);
+
+    if (fields.screenSize || fields.network) {
+      const nextRam = fields.ram ?? ram;
+      const nextStorage = fields.storage ?? storage;
+      setSpecs((prev) => {
+        const groups =
+          prev.length > 0
+            ? prev.map((g) => ({ ...g, items: g.items.map((i) => ({ ...i })) }))
+            : specTemplate(nextRam.trim(), nextStorage.trim());
+        const put = (category: string, label: string, value: string) => {
+          let group = groups.find((g) => g.category.toLowerCase() === category.toLowerCase());
+          if (!group) {
+            group = { category, items: [] };
+            groups.push(group);
+          }
+          const item = group.items.find((i) => i.label.toLowerCase() === label.toLowerCase());
+          if (item) item.value = value;
+          else group.items.push({ label, value });
+        };
+        if (fields.screenSize) put("Display", "Size", fields.screenSize);
+        if (fields.network) put("Connectivity", "Network", fields.network);
+        if (fields.ram) put("Memory", "RAM", fields.ram);
+        if (fields.storage) put("Memory", "Storage", fields.storage);
+        return groups;
+      });
+    }
+  }
+
   /* ---- specs helpers ---- */
   function updateSpecItem(gi: number, ii: number, key: "label" | "value", value: string) {
     setSpecs((prev) =>
@@ -279,6 +324,8 @@ export default function ProductForm({
 
   return (
     <form action={submit} className="max-w-3xl space-y-8">
+      {!product && <QuickAddPanel onApply={applyQuickAdd} />}
+
       {/* Category */}
       <section className="grid gap-4 rounded-2xl border border-stone-200 bg-white p-5 sm:grid-cols-3">
         <div>
@@ -388,6 +435,11 @@ export default function ProductForm({
         <div>
           <label className={labelClass}>Original Price (Rs.) *</label>
           <input value={price} onChange={(e) => setPrice(e.target.value)} required inputMode="numeric" className={inputClass} placeholder="389999" />
+          <label className="mt-2 flex items-center gap-2 text-sm font-semibold text-ink">
+            <input type="checkbox" checked={priceLocked} onChange={(e) => setPriceLocked(e.target.checked)} className="h-4 w-4 accent-brand" />
+            Lock this price
+          </label>
+          <p className="mt-1 text-xs text-stone-500">Keeps the PriceOye price sync from overwriting a price you set by hand.</p>
         </div>
         <div>
           <label className={labelClass}>Sale Price (Rs.)</label>

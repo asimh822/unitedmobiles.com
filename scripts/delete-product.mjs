@@ -33,8 +33,11 @@ if (!p) { console.error(`no product with id ${id}`); process.exit(1); }
 const variants = p.product_variants ?? [];
 // Product images plus any variant-only images, mapped back to storage paths.
 const urls = [...(p.images ?? []), ...variants.map((v) => v.image)].filter(Boolean);
+// Any key inside the bucket, not just catalog/ — images also land under press/
+// (apply-press-images.mjs) and at the bucket root (admin uploads). The old
+// catalog/-only pattern silently orphaned those.
 const paths = [...new Set(
-  urls.map((u) => (u.match(/product-images\/(catalog\/[^?]+)/) ?? [])[1]).filter(Boolean),
+  urls.map((u) => (u.match(/\/product-images\/([^?]+)/) ?? [])[1]).filter(Boolean).map(decodeURIComponent),
 )];
 
 console.log(`${p.brand} ${p.model} (${p.category}, Rs. ${Number(p.price).toLocaleString()})`);

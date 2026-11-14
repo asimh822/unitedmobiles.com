@@ -1,13 +1,18 @@
 // Crawls PriceOye listing + detail pages into compact po-*.json files that
 // scripts/import-priceoye.mjs consumes. Skips discontinued products.
-// Usage: node scripts/crawl-priceoye.mjs <out-dir> [--only=phone,watch]
-import { mkdirSync, writeFileSync } from "node:fs";
+// Usage: node scripts/crawl-priceoye.mjs <out-dir> [--only=phone,watch] [--urls=file]
+//   --only=a,b   restrict to those section keys or listing paths
+//   --urls=FILE  skip listing discovery and fetch exactly these detail URLs
+//                (one per line, # comments allowed). Use when you only need a
+//                couple of new models — a full crawl is thousands of requests.
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const outDir = process.argv[2];
 if (!outDir) { console.error("usage: node scripts/crawl-priceoye.mjs <out-dir>"); process.exit(1); }
 mkdirSync(outDir, { recursive: true });
 const only = (process.argv.find((a) => a.startsWith("--only=")) ?? "").slice(7).split(",").filter(Boolean);
+const urlsFile = (process.argv.find((a) => a.startsWith("--urls=")) ?? "").slice(7);
 
 const BASE = "https://priceoye.pk";
 const UA = { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" };
@@ -133,12 +138,18 @@ function parseDetail(html, url, section) {
 const seenUrls = new Set();
 for (const { path, section } of SOURCES) {
   if (only.length && !only.includes(section) && !only.includes(path)) continue;
+  // --urls carries no section of its own, so it must be paired with --only
+  if (urlsFile && !only.length) { console.error("--urls needs --only=<section> so items get the right category"); process.exit(1); }
   console.log(`\n== ${path} (${section}) ==`);
-  const urls = (await crawlListing(path)).filter((u) => !seenUrls.has(u));
+  const discovered = urlsFile
+    ? readFileSync(urlsFile, "utf8").split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !l.startsWith("#"))
+    : await crawlListing(path);
+  const urls = discovered.filter((u) => !seenUrls.has(u));
   urls.forEach((u) => seenUrls.add(u));
   console.log(`  ${urls.length} product pages to fetch`);
 
-  let done = 0, skipped = 0;
+  let done = 0;
+  const unavailable = []; // discontinued / out-of-stock on PriceOye (kept for the OOS pass)
   const items = (
     await mapLimit(urls, 6, async (url) => {
       const html = await fetchText(url);
@@ -147,13 +158,22 @@ for (const { path, section } of SOURCES) {
       if (!html) return null;
       const item = parseDetail(html, url, section);
       if (!item) return null;
-      if (item.status && item.status !== "launched") { skipped++; return null; }
-      if (!item.variants.some((v) => v.inStock && v.price)) { skipped++; return null; }
+      const discontinued = Boolean(item.status && item.status !== "launched");
+      const noStock = !item.variants.some((v) => v.inStock && v.price);
+      if (discontinued || noStock) {
+        unavailable.push({
+          section, url, brand: item.brand, title: item.title, status: item.status,
+          reason: discontinued ? "discontinued" : "out_of_stock", specs: item.specs,
+        });
+        return null;
+      }
       return item;
     })
   ).filter(Boolean);
 
   writeFileSync(join(outDir, `po-${path}.json`), JSON.stringify(items, null, 1));
-  console.log(`  saved ${items.length} in-stock products (${skipped} discontinued/out-of-stock skipped)`);
+  // separate filename so import/update scripts (which glob po-*.json) ignore it
+  writeFileSync(join(outDir, `oos-${path}.json`), JSON.stringify(unavailable, null, 1));
+  console.log(`  saved ${items.length} in-stock products (${unavailable.length} discontinued/out-of-stock -> oos-${path}.json)`);
 }
 console.log("\ncrawl complete");

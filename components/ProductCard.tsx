@@ -2,7 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 import PriceTag from "@/components/PriceTag";
 import { formatGb, formatPrice } from "@/lib/format";
-import { isOnSale, startingPrice, type Product } from "@/lib/types";
+import {
+  formatConditionScore,
+  isOnSale,
+  startingPrice,
+  warrantyLabel,
+  type Product,
+} from "@/lib/types";
 
 /**
  * Multiple variant prices -> "Starting from Rs. X" (lowest effective price);
@@ -50,7 +56,14 @@ export default function ProductCard({ product }: { product: Product }) {
         )}
         {product.condition === "Used" && (
           <span className="absolute right-3 top-3 rounded-full bg-ink/80 px-2.5 py-1 text-xs font-semibold text-white">
-            Used
+            {formatConditionScore(product.conditionScore)
+              ? `Used · ${formatConditionScore(product.conditionScore)}`
+              : "Used"}
+          </span>
+        )}
+        {product.condition === "Used" && warrantyLabel(product) && (
+          <span className="absolute bottom-3 left-3 rounded-full bg-emerald-600/90 px-2.5 py-1 text-[11px] font-semibold text-white">
+            🛡 {warrantyLabel(product)}
           </span>
         )}
       </div>

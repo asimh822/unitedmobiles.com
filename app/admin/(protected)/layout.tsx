@@ -17,6 +17,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <nav className="flex gap-3 text-sm font-semibold text-brand">
             <Link href="/admin" className="hover:underline">Products</Link>
             <Link href="/admin/brands" className="hover:underline">Brands</Link>
+            <Link href="/admin/quick-prices" className="hover:underline">Quick Prices</Link>
             <Link href="/admin/import" className="hover:underline">Import CSV</Link>
             <a href="/api/admin/export" className="hover:underline">Export CSV</a>
           </nav>

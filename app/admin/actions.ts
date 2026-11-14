@@ -81,6 +81,8 @@ export interface ProductPayload {
   ptaApproved: boolean;
   warranty: string | null;
   stockStatus: "in_stock" | "out_of_stock";
+  /** Shop-set price: the PriceOye sync must not overwrite it. */
+  priceLocked: boolean;
   existingImages: string[];
   specs: SpecGroup[];
   /** "Goes with this device" product ids, in display order. */
@@ -149,6 +151,7 @@ export async function saveProduct(_prev: ActionState, formData: FormData): Promi
     pta_approved: payload.ptaApproved,
     warranty: payload.warranty || null,
     stock_status: payload.stockStatus,
+    price_locked: payload.priceLocked,
     images,
     specs: payload.specs,
     suggested_ids: payload.suggestedIds ?? [],
@@ -187,6 +190,86 @@ export async function saveProduct(_prev: ActionState, formData: FormData): Promi
   revalidatePath("/");
   revalidatePath(`/products/${productId}`);
   redirect("/admin?saved=1");
+}
+
+/* --------------------------- bulk price updates --------------------------- */
+
+export interface PriceUpdateInput {
+  productId: string;
+  /** Variant rows carrying the matched RAM/ROM config. */
+  variantIds: string[];
+  /** Also write the product-level price (no config variants, or base config matches). */
+  updateProductPrice: boolean;
+  price: number;
+  /** null = leave the discounted price (and sale toggle) untouched. */
+  salePrice: number | null;
+  /** For error messages, e.g. "Vivo Y19s 8/256". */
+  label: string;
+}
+
+export interface BulkPriceResult {
+  updated: number;
+  failed: number;
+  errors: string[];
+}
+
+/**
+ * Quick Update Prices: writes ONLY price/sale_price on already-matched rows —
+ * never stock, images, or any other product data, and never creates products.
+ */
+export async function applyPriceUpdates(updates: PriceUpdateInput[]): Promise<BulkPriceResult> {
+  await requireAdmin();
+  if (!isSupabaseConfigured()) return { updated: 0, failed: updates.length, errors: [NOT_CONFIGURED] };
+
+  const supabase = getSupabaseAdmin();
+  let updated = 0;
+  const errors: string[] = [];
+
+  for (const u of updates) {
+    if (!(u.price > 0) || (u.salePrice !== null && !(u.salePrice > 0))) {
+      errors.push(`${u.label}: invalid price`);
+      continue;
+    }
+    let ok = true;
+
+    // A discounted price only displays while the product's sale toggle is on,
+    // so providing one implies turning the sale on.
+    if (u.updateProductPrice || u.salePrice !== null) {
+      const row: Record<string, unknown> = {};
+      if (u.updateProductPrice) {
+        row.price = u.price;
+        if (u.salePrice !== null) row.sale_price = u.salePrice;
+      }
+      if (u.salePrice !== null) row.sale_active = true;
+      const { error } = await supabase.from("products").update(row).eq("id", u.productId);
+      if (error) {
+        errors.push(`${u.label}: ${error.message}`);
+        ok = false;
+      }
+    }
+
+    if (ok && u.variantIds.length > 0) {
+      const row: Record<string, unknown> = { price: u.price };
+      if (u.salePrice !== null) row.sale_price = u.salePrice;
+      const { error } = await supabase
+        .from("product_variants")
+        .update(row)
+        .in("id", u.variantIds)
+        .eq("product_id", u.productId);
+      if (error) {
+        errors.push(`${u.label}: ${error.message}`);
+        ok = false;
+      }
+    }
+
+    if (ok) {
+      updated++;
+      revalidatePath(`/products/${u.productId}`);
+    }
+  }
+
+  if (updated > 0) revalidatePath("/");
+  return { updated, failed: updates.length - updated, errors };
 }
 
 export async function deleteProduct(formData: FormData): Promise<void> {

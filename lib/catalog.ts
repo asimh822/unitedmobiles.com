@@ -52,6 +52,7 @@ export function mapProduct(row: any): Product {
     ptaApproved: row.pta_approved ?? true,
     warranty: row.warranty ?? null,
     stockStatus: (row.stock_status ?? "in_stock") as StockStatus,
+    priceLocked: row.price_locked ?? false,
     images: row.images ?? [],
     specs: row.specs ?? [],
     suggestedIds: row.suggested_ids ?? row.suggestedIds ?? [],
@@ -60,6 +61,10 @@ export function mapProduct(row: any): Product {
       .sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
       .map(mapVariant),
     createdAt: row.created_at ?? new Date().toISOString(),
+    source: row.source ?? "manual",
+    conditionScore: row.condition_score != null ? Number(row.condition_score) : null,
+    warrantyUntil: row.warranty_until ?? null,
+    color: row.color ?? null,
   };
 }
 

@@ -2,7 +2,10 @@
 // into the catalog: dedupes against existing products, re-hosts images in
 // Supabase Storage, maps sections to our categories, creates color/RAM/ROM
 // variants and grouped spec boxes.
-// Usage: node scripts/import-priceoye.mjs <crawl-dir> [--dry]
+// Usage: node scripts/import-priceoye.mjs <crawl-dir> [--dry] [--markup=N] [--only-existing-brands]
+//   --markup=N              add N rupees on top of every PriceOye price
+//   --only-existing-brands  skip models whose brand has no product in
+//                           New Phones / KeyPad Phones yet (never creates brands)
 import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { dirname, join } from "node:path";
@@ -22,6 +25,8 @@ const supabase = createClient(
 
 const dir = process.argv[2];
 const dry = process.argv.includes("--dry");
+const markup = parseInt((process.argv.find((a) => a.startsWith("--markup=")) ?? "--markup=0").slice(9), 10) || 0;
+const onlyExistingBrands = process.argv.includes("--only-existing-brands");
 
 const SECTION_MAP = {
   phone: { category: "New Phones", subcategory: null, sub_subcategory: null },
@@ -58,7 +63,9 @@ const EXPANSIONS = [
 ];
 function norm(model, brand) {
   let s = ` ${model.toLowerCase()} `;
-  for (const w of [brand.toLowerCase(), ...brand.toLowerCase().split(/\s+/), "galaxy", "4g", "5g"]) {
+  // "nubia" is ZTE's sub-brand — PriceOye titles say "ZTE Nubia A36" for the
+  // phone the shop files as plain "ZTE A36", so it's noise like "galaxy".
+  for (const w of [brand.toLowerCase(), ...brand.toLowerCase().split(/\s+/), "galaxy", "nubia", "4g", "5g"]) {
     if (w) s = s.replaceAll(` ${w} `, " ");
   }
   for (const [re, rep] of EXPANSIONS) s = s.replace(re, rep);
@@ -196,6 +203,13 @@ const brandByLower = new Map(brandRows.map((b) => [b.name.toLowerCase(), b.name]
 
 // brand|category -> [{norm, label}] — brand-scoped so e.g. a ZTE "A36" can't
 // swallow the Samsung Galaxy A36 as a duplicate.
+// Brands that already sell phones on the site — the --only-existing-brands gate.
+const phoneBrands = new Set(
+  existing
+    .filter((p) => p.category === "New Phones" || p.category === "KeyPad Phones")
+    .map((p) => p.brand.toLowerCase()),
+);
+
 const existingNorms = new Map();
 for (const p of existing) {
   const key = `${p.brand.toLowerCase()}|${p.category}`;
@@ -217,15 +231,26 @@ async function canonicalBrand(name) {
 
 /* ---------------- pass 1: dedupe + brand resolution (serial) ---------------- */
 
-let deduped = 0, failed = 0;
+let deduped = 0, failed = 0, skippedBrand = 0;
 const seen = new Set();
 const skippedDupes = [];
+const skippedBrandNames = new Map(); // brand -> count
 const work = [];
 
 for (const item of items) {
   const map = SECTION_MAP[item.section];
   const inStock = (item.variants ?? []).filter((v) => v.inStock && Number.isFinite(v.price) && v.price >= 200);
   if (!map || !item.title || inStock.length === 0) { failed++; continue; }
+
+  if (onlyExistingBrands) {
+    const rawKey = (item.brand || "").trim().toLowerCase();
+    const resolved = (BRAND_ALIASES[rawKey] ?? item.brand ?? "").trim().toLowerCase();
+    if (!phoneBrands.has(resolved)) {
+      skippedBrand++;
+      skippedBrandNames.set(resolved || "(none)", (skippedBrandNames.get(resolved || "(none)") ?? 0) + 1);
+      continue;
+    }
+  }
 
   const category =
     item.section === "phone" && isKeypadPhone(item) ? "KeyPad Phones" : map.category;
@@ -241,18 +266,29 @@ for (const item of items) {
   if (seen.has(seenKey)) { deduped++; continue; }
   seen.add(seenKey);
 
-  const clash = (existingNorms.get(`${brand.toLowerCase()}|${category}`) ?? []).find((e) => sameModel(e.norm, n));
+  // Keypad detection is heuristic on both sides, so a phone dedupes against
+  // both phone buckets (New Phones <-> KeyPad Phones), like the price updater.
+  const clashBuckets =
+    category === "New Phones" || category === "KeyPad Phones" ? ["New Phones", "KeyPad Phones"] : [category];
+  const clash = clashBuckets
+    .flatMap((c) => existingNorms.get(`${brand.toLowerCase()}|${c}`) ?? [])
+    .find((e) => sameModel(e.norm, n));
   if (clash) { deduped++; skippedDupes.push(`${item.title} == ${clash.label}`); continue; }
 
   // Variants: in-stock color x size combos, crawl (color-major) order.
   const parsed = inStock
-    .map((v) => ({ ...v, ...parseSize(v.size) }))
+    .map((v) => ({ ...v, price: v.price + markup, ...parseSize(v.size) }))
     .map((v) => ({
       ...v,
       colorLabel: [titleCase(v.color || ""), v.extra].filter(Boolean).join(" ").trim(),
     }));
   work.push({ item, map, category, brand, model, parsed });
 }
+
+writeFileSync(
+  join(dir, "import-planned.txt"),
+  work.map((w) => `${w.brand} ${w.model} (${w.category}) Rs. ${Math.min(...w.parsed.map((v) => v.price)).toLocaleString()}`).join("\n"),
+);
 
 /* ---------------- pass 2: images + inserts (concurrent) ---------------- */
 
@@ -346,6 +382,11 @@ async function importOne({ item, map, category, brand, model, parsed }) {
 
 await mapLimit(work, 14, importOne);
 
-console.log(`\n${dry ? "[DRY] " : ""}inserted: ${inserted} products, ${variantRows} variant rows; deduped: ${deduped}; failed/invalid: ${failed}`);
+console.log(`\n${dry ? "[DRY] " : ""}inserted: ${inserted} products, ${variantRows} variant rows; deduped: ${deduped}; failed/invalid: ${failed}` +
+  (onlyExistingBrands ? `; skipped (new brand): ${skippedBrand}` : "") +
+  (markup ? `; markup Rs. ${markup.toLocaleString()}` : ""));
+if (skippedBrandNames.size) {
+  console.log("skipped brands: " + [...skippedBrandNames.entries()].sort((a, b) => b[1] - a[1]).map(([b, n]) => `${b} (${n})`).join(", "));
+}
 writeFileSync(join(dir, "import-dedupe-log.txt"), skippedDupes.join("\n"));
 console.log("dedupe matches logged to import-dedupe-log.txt");

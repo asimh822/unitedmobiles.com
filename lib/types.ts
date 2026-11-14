@@ -52,6 +52,8 @@ export interface Product {
   ptaApproved: boolean;
   warranty: string | null;
   stockStatus: StockStatus;
+  /** Shop-set price the PriceOye sync must leave alone. */
+  priceLocked: boolean;
   images: string[];
   specs: SpecGroup[];
   variants: Variant[];
@@ -59,6 +61,39 @@ export interface Product {
    * Empty/absent = automatic accessory suggestions. */
   suggestedIds?: string[];
   createdAt: string;
+  /** 'epos' = a used phone pushed by the shop EPOS (one row per handset). */
+  source?: string;
+  /** Used phones from the EPOS: condition out of 10, e.g. 8.5. */
+  conditionScore?: number | null;
+  /** Used phones from the EPOS: warranty end date (YYYY-MM-DD). */
+  warrantyUntil?: string | null;
+  color?: string | null;
+}
+
+/** Whole months of warranty left, rounded up (12 days still reads "1 month"). */
+export function warrantyMonthsLeft(until: string | null | undefined, now = new Date()): number {
+  if (!until) return 0;
+  const end = new Date(`${until}T23:59:59+05:00`);
+  if (Number.isNaN(end.getTime()) || end <= now) return 0;
+  let months = (end.getFullYear() - now.getFullYear()) * 12 + (end.getMonth() - now.getMonth());
+  if (end.getDate() > now.getDate()) months += 1;
+  return Math.max(months, 1);
+}
+
+/** Warranty line for badges. An EPOS warranty end date counts down live;
+ * an expired one shows nothing rather than a stale "4 months left". */
+export function warrantyLabel(p: Product): string | null {
+  if (p.warrantyUntil) {
+    const m = warrantyMonthsLeft(p.warrantyUntil);
+    return m ? `${m} month${m === 1 ? "" : "s"} warranty left` : null;
+  }
+  if (p.source === "epos") return null;
+  return p.warranty;
+}
+
+/** "8.5/10" */
+export function formatConditionScore(score: number | null | undefined): string | null {
+  return score == null ? null : `${Number(score)}/10`;
 }
 
 export type SortKey = "price_asc" | "price_desc" | "newest";

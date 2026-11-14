@@ -26,3 +26,6 @@ next-env.d.ts
 
 # vercel
 .vercel
+
+# local catalog backups written by scripts/remove-priceoye-oos.mjs
+/backups

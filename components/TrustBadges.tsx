@@ -1,5 +1,5 @@
 import { isPhoneLike } from "@/lib/categories";
-import type { Product } from "@/lib/types";
+import { formatConditionScore, warrantyLabel, type Product } from "@/lib/types";
 
 function Badge({ children, tone }: { children: React.ReactNode; tone: "turq" | "gold" | "slate" }) {
   const tones = {
@@ -21,7 +21,10 @@ export default function TrustBadges({ product }: { product: Product }) {
   return (
     <div className="flex flex-wrap gap-2">
       {product.ptaApproved && <Badge tone="turq">✓ PTA Approved</Badge>}
-      {product.warranty && <Badge tone="turq">🛡 {product.warranty}</Badge>}
+      {warrantyLabel(product) && <Badge tone="turq">🛡 {warrantyLabel(product)}</Badge>}
+      {product.condition === "Used" && formatConditionScore(product.conditionScore) && (
+        <Badge tone="gold">★ Condition {formatConditionScore(product.conditionScore)}</Badge>
+      )}
       {/* Phones/tabs only — installment talk on a Rs. 500 cable reads silly.
           Generic by design — never name a specific bank/vendor. */}
       {phoneLike && <Badge tone="gold">💳 Easy Installments Available</Badge>}
