@@ -1,7 +1,7 @@
 # United Mobiles — Project Context
 
 ## What this is
-An e-commerce-style website for **United Mobiles**, a mobile phone shop. There is NO online payment gateway — every order ends as a **WhatsApp message** to the shop, and the sale is completed manually by a salesman with **Cash on Delivery**. A companion desktop inventory app already exists and is not part of this project — this is a standalone web app with its own database.
+An e-commerce-style website for **United Mobiles**, a mobile phone shop. There is NO online payment gateway — every order ends as a **WhatsApp message** to the shop, and the sale is completed manually by a salesman with **Cash on Delivery**. A companion desktop inventory app (the shop EPOS, `E:\ShopSoftware`) already exists and is not part of this project — this is a standalone web app with its own database. **Exception since Nov 2026: the Used category is fed by the EPOS** (see "Used phones from the EPOS" at the end).
 
 Business goal: minimum number of clicks from "browsing" to "order sent." Every design/technical decision should serve that goal.
 
@@ -154,3 +154,29 @@ All secrets/config values must live in `.env` — never hardcoded in source:
 - Keep components small and reusable (e.g. `ProductCard`, `SpecBox`, `PriceTag`, `TrustBadge`)
 - Favor server components; mark client components explicitly with `"use client"` only where interactivity is required
 - Ask before introducing any new major dependency not already listed in this file
+
+---
+
+## Deploying (read this first)
+- **The live site is whatever is on GitHub `main`.** Vercel builds every push to `main` (live in ~1 to 3 minutes). Nothing on this PC goes live until it is committed AND pushed. There is no Vercel CLI here.
+- Work on `main`. A side branch (`catalog-sep-2026`) is how two months of finished work (promo carousel, Quick Prices, price lock) sat unpublished from 09/09/2026 until 14/11/2026 without anyone noticing.
+- Deploy routine: `npm run build` (must pass), commit, `git push origin main`, then confirm on https://www.unitedmobiles.net.
+- When a change is finished, deploy it or say clearly that it is NOT live yet.
+- Never commit `Shop Pics/` (46 MB of raw iPhone photos) or `.env.local`. `/backups` is gitignored.
+- Supabase schema changes are SQL files in `supabase/migrations/` that the owner runs by hand in the Supabase SQL editor. There is no DB password here, so a migration is not applied until he says so. Applied so far: 001 to 006.
+
+## Current state (Nov 2026)
+- Homepage: hero promo carousel (`components/HeroCarousel.tsx`, `PromoSlide.tsx`, images in `public/promo/`), then the brand rows.
+- Admin: Quick Prices (`/admin/quick-prices`) and Quick Add panels besides the normal product form.
+- `price_locked` (migration 005): a shop-set price the PriceOye scripts (`scripts/*priceoye*.mjs`) must leave alone. Those scripts only touch New Phones, KeyPad Phones and Tabs, never Used.
+- Images: `next.config.ts` has `images.unoptimized: true` (Vercel Hobby image quota), so **an image's stored file size IS what every visitor downloads**. Keep stored images small; never put a multi-hundred-KB photo on a list card.
+- Product URLs are SSG with 5 min revalidation; `/used` and other category pages render per request.
+
+## Used phones from the EPOS
+- Since 14/11/2026 every used phone in the shop is listed by the EPOS (`E:\ShopSoftware\website_sync.py`, hourly from the shop's API server, or "Update Website Now" on the shop PC). The salesman takes the photos and sets condition, warranty, PTA and price in the salesman app.
+- One product row per PHYSICAL handset: `source = 'epos'`, `epos_ref = 'used-<stock_item_id>'`, plus `condition_score` (1 to 10), `warranty_until` (date), `color` (migration 006). Sold or returned phones are deleted by the sync, photos included.
+- **The EPOS owns these rows. Do not edit them in the admin panel**: the next sync overwrites the fields, or deletes the row when the phone is sold. Fix data on the salesman app / shop PC instead. Hand-made products have `source = 'manual'` and the sync never touches them.
+- The 31 old hand-made Used listings were removed on 14/11/2026 (backup: `backups/removed-manual-used-2026-11-14.json`, script `scripts/remove-manual-used.mjs`).
+- The IMEI is never on the website and must never be added.
+- Badges: `lib/types.ts` `warrantyLabel()` (live countdown from `warranty_until`; an expired warranty shows nothing) and `formatConditionScore()` ("8.5/10"), used by `ProductCard` and `TrustBadges`.
+- Photos in Storage: `used/<id>/<slot>-<hash>.webp` (full, phone page) and `used/<id>/t1-<hash>.webp` (480px card copy, ~5 to 30 KB). **`cardImage()` in `lib/types.ts` finds the card copy BY NAME**; it must stay in step with `_push_one()` in `E:\ShopSoftware\website_sync.py`. Change one, change both.
