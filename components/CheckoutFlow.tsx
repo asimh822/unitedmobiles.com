@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { formatGb, formatPrice } from "@/lib/format";
+import { ADVANCE_PERCENT, PAYMENT, paymentSplit } from "@/lib/payment";
 import { PRICE_NOTICE, PRICE_NOTICE_ENABLED } from "@/lib/price-notice";
 import { buildOrderLink } from "@/lib/whatsapp";
 import { cardImage, effectivePrice, type Product, type Variant } from "@/lib/types";
@@ -35,6 +36,7 @@ export default function CheckoutFlow({ product, variant, addons = [] }: Props) {
 
   const selectedAddons = addons.filter((a) => addonIds.includes(a.id));
   const total = price + selectedAddons.reduce((sum, a) => sum + effectivePrice(a), 0);
+  const split = paymentSplit(total);
 
   const order = {
     brand: product.brand,
@@ -162,7 +164,8 @@ export default function CheckoutFlow({ product, variant, addons = [] }: Props) {
             {[
               ["1", "Press Send", "The message with your order is already written for you."],
               ["2", "We confirm on WhatsApp", PRICE_NOTICE.confirmStep],
-              ["3", "Pay at your door", "Cash on delivery — check the product before you pay."],
+              ["3", `Send the ${ADVANCE_PERCENT}% advance`, `${split.advance} by bank transfer. ${PAYMENT.safety}`],
+              ["4", "Pay the rest at your door", `${split.onDelivery} cash on delivery.`],
             ].map(([n, title, desc]) => (
               <li key={n} className="flex gap-3">
                 <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand text-xs font-bold text-white">
@@ -275,6 +278,22 @@ export default function CheckoutFlow({ product, variant, addons = [] }: Props) {
             </div>
           )}
 
+          {/* Payment split, before the button — no surprise on WhatsApp. */}
+          <div className="rounded-xl border border-brand/20 bg-brand/5 p-3 text-sm">
+            <p className="font-bold text-ink">How you pay</p>
+            <div className="mt-1.5 flex justify-between">
+              <span className="text-stone-600">{ADVANCE_PERCENT}% advance — bank transfer</span>
+              <span className="font-bold text-ink">{split.advance}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-stone-600">Rest — cash on delivery</span>
+              <span className="font-bold text-ink">{split.onDelivery}</span>
+            </div>
+            <p className="mt-1.5 text-xs text-stone-500">
+              Send the advance only after our salesman confirms your order. {PAYMENT.reason}
+            </p>
+          </div>
+
           {PRICE_NOTICE_ENABLED && (
             <p className="rounded-xl bg-gold/10 px-3 py-2 text-xs font-semibold text-gold-dark">
               {PRICE_NOTICE.checkoutNote}
@@ -301,7 +320,7 @@ export default function CheckoutFlow({ product, variant, addons = [] }: Props) {
           </div>
           <p className="text-center text-xs text-stone-400">
             Pressing Confirm opens WhatsApp with your order pre-filled — nothing is sent until you hit
-            Send there. Cash on delivery.
+            Send there.
           </p>
         </div>
       )}

@@ -1,9 +1,10 @@
 import { KashiWatermark } from "@/components/KashiMotifs";
+import { ADVANCE_PERCENT, PAYMENT } from "@/lib/payment";
 
 const TRUST_LINES = [
   "Official Vivo Outlet",
   "Genuine Products with Official Warranty",
-  "Cash on Delivery",
+  PAYMENT.short,
   "Lowest Price Guaranteed",
   "Multan's Trusted Mobile Shop for Over a Decade",
 ];
@@ -29,7 +30,7 @@ export default function Hero() {
           <span className="text-gold-light">Delivered to Your Door.</span>
         </h1>
         <p className="mt-1.5 text-sm text-white/85 sm:text-base">
-          Browse, tap Buy Now, and confirm on WhatsApp — pay cash when it arrives.
+          Browse, tap Buy Now, and confirm on WhatsApp — {ADVANCE_PERCENT}% advance, the rest when it arrives.
         </p>
 
         <ul className="mt-3 grid gap-x-6 gap-y-1.5 sm:grid-cols-2">

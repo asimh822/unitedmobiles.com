@@ -27,7 +27,7 @@ export default function LocalBusinessJsonLd() {
     description:
       "Official Vivo outlet on Katchehry Road, Multan. Genuine mobile phones " +
       "with official warranty, plus used phones, keypad phones and tablets. " +
-      "Same-day delivery across Multan, cash on delivery.",
+      "Same-day delivery across Multan: small bank-transfer advance, rest cash on delivery.",
     url: SITE_URL,
     image: `${SITE_URL}/shop-logo.png`,
     telephone: BUSINESS_PHONE,
@@ -50,7 +50,7 @@ export default function LocalBusinessJsonLd() {
       name: "Multan",
     },
     currenciesAccepted: "PKR",
-    paymentAccepted: "Cash on Delivery",
+    paymentAccepted: "Bank Transfer, Cash",
     priceRange: "₨₨",
   };
 

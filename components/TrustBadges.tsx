@@ -25,9 +25,12 @@ export default function TrustBadges({ product }: { product: Product }) {
       {product.condition === "Used" && formatConditionScore(product.conditionScore) && (
         <Badge tone="gold">★ Condition {formatConditionScore(product.conditionScore)}</Badge>
       )}
-      {/* Phones/tabs only — installment talk on a Rs. 500 cable reads silly.
+      {/* New phones/tabs only — installment talk on a Rs. 500 cable reads
+          silly, and installments aren't offered on used handsets.
           Generic by design — never name a specific bank/vendor. */}
-      {phoneLike && <Badge tone="gold">💳 Easy Installments Available</Badge>}
+      {phoneLike && product.condition !== "Used" && product.category !== "Used" && (
+        <Badge tone="gold">💳 Easy Installments Available</Badge>
+      )}
       {phoneLike && (
         <Badge tone="slate">{product.condition === "New" ? "Brand New" : "Pre-Owned"}</Badge>
       )}

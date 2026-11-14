@@ -5,7 +5,7 @@
  * Why it exists: website prices and the physical counter price can differ in
  * either direction while the worldwide chip shortage keeps moving phone prices
  * week to week. The final price is always confirmed on WhatsApp (our checkout)
- * before delivery, and payment is cash on delivery.
+ * before delivery; payment terms live in lib/payment.ts.
  *
  * Flip PRICE_NOTICE_ENABLED to false once shop and site prices are aligned —
  * that hides the modal and every inline note in one go.
@@ -31,7 +31,7 @@ export const PRICE_NOTICE = {
     "Phone prices are moving week to week because of the worldwide chip shortage, so the price you see here may be a little different from today's counter price — up or down.",
   /** Modal, second paragraph — the reassurance. */
   bodyConfirm:
-    "When you order on WhatsApp we confirm the exact price with you before anything is delivered, and you pay cash at your door.",
+    "When you order on WhatsApp we confirm the exact price with you before anything is delivered — you pay a small advance, the rest cash at your door.",
   /** Signs the modal off, so it reads as a note from the shop. */
   signature: "United Mobiles, Multan",
   cta: "Got it",

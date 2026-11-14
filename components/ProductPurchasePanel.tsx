@@ -8,8 +8,9 @@ import PriceTag from "@/components/PriceTag";
 import SpecsTable from "@/components/SpecsTable";
 import TrustBadges from "@/components/TrustBadges";
 import { colorNameToHex } from "@/lib/color-names";
+import { PAYMENT, paymentSplit } from "@/lib/payment";
 import { PRICE_NOTICE, PRICE_NOTICE_ENABLED } from "@/lib/price-notice";
-import { ramRomCombos, type Product, type RamRomCombo, type Variant } from "@/lib/types";
+import { effectivePrice, ramRomCombos, type Product, type RamRomCombo, type Variant } from "@/lib/types";
 
 /**
  * Client island for the product page: gallery + TWO independent selectors
@@ -214,7 +215,7 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
               href={checkoutHref}
               className="block w-full rounded-2xl bg-brand px-6 py-4 text-center text-lg font-extrabold text-white shadow-md transition-colors hover:bg-brand-dark"
             >
-              Buy Now — Cash on Delivery
+              Buy Now
             </Link>
           ) : (
             <button
@@ -226,8 +227,18 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
             </button>
           )}
           <p className="text-center text-[13px] text-stone-500">
-            No online payment — confirm your order and final price on WhatsApp, pay on delivery.
+            {(() => {
+              const split = paymentSplit(effectivePrice(product, variant));
+              return (
+                <>
+                  Pay just <span className="font-bold text-ink">{split.advance}</span> advance by bank
+                  transfer, the rest <span className="font-bold text-ink">({split.onDelivery})</span> cash on
+                  delivery.
+                </>
+              );
+            })()}
           </p>
+          <p className="text-center text-xs text-stone-400">{PAYMENT.reason}</p>
         </div>
 
         {hasSpecs && <SpecsTable specs={product.specs} />}

@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .filter(Boolean)
     .join(", ")}) for ${formatPrice(effectivePrice(product))} at United Mobiles. ${
     product.ptaApproved ? "PTA approved. " : ""
-  }Cash on delivery.`;
+  }Small advance, rest cash on delivery.`;
 
   return {
     title,

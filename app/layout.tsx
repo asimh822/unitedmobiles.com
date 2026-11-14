@@ -1,3 +1,4 @@
+import { PAYMENT } from "@/lib/payment";
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import Image from "next/image";
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
     template: "%s | United Mobiles",
   },
   description:
-    "United Mobiles is an official Vivo outlet on Katchehry Road, Multan — genuine phones with official warranty, lowest price guaranteed, same-day delivery in Multan, cash on delivery. A trusted physical shop for over a decade.",
+    "United Mobiles is an official Vivo outlet on Katchehry Road, Multan — genuine phones with official warranty, lowest price guaranteed, same-day delivery in Multan, small advance, rest cash on delivery. A trusted physical shop for over a decade.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -44,7 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </Link>
             <NavMenu />
             <span className="hidden shrink-0 whitespace-nowrap text-xs font-medium text-stone-500 lg:block">
-              Genuine phones. Cash on delivery.
+              Genuine phones. {PAYMENT.short}.
             </span>
           </div>
           <KashiBorder id="kashi-header" />
@@ -56,7 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <KashiBorder id="kashi-footer" />
           <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-8 text-sm text-stone-500 sm:flex-row sm:items-center sm:justify-between">
             <p className="font-semibold text-ink">United Mobiles</p>
-            <p>Genuine products • Official warranty • Cash on delivery</p>
+            <p>Genuine products • Official warranty • {PAYMENT.short}</p>
             <p>© {new Date().getFullYear()} United Mobiles</p>
           </div>
         </footer>
