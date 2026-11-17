@@ -20,7 +20,7 @@ export default async function HomePage() {
         <LaunchSlide
           href="/products/82337702-6ceb-4d2e-a0d4-d75376d0eedb"
           name="vivo V80"
-          price={211999}
+          price={190000}
           saleDate="2026-11-17"
           images={[
             { src: "/promo/v80-green.webp", alt: "vivo V80 in Green" },
