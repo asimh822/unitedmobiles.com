@@ -29,3 +29,6 @@ next-env.d.ts
 
 # local catalog backups written by scripts/remove-priceoye-oos.mjs
 /backups
+
+# report written by scripts/parse-match-specs.mjs
+scripts/match-specs-report.json

@@ -1,4 +1,5 @@
 import BrandRows from "@/components/BrandRows";
+import BuildSlide from "@/components/BuildSlide";
 import Hero from "@/components/Hero";
 import HeroCarousel from "@/components/HeroCarousel";
 import LaunchSlide from "@/components/LaunchSlide";
@@ -27,6 +28,7 @@ export default async function HomePage() {
             { src: "/promo/v80-grey.webp", alt: "vivo V80 in Grey" },
           ]}
         />
+        <BuildSlide />
       </HeroCarousel>
       <BrandRows category="New Phones" />
     </div>

@@ -8,6 +8,7 @@ const CATEGORY_PATHS = [
   "/used",
   "/keypad-phones",
   "/tabs",
+  "/build",
   ...(ACCESSORIES_ENABLED ? ["/accessories"] : []),
 ];
 

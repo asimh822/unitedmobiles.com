@@ -1,7 +1,14 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import { buildChatLink } from "@/lib/whatsapp";
 
-/** Persistent floating "Chat with us" button, site-wide general inquiries. */
+/** Persistent floating "Chat with us" button, site-wide general inquiries.
+ * Hidden on /build, where a fixed "Find my real phone" bar owns the bottom
+ * of the screen and every result card has its own WhatsApp button. */
 export default function WhatsAppFloat() {
+  const pathname = usePathname();
+  if (pathname === "/build") return null;
   return (
     <a
       href={buildChatLink()}

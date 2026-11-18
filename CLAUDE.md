@@ -163,7 +163,7 @@ All secrets/config values must live in `.env` — never hardcoded in source:
 - Deploy routine: `npm run build` (must pass), commit, `git push origin main`, then confirm on https://www.unitedmobiles.net.
 - When a change is finished, deploy it or say clearly that it is NOT live yet.
 - Never commit `Shop Pics/` (46 MB of raw iPhone photos) or `.env.local`. `/backups` is gitignored.
-- Supabase schema changes are SQL files in `supabase/migrations/` that the owner runs by hand in the Supabase SQL editor. There is no DB password here, so a migration is not applied until he says so. Applied so far: 001 to 006.
+- Supabase schema changes are SQL files in `supabase/migrations/` that the owner runs by hand in the Supabase SQL editor. There is no DB password here, so a migration is not applied until he says so. Applied so far: 001 to 007.
 
 ## Current state (Nov 2026)
 - Homepage carousel (`components/HeroCarousel.tsx`): Used slide first (`UsedPromoSlide.tsx`, live data, hidden when no used stock), trust banner (`Hero.tsx`), vivo V80 launch slide (`LaunchSlide.tsx`, `saleDate` flips "Pre-book" to "Now in stock" by itself). `PromoSlide.tsx` is kept for manufacturer key-visual promos (images in `public/promo/`). Then the brand rows.
@@ -183,3 +183,9 @@ All secrets/config values must live in `.env` — never hardcoded in source:
 - The IMEI is never on the website and must never be added.
 - Badges: `lib/types.ts` `warrantyLabel()` (live countdown from `warranty_until`; an expired warranty shows nothing) and `formatConditionScore()` ("8.5/10"), used by `ProductCard` and `TrustBadges`.
 - Photos in Storage: `used/<id>/<slot>-<hash>.webp` (full, phone page) and `used/<id>/t1-<hash>.webp` (480px card copy, ~5 to 30 KB). **`cardImage()` in `lib/types.ts` finds the card copy BY NAME**; it must stay in step with `_push_one()` in `E:\ShopSoftware\website_sync.py`. Change one, change both.
+
+## Build Your Dream Phone (`/build`, Nov 2026)
+- Port of `E:\ShopSoftware\prototypes\build_your_phone.html`. `three` (npm) is the one extra dependency and loads only on /build after a persona is tapped (`components/build/PhoneStage.tsx` via `next/dynamic`, `ssr:false`).
+- Shelf = New Phones + Pre-Owned (`lib/build-data.ts`); KeyPad and Tabs are left out. Matching, picks and WhatsApp text: `lib/build-match.ts`. Spec parsing: `lib/match-specs.ts` (no `@/` imports, because `scripts/parse-match-specs.mjs` imports it directly).
+- Migration 007: `screen_in, battery_mah, main_cam_mp, lens_count, ram_gb, storage_gb` on products (override/cache; nulls are parsed live) and the anonymous `build_logs` table (written only by `app/api/build-log`, no personal data).
+- Pre-Owned rows have no spec sheet: screen/battery/camera come from the same model in New Phones (`findDonor`); RAM/storage only ever the handset's own.
