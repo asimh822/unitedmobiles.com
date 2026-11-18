@@ -44,7 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               />
             </Link>
             <NavMenu />
-            <span className="hidden shrink-0 whitespace-nowrap text-xs font-medium text-stone-500 lg:block">
+            <span className="hidden shrink-0 whitespace-nowrap text-xs font-medium text-stone-500 xl:block">
               Genuine phones. {PAYMENT.short}.
             </span>
           </div>

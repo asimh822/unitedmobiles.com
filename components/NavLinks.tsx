@@ -56,8 +56,9 @@ const ITEMS: Item[] = [
     ),
   },
   {
-    label: "Build Your Phone",
-    short: "Build",
+    // Short on every screen: "Build Your Phone" overflowed the desktop menu
+    // into the tagline. The icon + page title carry the rest.
+    label: "Build",
     href: "/build",
     isNew: true,
     icon: (
