@@ -35,7 +35,18 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
   const combos = useMemo(() => ramRomCombos(product), [product]);
 
   const [colorIdx, setColorIdx] = useState(0);
-  const [comboIdx, setComboIdx] = useState(0);
+  // Open on the first RAM+ROM combo that is actually in stock, not an
+  // out-of-stock one with Buy Now greyed out.
+  const [comboIdx, setComboIdx] = useState(() =>
+    Math.max(
+      0,
+      combos.findIndex((c) =>
+        variants.some(
+          (v) => v.inStock && (c.ram ? v.ram === c.ram : true) && (c.storage ? v.storage === c.storage : true),
+        ),
+      ),
+    ),
+  );
   const [imageIdx, setImageIdx] = useState(0);
 
   const selectedColor = colors[colorIdx]?.color ?? null;
@@ -239,6 +250,14 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
             })()}
           </p>
           <p className="text-center text-xs text-stone-400">{PAYMENT.reason}</p>
+          {(product.category === "New Phones" || product.category === "Used") && (
+            <Link
+              href="/build"
+              className="flex items-center justify-center gap-1.5 rounded-2xl border border-dashed border-brand/30 bg-brand/5 px-4 py-2.5 text-sm font-bold text-brand hover:border-brand/60"
+            >
+              Not sure? Build your phone →
+            </Link>
+          )}
         </div>
 
         {hasSpecs && <SpecsTable specs={product.specs} />}

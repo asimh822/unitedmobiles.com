@@ -161,14 +161,17 @@ export function isOnSale(p: Product): boolean {
 }
 
 /**
- * Card pricing across all grids: lowest effective price over every variant,
- * plus whether variants actually differ in price ("Starting from Rs. X").
+ * Card pricing across all grids: lowest effective price over the in-stock
+ * variants (all of them if none is in stock), plus whether they actually
+ * differ in price ("Starting from Rs. X"). An out-of-stock cheap variant must
+ * not advertise a price nobody can buy at.
  */
 export function startingPrice(p: Product): { price: number; multiple: boolean } {
   if (p.variants.length === 0) {
     return { price: effectivePrice(p), multiple: false };
   }
-  const prices = p.variants.map((v) => effectivePrice(p, v));
+  const pool = p.variants.some((v) => v.inStock) ? p.variants.filter((v) => v.inStock) : p.variants;
+  const prices = pool.map((v) => effectivePrice(p, v));
   return { price: Math.min(...prices), multiple: new Set(prices).size > 1 };
 }
 
