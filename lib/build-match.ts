@@ -101,12 +101,16 @@ export const colorName = (hex: string) => COLORS.find((c) => c[1] === hex)?.[0] 
 
 /* ------------------------------ estimate ------------------------------ */
 
-/** Rough shelf price of the build, rounded to Rs. 500 (prototype formula). */
+/** Rough shelf price of the build, rounded to Rs. 500. The base is what the
+ *  cheapest 4GB + 64GB smartphones actually cost in the shop (Nov 2026: GO3,
+ *  Galaxy A07 4+64 at Rs. 37,000 to 38,200). It was Rs. 15,000, below every
+ *  phone on the shelf, so the minimum build out-priced nothing and the
+ *  matcher had no price signal left. */
 export function estimate(s: BuildState): number {
   const sto = ({ 64: 0, 128: 5000, 256: 14000, 512: 40000 } as Record<number, number>)[s.storage] ?? 0;
   const ram = ({ 4: 0, 6: 4000, 8: 9000, 12: 25000 } as Record<number, number>)[s.ram] ?? 0;
   const mp = ({ 13: 0, 50: 6000, 108: 18000, 200: 45000 } as Record<number, number>)[s.mp] ?? 0;
-  const raw = 15000 + sto + ram + mp + (s.lenses - 1) * 6000 + ((s.battery - 4000) / 1000) * 3000 + (s.screen - 6.1) * 10000;
+  const raw = 33000 + sto + ram + mp + (s.lenses - 1) * 6000 + ((s.battery - 4000) / 1000) * 3000 + (s.screen - 6.1) * 10000;
   return Math.round(raw / 500) * 500;
 }
 
@@ -132,20 +136,31 @@ const closeness = (a: number, b: number, tol: number) => Math.max(0, 1 - Math.ab
 /** A spec the catalog doesn't know counts as a coin flip, not a perfect fit. */
 const UNKNOWN = 0.5;
 
+/** Price fit. Over the tag it decays smoothly with the ratio and never hits
+ *  zero: a hard zero made a Rs. 37,000 phone and a Rs. 554,795 one score the
+ *  same against a cheap build, so specs alone picked the iPhone. */
+function priceFit(target: number, price: number): number {
+  if (price <= target * 1.05) return 1 - Math.max(0, (target * 0.6 - price) / target) * 0.5;
+  return Math.pow((target * 1.05) / price, 2);
+}
+
+/** Having more than asked is good, but far more is a different (dearer) phone:
+ *  each doubling past the wish costs a little, floored so it never dominates. */
+const overkill = (want: number, have: number, perDoubling: number) =>
+  Math.max(0.5, 1 - perDoubling * Math.log2(have / want));
+
 function parts(st: BuildState, ph: BuildPhone, c: BuildCombo): Record<Key, number> {
   const target = estimate(st);
-  const atLeast = (want: number, have: number | null, f: () => number) => (have == null ? UNKNOWN : have >= want ? 1 : f());
+  const atLeast = (want: number, have: number | null, below: () => number, above: () => number = () => 1) =>
+    have == null ? UNKNOWN : have >= want ? above() : below();
   return {
     screen: ph.screen == null ? UNKNOWN : closeness(st.screen, ph.screen, 0.8),
-    ram: atLeast(st.ram, c.ram, () => closeness(Math.log2(st.ram), Math.log2(c.ram!), 1.6)),
-    storage: atLeast(st.storage, c.storage, () => closeness(Math.log2(st.storage), Math.log2(c.storage!), 2)),
+    ram: atLeast(st.ram, c.ram, () => closeness(Math.log2(st.ram), Math.log2(c.ram!), 1.6), () => overkill(st.ram, c.ram!, 0.2)),
+    storage: atLeast(st.storage, c.storage, () => closeness(Math.log2(st.storage), Math.log2(c.storage!), 2), () => overkill(st.storage, c.storage!, 0.15)),
     battery: atLeast(st.battery, ph.battery, () => closeness(st.battery, ph.battery!, 2500)),
     mp: atLeast(st.mp, ph.mp, () => closeness(Math.log2(st.mp), Math.log2(ph.mp!), 3)),
     lenses: atLeast(st.lenses, ph.lenses, () => closeness(st.lenses, ph.lenses!, 3)),
-    price:
-      c.price <= target * 1.05
-        ? 1 - Math.max(0, (target * 0.6 - c.price) / target) * 0.5
-        : closeness(target, c.price, target * 0.6),
+    price: priceFit(target, c.price),
   };
 }
 
