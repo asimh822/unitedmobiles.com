@@ -5,12 +5,13 @@ import { usePathname } from "next/navigation";
 
 type Item = { label: string; short?: string; href: string; icon: React.ReactNode; isNew?: boolean };
 
-const svg = "h-4 w-4 shrink-0 stroke-current";
+const svg = "h-[18px] w-[18px] shrink-0 stroke-current sm:h-4 sm:w-4";
 const svgProps = { viewBox: "0 0 24 24", fill: "none", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true } as const;
 
 const ITEMS: Item[] = [
   {
     label: "New Phones",
+    short: "New",
     href: "/new-phones",
     icon: (
       <svg {...svgProps} className={svg}>
@@ -70,7 +71,11 @@ const ITEMS: Item[] = [
   },
 ];
 
-/** Category pills: icon + label; the current section is filled cobalt. */
+/**
+ * Category links; the current section is filled cobalt. On a phone they are
+ * five equal tabs (icon over a short label) so every section is on screen with
+ * no sideways scrolling; from sm up they are icon + label pills in a row.
+ */
 export default function NavLinks() {
   const pathname = usePathname();
 
@@ -83,10 +88,10 @@ export default function NavLinks() {
             key={item.href}
             href={item.href}
             aria-current={active ? "page" : undefined}
-            className={`relative flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1.5 text-[13px] font-bold transition-colors sm:px-3.5 sm:text-sm ${
+            className={`relative flex min-w-0 flex-1 flex-col items-center gap-0.5 whitespace-nowrap rounded-xl border px-0.5 py-1 text-[11px] font-bold transition-all active:scale-95 sm:flex-none sm:shrink-0 sm:flex-row sm:gap-1.5 sm:rounded-full sm:px-3.5 sm:py-1.5 sm:text-sm ${
               active
-                ? "border-brand bg-brand text-white shadow-sm"
-                : "border-stone-200 bg-white text-ink hover:border-brand/40 hover:bg-brand/5 hover:text-brand"
+                ? "border-brand bg-brand text-white shadow-md"
+                : "border-transparent text-ink hover:border-brand/40 hover:bg-brand/5 hover:text-brand sm:border-stone-200 sm:bg-white"
             }`}
           >
             <span className={active ? "text-white" : "text-brand"}>{item.icon}</span>
@@ -99,9 +104,12 @@ export default function NavLinks() {
               item.label
             )}
             {item.isNew && (
-              <span className="rounded-full bg-gold-light px-1.5 py-px text-[9px] font-extrabold uppercase leading-tight tracking-wide text-ink">
-                New
-              </span>
+              <>
+                <span aria-hidden="true" className="absolute right-[18%] top-1 h-2 w-2 rounded-full bg-gold-light ring-2 ring-cream sm:hidden" />
+                <span className="hidden rounded-full bg-gold-light px-1.5 py-px text-[9px] font-extrabold uppercase leading-tight tracking-wide text-ink sm:inline">
+                  New
+                </span>
+              </>
             )}
           </Link>
         );

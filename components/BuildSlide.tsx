@@ -14,7 +14,7 @@ export default function BuildSlide() {
   return (
     <Link
       href="/build"
-      className="group relative flex min-h-[200px] items-center gap-2 overflow-hidden rounded-3xl bg-gradient-to-br from-cream via-[#f6e7c4] to-gold-light px-5 py-5 text-ink sm:h-[28vh] sm:px-10"
+      className="bg-drift group relative flex min-h-[190px] items-center gap-2 overflow-hidden rounded-3xl bg-gradient-to-br from-cream via-[#f6e7c4] to-gold-light px-5 py-4 text-ink sm:h-[28vh] sm:px-10 sm:py-5"
     >
       <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 -left-10 h-64 w-64 rounded-full bg-white/60 blur-2xl" />
 
@@ -25,15 +25,15 @@ export default function BuildSlide() {
         <h2 className="mt-2 text-2xl font-extrabold leading-tight tracking-tight sm:text-4xl">
           Build your <span className="text-brand">dream phone</span>
         </h2>
-        <p className="mt-1.5 max-w-sm text-sm font-semibold text-stone-700 sm:text-base">
+        <p className="mt-1 max-w-sm text-[13px] font-semibold text-stone-700 sm:mt-1.5 sm:text-base">
           Pick the screen, camera, battery and colour. We find the real one on our shelf.
         </p>
-        <span className="mt-3 inline-block rounded-full bg-brand px-4 py-1.5 text-sm font-extrabold text-white shadow-md transition group-hover:bg-brand-dark">
+        <span className="cta-shine mt-3 inline-block rounded-full bg-brand px-4 py-1.5 text-sm font-extrabold text-white shadow-md transition group-hover:bg-brand-dark">
           Start building →
         </span>
       </div>
 
-      <div aria-hidden="true" className="relative -mr-2 h-32 w-20 shrink-0 sm:mr-0 sm:h-[24vh] sm:w-[18vh]">
+      <div aria-hidden="true" className="float-y relative -mr-2 h-32 w-20 shrink-0 sm:mr-0 sm:h-[24vh] sm:w-[18vh]">
         {PHONES.map((p) => (
           <div
             key={p.color}

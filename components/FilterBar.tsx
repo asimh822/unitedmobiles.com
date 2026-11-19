@@ -72,7 +72,7 @@ export default function FilterBar({
   );
 
   const selectClass =
-    "rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm font-medium text-ink focus:border-brand focus:outline-none";
+    "shrink-0 rounded-full border border-stone-200 bg-white px-3 py-2 text-sm font-medium text-ink focus:border-brand focus:outline-none";
 
   return (
     <div className="flex flex-col gap-3">
@@ -91,12 +91,23 @@ export default function FilterBar({
           type="search"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Search by brand or model — e.g. Samsung, iPhone 15…"
-          className="w-full rounded-2xl border border-stone-200 bg-white py-3 pl-11 pr-4 text-sm text-ink placeholder:text-stone-400 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+          placeholder="Search brand or model, e.g. Samsung"
+          className="w-full rounded-full border border-stone-200 bg-white py-3 pl-11 pr-4 text-sm text-ink placeholder:text-stone-400 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
         />
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="no-scrollbar -mx-4 flex items-center gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
+        {/* Sort leads on a phone: it is the control people reach for first. */}
+        <select
+          aria-label="Sort"
+          className={`${selectClass} border-brand/30 font-bold text-brand sm:hidden`}
+          value={params.get("sort") ?? "price_asc"}
+          onChange={(e) => apply({ sort: e.target.value === "price_asc" ? "" : e.target.value })}
+        >
+          {SORTS.map((s) => (
+            <option key={s.value} value={s.value}>{s.label}</option>
+          ))}
+        </select>
         {showBrand && (
           <select
             aria-label="Brand"
@@ -166,7 +177,7 @@ export default function FilterBar({
           </select>
         )}
 
-        <div className="ml-auto flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2 sm:ml-auto">
           {hasFilters && (
             <button
               type="button"
@@ -181,7 +192,7 @@ export default function FilterBar({
           )}
           <select
             aria-label="Sort"
-            className={selectClass}
+            className={`${selectClass} hidden sm:block`}
             value={params.get("sort") ?? "price_asc"}
             onChange={(e) => apply({ sort: e.target.value === "price_asc" ? "" : e.target.value })}
           >

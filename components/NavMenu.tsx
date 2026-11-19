@@ -22,7 +22,7 @@ export default function NavMenu() {
   return (
     <nav
       aria-label="Categories"
-      className="flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto py-1 pr-6 text-sm font-semibold [mask-image:linear-gradient(to_right,black_80%,transparent)] [scrollbar-width:none] sm:gap-2 sm:pr-0 sm:[mask-image:none] [&::-webkit-scrollbar]:hidden"
+      className="flex min-w-0 flex-1 items-center gap-1 pb-1.5 text-sm font-semibold sm:gap-2 sm:overflow-x-auto sm:py-1 sm:[scrollbar-width:none] sm:[&::-webkit-scrollbar]:hidden"
     >
       <NavLinks />
 

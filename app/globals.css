@@ -15,11 +15,38 @@
   --color-gold-light: #eec868; /* highlight on cobalt backgrounds */
   --color-cream: #faf7f0; /* glazed-ceramic off-white — background */
   --color-ink: #1c1917; /* deep slate — text */
+  /* WhatsApp green: wa for icon-only buttons, wa-dark (5:1 on white text) for buttons with a label. */
+  --color-wa: #1faa59;
+  --color-wa-dark: #15803d;
 
   --animate-trust-in: trust-in 0.5s ease-out both;
   /* First-visit price notice modal (components/PriceNotice.tsx) */
   --animate-fade-in: fade-in 0.2s ease-out both;
   --animate-modal-in: modal-in 0.25s ease-out both;
+  --animate-slide-up: slide-up 0.35s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+  --animate-pop-in: pop-in 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      transform: translateY(14px) scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
 
   @keyframes trust-in {
     from {
@@ -181,4 +208,124 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .build-swing, .build-shuffle > div { animation: none; }
   .build-flip-inner { transition: none; }
+}
+
+/* ---------- Site-wide life: small, CSS-only motion ---------- */
+
+/* Cards rise a little under the pointer and dip under a thumb. */
+.card-lift {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+@media (hover: hover) {
+  .card-lift:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px -10px rgb(28 78 156 / 0.28);
+    border-color: rgb(28 78 156 / 0.3);
+  }
+}
+.card-lift:active {
+  transform: scale(0.97);
+}
+
+/* Rows and cards fade up as they scroll into view. Scroll-driven, so it costs
+   no JS; browsers without it simply show everything. */
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: reveal-up linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 45%;
+  }
+  @keyframes reveal-up {
+    from {
+      opacity: 0;
+      transform: translateY(26px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* A light sweeps across the main call-to-action every few seconds. */
+.cta-shine {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.cta-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.28) 50%, transparent 65%);
+  transform: translateX(-120%);
+  animation: cta-shine 4.5s ease-in-out infinite;
+}
+@keyframes cta-shine {
+  0%, 60% { transform: translateX(-120%); }
+  100% { transform: translateX(120%); }
+}
+
+/* WhatsApp button: a ring breathes out from it. */
+.wa-pulse::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--color-wa);
+  z-index: -1;
+  animation: wa-pulse 2.6s ease-out infinite;
+}
+@keyframes wa-pulse {
+  0% { transform: scale(1); opacity: 0.55; }
+  70%, 100% { transform: scale(1.55); opacity: 0; }
+}
+
+/* Banner backgrounds drift slowly; banner art bobs. */
+.bg-drift {
+  background-size: 180% 180%;
+  animation: bg-drift 14s ease-in-out infinite alternate;
+}
+@keyframes bg-drift {
+  from { background-position: 0% 0%; }
+  to { background-position: 100% 100%; }
+}
+.float-y {
+  animation: float-y 5s ease-in-out infinite alternate;
+}
+@keyframes float-y {
+  from { translate: 0 -5px; }
+  to { translate: 0 5px; }
+}
+
+/* "Live" dot beside in-stock text. */
+.live-dot {
+  position: relative;
+}
+.live-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: inherit;
+  animation: wa-pulse 2s ease-out infinite;
+}
+
+/* Horizontal scrollers without a visible bar. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .cta-shine::after, .wa-pulse::before, .bg-drift, .float-y, .live-dot::after {
+    animation: none;
+  }
+  .card-lift, .card-lift:hover, .card-lift:active {
+    transition: none;
+    transform: none;
+  }
 }

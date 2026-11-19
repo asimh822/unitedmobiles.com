@@ -43,7 +43,7 @@ export default function UsedPromoSlide({ total, from, photos }: UsedPromo) {
   return (
     <Link
       href="/used"
-      className="group relative flex min-h-[200px] items-center gap-3 overflow-hidden rounded-3xl bg-gradient-to-br from-ink via-[#2a2420] to-gold-dark px-5 py-5 text-white sm:h-[28vh] sm:px-10"
+      className="bg-drift group relative flex min-h-[190px] items-center gap-3 overflow-hidden rounded-3xl bg-gradient-to-br from-ink via-[#2a2420] to-gold-dark px-5 py-4 text-white sm:h-[28vh] sm:px-10 sm:py-5"
     >
       <div
         aria-hidden="true"
@@ -54,31 +54,31 @@ export default function UsedPromoSlide({ total, from, photos }: UsedPromo) {
         <span className="inline-block rounded-full bg-gold-light px-2.5 py-0.5 text-[11px] font-extrabold uppercase tracking-wide text-ink">
           New · Pre-Owned
         </span>
-        <h2 className="mt-2 text-2xl font-extrabold leading-tight sm:text-3xl">
+        <h2 className="mt-1.5 text-xl font-extrabold leading-tight sm:mt-2 sm:text-3xl">
           Pre-Owned Phones.{" "}
-          <span className="text-gold-light">Real Photos. Real Prices.</span>
+          <span className="block text-gold-light sm:inline">Real Photos. Real Prices.</span>
         </h2>
-        <p className="mt-1 text-sm text-white/80 sm:text-base">
+        <p className="mt-1 hidden text-sm text-white/80 sm:block sm:text-base">
           See the exact phone you&apos;ll get — checked and rated by our shop.
         </p>
         <ul className="mt-2.5 flex flex-wrap gap-1.5 text-[11px] font-semibold sm:text-xs">
-          {PERKS.map((p) => (
-            <li key={p} className="rounded-full bg-white/10 px-2 py-0.5 ring-1 ring-white/20">
+          {PERKS.map((p, i) => (
+            <li key={p} className={`rounded-full bg-white/10 px-2 py-0.5 ring-1 ring-white/20 ${i > 1 ? "hidden sm:block" : ""}`}>
               {p}
             </li>
           ))}
         </ul>
-        <span className="mt-3 inline-flex items-center gap-2 rounded-full bg-brand px-4 py-1.5 text-sm font-extrabold shadow-md transition group-hover:bg-brand-dark">
+        <span className="cta-shine mt-3 inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-brand px-4 py-1.5 text-sm font-extrabold shadow-md transition group-hover:bg-brand-dark">
           {from ? `From ${formatPrice(from)}` : "Shop Used"} →
         </span>
         {/* A small count ("2 in stock") undersells the shelf — show it once it impresses. */}
         {total >= 5 && (
-          <span className="ml-2 text-xs font-semibold text-white/70">{total} in stock</span>
+          <span className="ml-2 whitespace-nowrap text-xs font-semibold text-white/70">{total} in stock</span>
         )}
       </div>
 
       {photos.length > 0 && (
-        <div aria-hidden="true" className="relative flex shrink-0 items-center">
+        <div aria-hidden="true" className="float-y relative flex shrink-0 items-center">
           {photos.map((p, i) => (
             <div
               key={p.id}

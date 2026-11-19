@@ -99,8 +99,18 @@ export default function DreamPhoneBuilder({ phones }: { phones: BuildPhone[] }) 
     setSt(p.start);
     setTab("screen");
     setStep("build");
-    top.current?.scrollIntoView({ block: "start" });
   }
+
+  // The builder is a full-screen sheet: lock the page behind it so nothing
+  // scrolls and every control stays on one screen.
+  useEffect(() => {
+    if (step !== "build") return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [step]);
 
   function restart() {
     setStep("persona");
@@ -159,99 +169,119 @@ export default function DreamPhoneBuilder({ phones }: { phones: BuildPhone[] }) 
   }
 
   return (
-    <div ref={top} className="mx-auto max-w-xl scroll-mt-20 pb-32 pt-4">
+    <div ref={top} className="mx-auto max-w-xl scroll-mt-20 pb-10 pt-4">
       {step === "persona" && <PersonaStep onPick={start} onWarm={() => void loadStage()} />}
 
       {/* The stage stays mounted through searching/results so the 3D scene isn't rebuilt on "Edit". */}
       {step !== "persona" && (
-        <section className={step === "build" ? "" : "hidden"} aria-label="Build your phone">
-          <div className="mb-3 flex items-center justify-between gap-2">
-            <p className="text-sm font-bold text-ink">
-              <span aria-hidden="true">{persona?.emoji}</span> {persona?.name}
-            </p>
-            <button
-              type="button"
-              onClick={restart}
-              className="rounded-full border border-stone-200 bg-white px-3 py-1.5 text-xs font-bold text-stone-600 hover:border-brand/40 hover:text-brand"
-            >
-              Start over
-            </button>
-          </div>
-
-          <div className="relative h-[42vh] max-h-[440px] min-h-[260px] overflow-hidden rounded-3xl border border-stone-200 bg-[radial-gradient(ellipse_at_50%_35%,#ffffff_0%,#eef2fa_45%,#dfe6f3_100%)]">
-            {gl ? (
-              <PhoneStage
-                st={st}
-                mode={MODE[tab] ?? "home"}
-                faceBack={tab === "camera" || tab === "color"}
-                paused={step !== "build"}
-                onReady={(api) => (stage.current = api)}
-                onFirstDrag={() => setHint(false)}
-              />
-            ) : (
-              <FlatPhone st={st} />
-            )}
-            <div className="pointer-events-none absolute left-4 top-4 text-2xl font-extrabold text-ink">
-              {st.screen.toFixed(1)}&quot;
-              <small className="block text-[10px] font-semibold tracking-widest text-stone-500">SCREEN</small>
-            </div>
-            <div key={swing} className={`build-tag pointer-events-none absolute right-5 top-7 ${swing ? "build-swing" : ""}`}>
-              <div className="relative rounded-l-md rounded-r-2xl bg-gold-light py-2 pl-5 pr-3 text-[15px] font-extrabold text-ink shadow-[0_10px_24px_rgba(192,138,46,.3)]">
-                <span aria-hidden="true" className="absolute left-2 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-ink" />
-                <small className="block text-[9px] font-bold tracking-wide text-ink/70">EST. PRICE</small>
-                <span aria-live="polite">{formatPrice(price)}</span>
-              </div>
-            </div>
-            {gl && (
-              <p
-                className={`pointer-events-none absolute inset-x-0 bottom-2 text-center text-[11px] font-medium text-stone-500 transition-opacity duration-500 ${
-                  hint ? "opacity-100" : "opacity-0"
-                }`}
-              >
-                👆 Drag the phone to spin it
-              </p>
-            )}
-          </div>
-
-          <div role="tablist" aria-label="Phone features" className="-mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {TABS.map((t) => {
-              const on = t.id === tab;
-              return (
+        <section
+          className={
+            step === "build"
+              ? "fixed inset-0 z-50 flex h-[100dvh] flex-col overflow-y-auto bg-cream animate-fade-in"
+              : "hidden"
+          }
+          aria-label="Build your phone"
+        >
+          {/* One screen, no scrolling: the phone takes whatever height is left
+              over, the controls and the button always sit under it. Side by
+              side on desktop. */}
+          <div className="mx-auto flex min-h-0 w-full max-w-xl flex-1 flex-col gap-2 px-3 pb-[max(10px,env(safe-area-inset-bottom))] pt-2 lg:max-w-5xl lg:flex-row lg:items-stretch lg:gap-8 lg:px-6 lg:py-8">
+            <div className="relative min-h-[170px] flex-1 overflow-hidden rounded-3xl border border-stone-200 bg-[radial-gradient(ellipse_at_50%_35%,#ffffff_0%,#eef2fa_45%,#dfe6f3_100%)]">
+              {gl ? (
+                <PhoneStage
+                  st={st}
+                  mode={MODE[tab] ?? "home"}
+                  faceBack={tab === "camera" || tab === "color"}
+                  paused={step !== "build"}
+                  onReady={(api) => (stage.current = api)}
+                  onFirstDrag={() => setHint(false)}
+                />
+              ) : (
+                <FlatPhone st={st} />
+              )}
+              <div className="absolute left-3 top-3 flex items-center gap-2.5">
                 <button
-                  key={t.id}
                   type="button"
-                  role="tab"
-                  aria-selected={on}
-                  onClick={() => {
-                    buzz();
-                    setTab(t.id);
-                  }}
-                  className={`flex min-w-[66px] shrink-0 flex-col items-center gap-0.5 rounded-2xl border px-3 py-2 text-xs font-bold transition-colors ${
-                    on ? "border-brand bg-brand text-white shadow-sm" : "border-stone-200 bg-white text-ink hover:border-brand/40"
+                  onClick={restart}
+                  aria-label="Back to styles"
+                  className="grid h-9 w-9 place-items-center rounded-full border border-stone-200 bg-white/90 text-ink shadow-sm backdrop-blur hover:border-brand/40 hover:text-brand"
+                >
+                  <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M15 5l-7 7 7 7" />
+                  </svg>
+                </button>
+                <div className="pointer-events-none text-xl font-extrabold leading-none text-ink">
+                  {st.screen.toFixed(1)}&quot;
+                  <small className="mt-0.5 block text-[9px] font-semibold tracking-widest text-stone-500">
+                    <span aria-hidden="true">{persona?.emoji}</span> {persona?.name?.toUpperCase()}
+                  </small>
+                </div>
+              </div>
+              <div key={swing} className={`build-tag pointer-events-none absolute right-4 top-7 ${swing ? "build-swing" : ""}`}>
+                <div className="relative rounded-l-md rounded-r-2xl bg-gold-light py-1.5 pl-5 pr-3 text-[15px] font-extrabold text-ink shadow-[0_10px_24px_rgba(192,138,46,.3)]">
+                  <span aria-hidden="true" className="absolute left-2 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-ink" />
+                  <small className="block text-[9px] font-bold tracking-wide text-ink/70">EST. PRICE</small>
+                  <span aria-live="polite">{formatPrice(price)}</span>
+                </div>
+              </div>
+              {gl && (
+                <p
+                  className={`pointer-events-none absolute inset-x-0 bottom-2 text-center text-[11px] font-medium text-stone-500 transition-opacity duration-500 ${
+                    hint ? "opacity-100" : "opacity-0"
                   }`}
                 >
-                  <span className={on ? "text-white" : "text-brand"}>{t.icon}</span>
-                  {t.label}
-                </button>
-              );
-            })}
-          </div>
+                  👆 Drag the phone to spin it
+                </p>
+              )}
+            </div>
 
-          <div role="tabpanel" className="mt-1 min-h-[150px] rounded-3xl border border-stone-200 bg-white p-4">
-            <Panel tab={tab} st={st} set={set} />
-          </div>
+            <div className="flex shrink-0 flex-col gap-2 lg:w-[400px] lg:justify-center lg:gap-3">
+              <p className="hidden text-2xl font-extrabold leading-tight text-ink lg:block">
+                Make it <span className="text-brand">yours</span>
+              </p>
+              {/* All six features visible at once: nothing hides off the edge. */}
+              <div role="tablist" aria-label="Phone features" className="grid grid-cols-6 gap-1.5">
+                {TABS.map((t) => {
+                  const on = t.id === tab;
+                  return (
+                    <button
+                      key={t.id}
+                      type="button"
+                      role="tab"
+                      aria-selected={on}
+                      onClick={() => {
+                        buzz();
+                        setTab(t.id);
+                      }}
+                      className={`flex flex-col items-center gap-0.5 rounded-2xl border py-1.5 text-[11px] font-bold tracking-tight transition-all active:scale-95 ${
+                        on ? "border-brand bg-brand text-white shadow-md" : "border-stone-200 bg-white text-ink hover:border-brand/40"
+                      }`}
+                    >
+                      <span className={on ? "text-white" : "text-brand"}>{t.icon}</span>
+                      {t.label}
+                    </button>
+                  );
+                })}
+              </div>
 
-          {step === "build" && (
-            <div className="fixed inset-x-0 bottom-0 z-30 border-t border-stone-200 bg-cream/95 px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 backdrop-blur">
+              {/* Fixed height: the phone above must not jump when the tab changes. */}
+              <div
+                key={tab}
+                role="tabpanel"
+                className="flex h-[176px] flex-col justify-center rounded-3xl border border-stone-200 bg-white px-4 py-3 animate-fade-in"
+              >
+                <Panel tab={tab} st={st} set={set} />
+              </div>
+
               <button
                 type="button"
                 onClick={find}
-                className="mx-auto block w-full max-w-xl rounded-2xl bg-brand px-6 py-4 text-center text-lg font-extrabold text-white shadow-md transition-colors hover:bg-brand-dark active:scale-[.99]"
+                className="cta-shine block w-full rounded-2xl bg-brand px-6 py-3.5 text-center text-lg font-extrabold text-white shadow-md transition-colors hover:bg-brand-dark active:scale-[.99]"
               >
                 ✨ Find my real phone
               </button>
             </div>
-          )}
+          </div>
         </section>
       )}
 
@@ -295,12 +325,13 @@ function PersonaStep({ onPick, onWarm }: { onPick: (p: Persona) => void; onWarm:
         Pick your style. Shape it, spin it, make it yours. Then we find the real phone on our shelf.
       </p>
       <div className="grid grid-cols-2 gap-3" onPointerEnter={onWarm} onTouchStart={onWarm}>
-        {PERSONAS.map((p) => (
+        {PERSONAS.map((p, i) => (
           <button
             key={p.id}
             type="button"
             onClick={() => onPick(p)}
-            className={`group relative overflow-hidden rounded-3xl border p-4 text-left transition active:scale-[.97] ${
+            style={{ animationDelay: `${i * 70}ms` }}
+            className={`group relative overflow-hidden rounded-3xl border p-4 text-left transition animate-pop-in motion-reduce:animate-none active:scale-[.97] ${
               p.wide
                 ? "col-span-2 border-dashed border-stone-300 bg-transparent text-center hover:border-brand/50"
                 : "border-stone-200 bg-white hover:border-brand/40 hover:shadow-sm"
@@ -313,7 +344,7 @@ function PersonaStep({ onPick, onWarm }: { onPick: (p: Persona) => void; onWarm:
                 style={{ background: p.glow }}
               />
             )}
-            <span aria-hidden="true" className="relative mb-1.5 block text-4xl">
+            <span aria-hidden="true" className="float-y relative mb-1.5 block text-4xl" style={{ animationDelay: `${-i * 0.9}s` }}>
               {p.emoji}
             </span>
             <b className="relative block text-base font-extrabold text-ink">{p.name}</b>
@@ -329,7 +360,7 @@ function PersonaStep({ onPick, onWarm }: { onPick: (p: Persona) => void; onWarm:
 
 type Setter = <K extends keyof BuildState>(k: K, v: BuildState[K]) => void;
 
-function Chips<K extends keyof BuildState>({ k, st, set, opts }: { k: K; st: BuildState; set: Setter; opts: [BuildState[K], string, string?][] }) {
+function Chips<K extends keyof BuildState>({ k, st, set, opts, big }: { k: K; st: BuildState; set: Setter; opts: [BuildState[K], string, string?][]; big?: boolean }) {
   return (
     <div className="flex flex-wrap gap-2">
       {opts.map(([v, label, sub]) => {
@@ -343,7 +374,7 @@ function Chips<K extends keyof BuildState>({ k, st, set, opts }: { k: K; st: Bui
               buzz();
               set(k, v);
             }}
-            className={`min-w-[60px] flex-1 rounded-2xl border px-1.5 py-3 text-center text-sm font-extrabold transition-colors ${
+            className={`min-w-[60px] flex-1 rounded-2xl border px-1.5 text-center text-sm font-extrabold leading-tight transition-all active:scale-95 ${big ? "py-4" : "py-1.5"} ${
               on ? "border-brand bg-brand/5 text-brand" : "border-stone-200 bg-white text-ink hover:border-brand/40"
             }`}
           >
@@ -368,7 +399,7 @@ function Range({ k, st, set, min, max, step, label }: { k: "screen" | "battery";
       value={v}
       onChange={(e) => set(k, Number(e.target.value))}
       onPointerUp={buzz}
-      className="build-range my-3.5"
+      className="build-range my-3"
       style={{ "--p": `${((v - min) / (max - min)) * 100}%` } as React.CSSProperties}
     />
   );
@@ -377,8 +408,8 @@ function Range({ k, st, set, min, max, step, label }: { k: "screen" | "battery";
 function Panel({ tab, st, set }: { tab: Tab; st: BuildState; set: Setter }) {
   const title = (t: string, h: string) => (
     <>
-      <p className="text-[17px] font-extrabold text-ink">{t}</p>
-      <p className="mb-3 text-xs text-stone-500">{h}</p>
+      <p className="text-base font-extrabold leading-tight text-ink">{t}</p>
+      <p className="mb-2 text-[11px] text-stone-500">{h}</p>
     </>
   );
   if (tab === "screen")
@@ -396,7 +427,7 @@ function Panel({ tab, st, set }: { tab: Tab; st: BuildState; set: Setter }) {
     return (
       <>
         {title("Build your camera", "Add lenses. Higher MP = bigger, sharper lenses.")}
-        <div className="mb-3">
+        <div className="mb-2">
           <Chips k="lenses" st={st} set={set} opts={[[1, "●", "1 lens"], [2, "●●", "2 lenses"], [3, "●●●", "3 lenses"], [4, "●●●●", "4 lenses"]]} />
         </div>
         <Chips k="mp" st={st} set={set} opts={[[13, "13MP", "basic"], [50, "50MP", "sharp"], [108, "108MP", "pro"], [200, "200MP", "zoom king"]]} />
@@ -427,20 +458,20 @@ function Panel({ tab, st, set }: { tab: Tab; st: BuildState; set: Setter }) {
     return (
       <>
         {title("How much do you keep?", "See what fits on the phone's screen.")}
-        <Chips k="storage" st={st} set={set} opts={[[64, "64GB"], [128, "128GB"], [256, "256GB"], [512, "512GB"]]} />
+        <Chips big k="storage" st={st} set={set} opts={[[64, "64GB"], [128, "128GB"], [256, "256GB"], [512, "512GB"]]} />
       </>
     );
   if (tab === "speed")
     return (
       <>
         {title("How fast?", "More RAM = more apps open, smoother games.")}
-        <Chips k="ram" st={st} set={set} opts={[[4, "4GB", "calls & chat"], [6, "6GB", "daily use"], [8, "8GB", "fast"], [12, "12GB", "gaming beast"]]} />
+        <Chips big k="ram" st={st} set={set} opts={[[4, "4GB", "calls & chat"], [6, "6GB", "daily use"], [8, "8GB", "fast"], [12, "12GB", "gaming beast"]]} />
       </>
     );
   return (
     <>
       {title("Pick your colour", "Tap to repaint. Spin it to see the shine.")}
-      <div className="flex flex-wrap justify-center gap-3.5">
+      <div className="flex justify-between gap-1">
         {COLORS.map(([name, hex]) => {
           const on = st.color === hex;
           return (
@@ -453,7 +484,7 @@ function Panel({ tab, st, set }: { tab: Tab; st: BuildState; set: Setter }) {
                 buzz();
                 set("color", hex);
               }}
-              className={`h-12 w-12 rounded-full border-[3px] shadow-[inset_-6px_-8px_14px_rgba(0,0,0,.3),inset_6px_6px_10px_rgba(255,255,255,.3)] transition-transform ${
+              className={`aspect-square w-full max-w-11 rounded-full border-[3px] shadow-[inset_-6px_-8px_14px_rgba(0,0,0,.3),inset_6px_6px_10px_rgba(255,255,255,.3)] transition-transform ${
                 on ? "scale-110 border-brand" : "border-white ring-1 ring-stone-200"
               }`}
               style={{ background: `radial-gradient(circle at 30% 30%, #ffffff55, ${hex} 55%)` }}
@@ -619,7 +650,7 @@ function Results({
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => onReserve(i)}
-                      className="flex flex-[1.6] items-center justify-center gap-1.5 rounded-2xl bg-brand px-3 py-3 text-center text-sm font-extrabold text-white shadow-sm hover:bg-brand-dark"
+                      className="flex flex-[1.6] items-center justify-center gap-1.5 rounded-2xl bg-wa-dark px-3 py-3 text-center text-sm font-extrabold text-white shadow-sm hover:brightness-110"
                     >
                       <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden="true">
                         <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.6-6.1c-.3-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.3-.6.8-.8 1-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.4-3c-.3-.4 0-.5.2-.7l.4-.5c.1-.2.2-.3.1-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.2s1 2.5 1.1 2.7c.1.2 1.9 3 4.7 4.2.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.6-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2 0-.1-.2-.2-.5-.3Z" />
@@ -642,7 +673,7 @@ function Results({
           href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi United Mobiles! I built my dream phone on your website (${summary(st)}). What do you have like this?`)}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="block rounded-2xl bg-brand px-6 py-4 text-center font-extrabold text-white"
+          className="block rounded-2xl bg-wa-dark px-6 py-4 text-center font-extrabold text-white"
         >
           Ask us on WhatsApp
         </a>

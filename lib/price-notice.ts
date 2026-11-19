@@ -13,11 +13,10 @@
 export const PRICE_NOTICE_ENABLED = true;
 
 /**
- * Delay before the modal opens. Not a "don't nag them" delay any more — just
- * long enough for the page behind it to paint, so the customer sees what they
- * landed on before the dialog covers it.
+ * Delay before the note slides in: long enough for the page to paint and the
+ * customer to see what they landed on first.
  */
-export const PRICE_NOTICE_DELAY_MS = 600;
+export const PRICE_NOTICE_DELAY_MS = 1800;
 
 /** sessionStorage key: the modal shows once per browser session. Bump the
  *  version suffix to re-show it to everyone mid-session after a copy change. */
@@ -26,13 +25,16 @@ export const PRICE_NOTICE_STORAGE_KEY = "um-price-notice-v3";
 export const PRICE_NOTICE = {
   /** Plain and factual on purpose: a shop notice, not an offer. */
   headline: "About our prices",
-  /** Modal, first paragraph — the honest bit. */
+  /** First-visit corner note (components/PriceNotice.tsx): both points in one breath. */
+  toast:
+    "Prices are moving week to week, so today's price may differ a little, up or down. We confirm the exact price with you on WhatsApp before delivery.",
+  /** Longer wording, first paragraph (kept for reuse). */
   body:
     "Phone prices are moving week to week because of the worldwide chip shortage, so the price you see here may be a little different from today's counter price — up or down.",
-  /** Modal, second paragraph — the reassurance. */
+  /** Longer wording, second paragraph (kept for reuse). */
   bodyConfirm:
     "When you order on WhatsApp we confirm the exact price with you before anything is delivered — you pay a small advance, the rest cash at your door.",
-  /** Signs the modal off, so it reads as a note from the shop. */
+  /** Signature for the longer wording. */
   signature: "United Mobiles, Multan",
   cta: "Got it",
   dismissLabel: "Dismiss price notice",

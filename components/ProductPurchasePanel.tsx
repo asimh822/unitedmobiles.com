@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import KeyHighlights from "@/components/KeyHighlights";
 import PriceTag from "@/components/PriceTag";
 import SpecsTable from "@/components/SpecsTable";
@@ -10,6 +10,7 @@ import TrustBadges from "@/components/TrustBadges";
 import { colorNameToHex } from "@/lib/color-names";
 import { PAYMENT, paymentSplit } from "@/lib/payment";
 import { PRICE_NOTICE, PRICE_NOTICE_ENABLED } from "@/lib/price-notice";
+import { formatPrice } from "@/lib/format";
 import { effectivePrice, ramRomCombos, type Product, type RamRomCombo, type Variant } from "@/lib/types";
 
 /**
@@ -94,8 +95,22 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
 
   const hasSpecs = product.specs.some((g) => g.items.some((i) => i.value.trim()));
 
+  // Phones: a Buy Now bar is pinned to the bottom of the screen whenever the
+  // real button is not on it, so ordering is one tap from anywhere on the page.
+  const buyRef = useRef<HTMLDivElement>(null);
+  const [buyVisible, setBuyVisible] = useState(false);
+  useEffect(() => {
+    const el = buyRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setBuyVisible(e.isIntersecting), { threshold: 0.6 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  const payNow = effectivePrice(product, variant);
+  const barLabel = [selectedCombo?.label, selectedColor].filter(Boolean).join(" · ");
+
   return (
-    <div className="grid gap-6 lg:grid-cols-[2fr_3fr] lg:grid-rows-[auto_1fr] lg:gap-x-10 lg:gap-y-5">
+    <div className="grid gap-6 pb-20 lg:grid-cols-[2fr_3fr] lg:grid-rows-[auto_1fr] lg:gap-x-10 lg:gap-y-5 lg:pb-0">
       {/* 1. Title + price — first on mobile, top of the right column on desktop */}
       <div className="space-y-3 lg:col-start-2 lg:row-start-1">
         <div>
@@ -116,7 +131,7 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
               inStock ? "text-emerald-700" : "text-stone-400"
             }`}
           >
-            <span className={`h-2 w-2 rounded-full ${inStock ? "bg-emerald-500" : "bg-stone-400"}`} />
+            <span className={`h-2 w-2 rounded-full ${inStock ? "live-dot bg-emerald-500" : "bg-stone-400"}`} />
             {inStock ? "In stock — ready to deliver" : "Out of stock"}
           </p>
         </div>
@@ -131,10 +146,11 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
             <Image
               src={currentImage}
               alt={`${product.brand} ${product.model}${selectedColor ? ` — ${selectedColor}` : ""}`}
+              key={currentImage}
               fill
               priority
               sizes="(max-width: 1024px) 384px, 40vw"
-              className="object-contain p-4"
+              className="object-contain p-4 animate-fade-in"
             />
           ) : (
             <div className="grid h-full place-items-center text-6xl text-stone-300">📱</div>
@@ -153,7 +169,7 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
                   aria-label={c.color}
                   aria-pressed={i === colorIdx}
                   title={c.color}
-                  className={`h-7 w-7 rounded-full border border-stone-300 transition-shadow ${
+                  className={`h-8 w-8 rounded-full border border-stone-300 transition-all active:scale-90 ${
                     i === colorIdx ? "ring-2 ring-brand ring-offset-2" : "hover:ring-2 hover:ring-stone-300 hover:ring-offset-1"
                   }`}
                   style={{ backgroundColor: c.colorHex ?? colorNameToHex(c.color) ?? "#a8a29e" }}
@@ -203,7 +219,7 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
                     type="button"
                     onClick={() => setComboIdx(i)}
                     aria-pressed={active}
-                    className={`rounded-xl border px-4 py-2.5 text-[15px] font-bold ${
+                    className={`rounded-xl border px-4 py-2.5 text-[15px] font-bold transition-all active:scale-95 ${
                       active
                         ? "border-brand bg-brand/5 text-brand"
                         : available
@@ -220,13 +236,13 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
           </div>
         )}
 
-        <div className="space-y-2">
+        <div ref={buyRef} className="space-y-2">
           {inStock ? (
             <Link
               href={checkoutHref}
-              className="block w-full rounded-2xl bg-brand px-6 py-4 text-center text-lg font-extrabold text-white shadow-md transition-colors hover:bg-brand-dark"
+              className="cta-shine block w-full rounded-2xl bg-brand px-6 py-4 text-center text-lg font-extrabold text-white shadow-md transition hover:bg-brand-dark active:scale-[.99]"
             >
-              Buy Now
+              Buy Now →
             </Link>
           ) : (
             <button
@@ -262,6 +278,32 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
 
         {hasSpecs && <SpecsTable specs={product.specs} />}
       </div>
+
+      {/* Pinned Buy bar (phones and small tablets only). */}
+      {!buyVisible && (
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-stone-200 bg-cream/95 px-4 pb-[max(10px,env(safe-area-inset-bottom))] pt-2.5 shadow-[0_-8px_24px_-12px_rgba(28,25,23,.25)] backdrop-blur animate-slide-up motion-reduce:animate-none lg:hidden">
+          <div className="mx-auto flex max-w-xl items-center gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="text-lg font-extrabold leading-tight text-brand">{formatPrice(payNow)}</p>
+              <p className="truncate text-[11px] font-medium text-stone-500">
+                {barLabel || `${product.brand} ${product.model}`}
+              </p>
+            </div>
+            {inStock ? (
+              <Link
+                href={checkoutHref}
+                className="cta-shine shrink-0 rounded-2xl bg-brand px-7 py-3 text-base font-extrabold text-white shadow-md active:scale-95"
+              >
+                Buy Now →
+              </Link>
+            ) : (
+              <span className="shrink-0 rounded-2xl bg-stone-300 px-6 py-3 text-base font-extrabold text-white">
+                Out of Stock
+              </span>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

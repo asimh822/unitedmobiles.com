@@ -18,10 +18,8 @@ Business goal: minimum number of clicks from "browsing" to "order sent." Every d
 ---
 
 ## Design System
-- **Primary color**: Teal `#0D9488`
-- **Background**: Warm white `#FAFAF9`
-- **Accent / CTA / Sale color**: Coral `#F97316`
-- **Text**: Deep Slate `#1C1917`
+- **Palette lives in `app/globals.css` (`@theme`)**: Multan blue-pottery colours. Primary/CTA cobalt `brand` `#1c4e9c`, accents `turq` and `gold`, background `cream` `#faf7f0`, text `ink` `#1c1917`. (The original teal/coral plan was dropped.)
+- **WhatsApp buttons are green** (`wa` icon-only, `wa-dark` with a label), never brand blue.
 - **Tone**: Modern, catchy, mobile-shop energy — NOT a corporate telecom look (avoid reference sites like Carphone Warehouse's red/contract-heavy styling — we don't sell contracts or plans)
 - **Mobile-first**: Majority of traffic is expected on phones. Design and test mobile layouts first, then scale up to desktop.
 - **Currency formatting**: Always `Rs. 45,000` style with thousands separators — never raw numbers.
@@ -174,6 +172,14 @@ All secrets/config values must live in `.env` — never hardcoded in source:
 - `price_locked` (migration 005): a shop-set price the PriceOye scripts (`scripts/*priceoye*.mjs`) must leave alone. Those scripts only touch New Phones, KeyPad Phones and Tabs, never Used.
 - Images: `next.config.ts` has `images.unoptimized: true` (Vercel Hobby image quota), so **an image's stored file size IS what every visitor downloads**. Keep stored images small; never put a multi-hundred-KB photo on a list card.
 - Product URLs are SSG with 5 min revalidation; `/used` and other category pages render per request.
+
+## Design refresh (19 Nov 2026)
+- **Header**: on a phone the logo row scrolls away and five equal category tabs stay pinned (`sticky top-[-52px]` in `app/layout.tsx` = logo row height; change one, change both). `components/OpenStatus.tsx` shows "Open now · till 9 PM" from `lib/business.ts`.
+- **/build build step is a full-screen, no-scroll sheet** (`fixed inset-0`, `100dvh`): stage flexes, six tabs in one row, panel fixed at 176px, button in flow. Keep any new panel content inside that height or the one-screen fit breaks on 360x600 phones.
+- **Product page**: a pinned Buy Now bar (below `lg`) shows whenever the real button is off screen (`ProductPurchasePanel.tsx`). WhatsApp float and price note move up on `/products/*` to clear it.
+- **Price notice is a corner card, not a modal** (`components/PriceNotice.tsx`): non-blocking, once per session, auto-hides, never on /build or /admin.
+- **Motion utilities** in `globals.css`: `card-lift`, `reveal` (scroll-driven, wrap a section, never the same element as `card-lift`), `cta-shine`, `wa-pulse`, `bg-drift`, `float-y`, `live-dot`. CSS only, all off under reduced motion.
+- Pre-Owned compact cards show the condition score and storage; filters are one swipeable row on phones.
 
 ## Used phones from the EPOS
 - Since 14/11/2026 every used phone in the shop is listed by the EPOS (`E:\ShopSoftware\website_sync.py`, hourly from the shop's API server, or "Update Website Now" on the shop PC). The salesman takes the photos and sets condition, warranty, PTA and price in the salesman app.

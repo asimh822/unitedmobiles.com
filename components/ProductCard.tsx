@@ -35,7 +35,7 @@ export default function ProductCard({ product }: { product: Product }) {
   return (
     <Link
       href={`/products/${product.id}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white transition-shadow hover:shadow-lg"
+      className="card-lift group flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white"
     >
       <div className="tile-edge" />
       <div className="relative aspect-square bg-stone-100">

@@ -22,12 +22,12 @@ export default function BrandRow({ row, viewAllHref }: Props) {
   const letters = brand.name.replace(/\s/g, "").split("");
 
   return (
-    <section aria-label={`${brand.name} products`} className="flex gap-1.5 sm:gap-2">
+    <section aria-label={`${brand.name} products`} className="reveal flex gap-1.5 sm:gap-2">
       {/* mb-1 mirrors the scroller's pb-1 so this box is exactly card height */}
       <Link
         href={viewAllHref}
-        className="mb-1 flex shrink-0 items-center self-stretch rounded-lg border bg-white px-1.5 transition-opacity hover:opacity-75 sm:px-2"
-        style={{ borderColor: `${color}44` }}
+        className="mb-1 flex shrink-0 items-center self-stretch rounded-xl border px-1.5 transition hover:brightness-95 active:scale-95 sm:px-2"
+        style={{ borderColor: `${color}44`, background: `linear-gradient(180deg, ${color}14, #ffffff 55%, ${color}14)` }}
         title={`All ${brand.name} products`}
       >
         <span

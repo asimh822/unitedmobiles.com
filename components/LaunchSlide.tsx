@@ -33,7 +33,7 @@ export default function LaunchSlide({ href, name, price, saleDate, images }: Pro
   return (
     <Link
       href={href}
-      className="group relative flex min-h-[200px] items-center gap-2 overflow-hidden rounded-3xl bg-gradient-to-br from-[#ecfdf5] via-[#d1fae5] to-[#99f6e4] px-5 py-5 text-ink sm:h-[28vh] sm:px-10"
+      className="bg-drift group relative flex min-h-[190px] items-center gap-2 overflow-hidden rounded-3xl bg-gradient-to-br from-[#ecfdf5] via-[#d1fae5] to-[#99f6e4] px-5 py-4 text-ink sm:h-[28vh] sm:px-10 sm:py-5"
     >
       <div
         aria-hidden="true"
@@ -49,14 +49,14 @@ export default function LaunchSlide({ href, name, price, saleDate, images }: Pro
           {live ? "Now in stock — order yours today." : `First sale ${dayLabel}. Be first in Multan.`}
         </p>
         <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
-          <span className="rounded-full bg-brand px-4 py-1.5 text-sm font-extrabold text-white shadow-md transition group-hover:bg-brand-dark">
+          <span className="cta-shine rounded-full bg-brand px-4 py-1.5 text-sm font-extrabold text-white shadow-md transition group-hover:bg-brand-dark">
             {live ? "Buy Now →" : "Pre-book Now →"}
           </span>
           <span className="text-sm font-bold">From {formatPrice(price)}</span>
         </div>
       </div>
 
-      <div aria-hidden="true" className="relative flex h-full shrink-0 items-center">
+      <div aria-hidden="true" className="float-y relative flex h-full shrink-0 items-center">
         {images.slice(0, 2).map((img, i) => (
           <div
             key={img.src}
