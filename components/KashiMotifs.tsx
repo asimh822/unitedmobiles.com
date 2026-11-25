@@ -114,3 +114,24 @@ export function KashiFlourish({ className = "" }: { className?: string }) {
     </svg>
   );
 }
+
+/**
+ * Small rosette for headings: eight cobalt petals with turquoise hearts and
+ * a gold centre, the banner medallion's flower without the plate. Sits
+ * inline before the text (wrap the heading in `flex items-center gap-2`).
+ */
+export function KashiRosette({ className = "" }: { className?: string }) {
+  const petal = "M12 11C9.6 9 9.6 5 12 2.5C14.4 5 14.4 9 12 11Z";
+  const heart = "M12 9.3C11 8.2 11 6.2 12 5C13 6.2 13 8.2 12 9.3Z";
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" className={`h-4 w-4 shrink-0 ${className}`} role="presentation">
+      {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => (
+        <g key={deg} transform={`rotate(${deg} 12 12)`}>
+          <path d={petal} fill="var(--color-brand)" />
+          <path d={heart} fill="var(--color-turq)" />
+        </g>
+      ))}
+      <circle cx="12" cy="12" r="2.2" fill="var(--color-gold)" />
+    </svg>
+  );
+}

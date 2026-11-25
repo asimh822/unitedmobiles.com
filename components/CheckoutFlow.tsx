@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { KashiRosette } from "@/components/KashiMotifs";
 import { formatGb, formatPrice } from "@/lib/format";
 import { ADVANCE_PERCENT, PAYMENT, paymentSplit } from "@/lib/payment";
 import { PRICE_NOTICE, PRICE_NOTICE_ENABLED } from "@/lib/price-notice";
@@ -199,7 +200,10 @@ export default function CheckoutFlow({ product, variant, addons = [] }: Props) {
 
       {step === 2 && !confirmed && (
         <div className="space-y-4 rounded-2xl border border-stone-200 bg-white p-5">
-          <h2 className="text-lg font-extrabold text-ink">Confirm your order</h2>
+          <h2 className="flex items-center gap-2 text-lg font-extrabold text-ink">
+            <KashiRosette />
+            Confirm your order
+          </h2>
           <dl className="space-y-2 text-sm">
             {[
               { label: "Phone", value: `${product.brand} ${product.model}${combo ? ` (${combo})` : ""}` },

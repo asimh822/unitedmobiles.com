@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { KashiRosette } from "@/components/KashiMotifs";
 import CompactProductCard from "@/components/CompactProductCard";
 import ProductPurchasePanel from "@/components/ProductPurchasePanel";
 import { getAllProducts, getProduct, getSimilarProducts, getSuggestedProducts } from "@/lib/catalog";
@@ -71,7 +72,10 @@ export default async function ProductPage({ params }: Props) {
 
       {related.length > 0 && (
         <section aria-label={heading}>
-          <h2 className="mb-4 text-xl font-extrabold text-ink">{heading}</h2>
+          <h2 className="mb-4 flex items-center gap-2 text-xl font-extrabold text-ink">
+            <KashiRosette className="h-5 w-5" />
+            {heading}
+          </h2>
           {/* Compact cards (homepage brand-row size) — this strip is a nudge, not a grid page */}
           <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 sm:gap-3 lg:grid-cols-6">
             {related.map((p) => (

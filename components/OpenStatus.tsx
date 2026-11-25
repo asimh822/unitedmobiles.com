@@ -35,7 +35,7 @@ function status(): { open: boolean; text: string } {
 }
 
 /**
- * "Open now · till 9 PM" with a live dot, from the hours in lib/business.ts.
+ * "Open now · till 10:30 PM" with a live dot, from the hours in lib/business.ts.
  * Renders nothing until mounted: the pages are static, so the server cannot
  * know what time the visitor arrives.
  */

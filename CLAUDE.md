@@ -174,7 +174,7 @@ All secrets/config values must live in `.env` — never hardcoded in source:
 - Product URLs are SSG with 5 min revalidation; `/used` and other category pages render per request.
 
 ## Design refresh (19 Nov 2026)
-- **Header**: on a phone the logo row scrolls away and five equal category tabs stay pinned (`sticky top-[-52px]` in `app/layout.tsx` = logo row height; change one, change both). `components/OpenStatus.tsx` shows "Open now · till 9 PM" from `lib/business.ts`.
+- **Header**: on a phone the logo row scrolls away and five equal category tabs stay pinned (`sticky top-[-52px]` in `app/layout.tsx` = logo row height; change one, change both). `components/OpenStatus.tsx` shows "Open now · till 10:30 PM" from `lib/business.ts`.
 - **/build build step is a full-screen, no-scroll sheet** (`fixed inset-0`, `100dvh`): stage flexes, six tabs in one row, panel fixed at 176px, button in flow. Keep any new panel content inside that height or the one-screen fit breaks on 360x600 phones.
 - **Product page**: a pinned Buy Now bar (below `lg`) shows whenever the real button is off screen (`ProductPurchasePanel.tsx`). WhatsApp float and price note move up on `/products/*` to clear it.
 - **Price notice is a corner card, not a modal** (`components/PriceNotice.tsx`): non-blocking, once per session, auto-hides, never on /build or /admin.

@@ -4,7 +4,7 @@ import { Manrope } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { Analytics } from "@vercel/analytics/react";
-import { KashiBorder } from "@/components/KashiMotifs";
+import { KashiBorder, KashiRosette } from "@/components/KashiMotifs";
 import LocalBusinessJsonLd from "@/components/LocalBusinessJsonLd";
 import NavMenu from "@/components/NavMenu";
 import OpenStatus from "@/components/OpenStatus";
@@ -89,13 +89,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
 
             <div className="space-y-2">
-              <p className="text-xs font-extrabold uppercase tracking-widest text-brand">Visit the shop</p>
+              <p className="flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-widest text-brand">
+                <KashiRosette className="h-3.5 w-3.5" />
+                Visit the shop
+              </p>
               <p>
                 {BUSINESS_ADDRESS.street},
                 <br />
                 {BUSINESS_ADDRESS.locality}, {BUSINESS_ADDRESS.region}
               </p>
-              <p>Saturday to Thursday, 10:30 AM to 9:00 PM. Closed Friday.</p>
+              <p>Saturday to Thursday, 10:30 AM to 10:30 PM. Closed Friday.</p>
               <div className="flex flex-wrap gap-2 pt-1">
                 <a
                   href={MAPS_URL}
@@ -123,7 +126,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
 
             <div className="space-y-2">
-              <p className="text-xs font-extrabold uppercase tracking-widest text-brand">Shop</p>
+              <p className="flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-widest text-brand">
+                <KashiRosette className="h-3.5 w-3.5" />
+                Shop
+              </p>
               <ul className="grid grid-cols-2 gap-x-4 gap-y-1.5 font-semibold text-ink sm:grid-cols-1">
                 {FOOTER_LINKS.map(([label, href]) => (
                   <li key={href}>

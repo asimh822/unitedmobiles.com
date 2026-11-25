@@ -1,4 +1,5 @@
 import type { SpecGroup } from "@/lib/types";
+import { KashiRosette } from "@/components/KashiMotifs";
 
 /**
  * Full specification sheet, grouped the way the data is stored (General,
@@ -10,7 +11,8 @@ export default function SpecsTable({ specs }: { specs: SpecGroup[] }) {
   if (!groups.length) return null;
   return (
     <section aria-labelledby="specs-heading" className="rounded-2xl border border-stone-200 bg-white">
-      <h2 id="specs-heading" className="border-b border-stone-200 px-4 py-3 text-base font-extrabold text-ink sm:px-5">
+      <h2 id="specs-heading" className="flex items-center gap-2 border-b border-stone-200 px-4 py-3 text-base font-extrabold text-ink sm:px-5">
+        <KashiRosette />
         Full specifications
       </h2>
       <div className="divide-y divide-stone-100">
