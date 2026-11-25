@@ -36,6 +36,18 @@ const ITEMS: Item[] = [
     ),
   },
   {
+    // Phones for sale that are not in the shop's EPOS stock (Nov 2026).
+    label: "Kits",
+    href: "/kits",
+    isNew: true,
+    icon: (
+      <svg {...svgProps} className={svg}>
+        <path d="M21 8 12 3 3 8v8l9 5 9-5V8Z" />
+        <path d="m3 8 9 5 9-5M12 13v8" />
+      </svg>
+    ),
+  },
+  {
     label: "KeyPad Phones",
     short: "KeyPad",
     href: "/keypad-phones",
@@ -73,7 +85,7 @@ const ITEMS: Item[] = [
 
 /**
  * Category links; the current section is filled cobalt. On a phone they are
- * five equal tabs (icon over a short label) so every section is on screen with
+ * six equal tabs (icon over a short label) so every section is on screen with
  * no sideways scrolling; from sm up they are icon + label pills in a row.
  */
 export default function NavLinks() {
@@ -88,7 +100,7 @@ export default function NavLinks() {
             key={item.href}
             href={item.href}
             aria-current={active ? "page" : undefined}
-            className={`relative flex min-w-0 flex-1 flex-col items-center gap-0.5 whitespace-nowrap rounded-xl border px-0.5 py-1 text-[11px] font-bold transition-all active:scale-95 sm:flex-none sm:shrink-0 sm:flex-row sm:gap-1.5 sm:rounded-full sm:px-3.5 sm:py-1.5 sm:text-sm ${
+            className={`relative flex min-w-0 flex-1 flex-col items-center gap-0.5 whitespace-nowrap rounded-xl border px-0.5 py-1 text-[10px] font-bold transition-all active:scale-95 sm:flex-none sm:shrink-0 sm:flex-row sm:gap-1.5 sm:rounded-full sm:px-3.5 sm:py-1.5 sm:text-sm ${
               active
                 ? "border-brand bg-brand text-white shadow-md"
                 : "border-transparent text-ink hover:border-brand/40 hover:bg-brand/5 hover:text-brand sm:border-stone-200 sm:bg-white"

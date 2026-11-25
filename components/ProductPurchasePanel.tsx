@@ -266,7 +266,7 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
             })()}
           </p>
           <p className="text-center text-xs text-stone-400">{PAYMENT.reason}</p>
-          {(product.category === "New Phones" || product.category === "Used") && (
+          {(product.category === "New Phones" || product.category === "Used" || product.category === "Kits") && (
             <Link
               href="/build"
               className="flex items-center justify-center gap-1.5 rounded-2xl border border-dashed border-brand/30 bg-brand/5 px-4 py-2.5 text-sm font-bold text-brand hover:border-brand/60"

@@ -26,6 +26,7 @@ const MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURICom
 const FOOTER_LINKS: [string, string][] = [
   ["New Phones", "/new-phones"],
   ["Pre-Owned Phones", "/used"],
+  ["Kits", "/kits"],
   ["KeyPad Phones", "/keypad-phones"],
   ["Tabs", "/tabs"],
   ["Build Your Phone", "/build"],

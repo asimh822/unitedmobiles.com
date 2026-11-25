@@ -69,7 +69,7 @@ export interface ProductPayload {
   id?: string;
   brand: string;
   model: string;
-  category: "New Phones" | "Used" | "KeyPad Phones" | "Tabs" | "Accessories";
+  category: "New Phones" | "Used" | "Kits" | "KeyPad Phones" | "Tabs" | "Accessories";
   subcategory: string | null;
   subSubcategory: string | null;
   price: number;
@@ -368,7 +368,7 @@ export async function importProducts(rows: ImportRow[]): Promise<ActionState> {
   const supabase = getSupabaseAdmin();
   let imported = 0;
 
-  const VALID_CATEGORIES = ["New Phones", "Used", "KeyPad Phones", "Tabs", "Accessories"];
+  const VALID_CATEGORIES = ["New Phones", "Used", "Kits", "KeyPad Phones", "Tabs", "Accessories"];
   const brandCache = new Map<string, string>();
 
   for (const group of groups.values()) {

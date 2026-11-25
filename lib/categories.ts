@@ -1,4 +1,6 @@
-export const CATEGORIES = ["New Phones", "Used", "KeyPad Phones", "Tabs", "Accessories"] as const;
+// "Kits" (Nov 2026): phones the shop sells that are NOT in its EPOS stock,
+// pushed by the EPOS like Used (E:\ShopSoftware\website_sync.py, epos_ref kit-<id>).
+export const CATEGORIES = ["New Phones", "Used", "Kits", "KeyPad Phones", "Tabs", "Accessories"] as const;
 
 /** Temporarily hides the Accessories section storefront-wide (nav, /accessories
  * pages, suggestion strips, sitemap). Admin still manages accessory products.
@@ -19,6 +21,7 @@ export function slugify(value: string): string {
 export const CATEGORY_SLUGS: Record<string, Category> = {
   "new-phones": "New Phones",
   used: "Used",
+  kits: "Kits",
   "keypad-phones": "KeyPad Phones",
   tabs: "Tabs",
   accessories: "Accessories",

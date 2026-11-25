@@ -28,7 +28,7 @@ Business goal: minimum number of clicks from "browsing" to "order sent." Every d
 
 ## Navigation & Category System
 
-**Top menu**: New Phones | Used | KeyPad Phones | Tabs | Accessories
+**Top menu**: New Phones | Used | Kits | KeyPad Phones | Tabs | Accessories (Kits added Nov 2026, see "Kits from the EPOS")
 
 **Accessories has a dropdown submenu** with these subcategories:
 - Chargers
@@ -161,7 +161,7 @@ All secrets/config values must live in `.env` — never hardcoded in source:
 - Deploy routine: `npm run build` (must pass), commit, `git push origin main`, then confirm on https://www.unitedmobiles.net.
 - When a change is finished, deploy it or say clearly that it is NOT live yet.
 - Never commit `Shop Pics/` (46 MB of raw iPhone photos) or `.env.local`. `/backups` is gitignored.
-- Supabase schema changes are SQL files in `supabase/migrations/` that the owner runs by hand in the Supabase SQL editor. There is no DB password here, so a migration is not applied until he says so. Applied so far: 001 to 007.
+- Supabase schema changes are SQL files in `supabase/migrations/` that the owner runs by hand in the Supabase SQL editor. There is no DB password here, so a migration is not applied until he says so. Applied so far: 001 to 008 (008 Kits applied 25/11/2026).
 
 ## Current state (Nov 2026)
 - Homepage carousel (`components/HeroCarousel.tsx`): Used slide first (`UsedPromoSlide.tsx`, live data, hidden when no used stock), trust banner (`Hero.tsx`), vivo V80 launch slide (`LaunchSlide.tsx`, `saleDate` flips "Pre-book" to "Now in stock" by itself). `PromoSlide.tsx` is kept for manufacturer key-visual promos (images in `public/promo/`). Then the brand rows.
@@ -189,6 +189,12 @@ All secrets/config values must live in `.env` — never hardcoded in source:
 - The IMEI is never on the website and must never be added.
 - Badges: `lib/types.ts` `warrantyLabel()` (live countdown from `warranty_until`; an expired warranty shows nothing) and `formatConditionScore()` ("8.5/10"), used by `ProductCard` and `TrustBadges`.
 - Photos in Storage: `used/<id>/<slot>-<hash>.webp` (full, phone page) and `used/<id>/t1-<hash>.webp` (480px card copy, ~5 to 30 KB). **`cardImage()` in `lib/types.ts` finds the card copy BY NAME**; it must stay in step with `_push_one()` in `E:\ShopSoftware\website_sync.py`. Change one, change both.
+
+## Kits from the EPOS (Nov 2026)
+- Category **Kits** (`/kits`, `app/kits/page.tsx`): phones the shop sells that are NOT in its EPOS stock. Pushed by the same EPOS sync as Used: `source='epos'`, `epos_ref='kit-<id>'`, `condition='Used'` (so the condition and warranty badges work unchanged), photos in `kits/<id>/` with the same `t1-` card copy, so `cardImage()` needs no change.
+- Migration **008** widens the category check to allow 'Kits'. Applied 25/11/2026.
+- Same rules as Used: the EPOS owns these rows, never edit them in admin; the IMEI never appears.
+- Phone header now has SIX tabs (label 10px on phones to fit). Kits are not on /build or the homepage.
 
 ## Build Your Dream Phone (`/build`, Nov 2026)
 - Port of `E:\ShopSoftware\prototypes\build_your_phone.html`. `three` (npm) is the one extra dependency and loads only on /build after a persona is tapped (`components/build/PhoneStage.tsx` via `next/dynamic`, `ssr:false`).

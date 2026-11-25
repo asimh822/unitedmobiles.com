@@ -6,6 +6,7 @@ import { SITE_URL } from "@/lib/site";
 const CATEGORY_PATHS = [
   "/new-phones",
   "/used",
+  "/kits",
   "/keypad-phones",
   "/tabs",
   "/build",
