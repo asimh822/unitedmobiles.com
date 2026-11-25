@@ -67,10 +67,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <span className="truncate font-medium text-stone-500">Katchehry Road, Multan</span>
               </div>
             </div>
+            {/* No tagline beside the menu: with six tabs it pushed them out of
+                view. The payment terms are in the hero and the footer. */}
             <NavMenu />
-            <span className="hidden shrink-0 whitespace-nowrap text-xs font-medium text-stone-500 xl:block">
-              Genuine phones. {PAYMENT.short}.
-            </span>
           </div>
           <KashiBorder id="kashi-header" />
         </header>
