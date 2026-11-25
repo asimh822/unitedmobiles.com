@@ -86,18 +86,13 @@ body {
   color: var(--color-ink);
 }
 
-/* Mosaic tile edge for product cards: alternating cobalt/turquoise square
-   tiles with white grout lines (pure CSS, square tiles = height). */
+/* Card top edge: one thin glazed line, cobalt into turquoise. It used to be
+   a row of tiny alternating tiles, which on a grid of 24 cards read as noise
+   competing with the phone photos. */
 .tile-edge {
-  height: 5px;
+  height: 3px;
   flex-shrink: 0;
-  background-image: repeating-linear-gradient(
-    90deg,
-    var(--color-brand) 0 5px,
-    #fff 5px 6px,
-    var(--color-turq) 6px 11px,
-    #fff 11px 12px
-  );
+  background: linear-gradient(90deg, var(--color-brand), var(--color-turq));
 }
 
 /* Skeleton shimmer (lightweight, CSS-only) */

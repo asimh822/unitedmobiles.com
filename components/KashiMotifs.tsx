@@ -5,58 +5,54 @@
  */
 
 /**
- * Tile border band (~16px tall): a run of square glazed tiles with grout
- * gaps, alternating the two classic kashi tile faces — an eight-petal
- * rosette and an eight-point star (two overlapped squares). Give each
- * instance a unique `id`.
+ * Border band (20px): the painted rim of a Multani plate. A continuous
+ * cobalt vine on a white glaze, between two cobalt rules, with a small
+ * flower in every bend and turquoise leaves. One flowing line reads as
+ * hand-painted pottery at any distance; the old row of tiny square tiles
+ * read as a dotted line. Give each instance a unique `id`.
  */
 export function KashiBorder({ id, className = "" }: { id: string; className?: string }) {
+  const flower = (cx: number, cy: number) => (
+    <g>
+      {[0, 72, 144, 216, 288].map((deg) => (
+        <ellipse
+          key={deg}
+          cx={cx}
+          cy={cy - 2.7}
+          rx="1.7"
+          ry="2.5"
+          fill="var(--color-brand)"
+          transform={`rotate(${deg} ${cx} ${cy})`}
+        />
+      ))}
+      <circle cx={cx} cy={cy} r="1.3" fill="var(--color-gold)" />
+    </g>
+  );
+  const leaf = (cx: number, cy: number, deg: number) => (
+    <ellipse cx={cx} cy={cy} rx="1.4" ry="3" fill="var(--color-turq)" transform={`rotate(${deg} ${cx} ${cy})`} />
+  );
   return (
-    <svg aria-hidden="true" className={`block h-4 w-full ${className}`} role="presentation">
+    <svg aria-hidden="true" className={`block h-5 w-full ${className}`} role="presentation">
       <defs>
-        <pattern id={id} width="36" height="16" patternUnits="userSpaceOnUse">
-          {/* Tile A — eight-petal rosette: cobalt cross petals, turquoise
-              diagonals, gold heart */}
-          <rect x="1" y="1" width="14" height="14" rx="1" fill="white" stroke="var(--color-brand)" strokeWidth="0.75" />
-          <g>
-            {[0, 90, 180, 270].map((deg) => (
-              <ellipse
-                key={deg}
-                cx="8"
-                cy="4.7"
-                rx="1.7"
-                ry="3.1"
-                fill="var(--color-brand)"
-                transform={`rotate(${deg} 8 8)`}
-              />
-            ))}
-            {[45, 135, 225, 315].map((deg) => (
-              <ellipse
-                key={deg}
-                cx="8"
-                cy="5.2"
-                rx="1.3"
-                ry="2.5"
-                fill="var(--color-turq)"
-                transform={`rotate(${deg} 8 8)`}
-              />
-            ))}
-            <circle cx="8" cy="8" r="1.4" fill="var(--color-gold)" />
-          </g>
-
-          {/* Tile B — eight-point star: two overlapped squares, cobalt core */}
-          <rect x="19" y="1" width="14" height="14" rx="1" fill="white" stroke="var(--color-brand)" strokeWidth="0.75" />
-          <g>
-            <rect x="22.6" y="4.6" width="6.8" height="6.8" fill="var(--color-turq)" />
-            <rect x="22.6" y="4.6" width="6.8" height="6.8" fill="var(--color-turq)" transform="rotate(45 26 8)" />
-            <circle cx="26" cy="8" r="1.9" fill="var(--color-brand)" />
-            <circle cx="26" cy="8" r="0.8" fill="var(--color-gold)" />
-            {/* corner dots, like the pinned corners of a glazed tile */}
-            <circle cx="20.7" cy="2.7" r="0.6" fill="var(--color-brand)" />
-            <circle cx="31.3" cy="2.7" r="0.6" fill="var(--color-brand)" />
-            <circle cx="20.7" cy="13.3" r="0.6" fill="var(--color-brand)" />
-            <circle cx="31.3" cy="13.3" r="0.6" fill="var(--color-brand)" />
-          </g>
+        <pattern id={id} width="72" height="20" patternUnits="userSpaceOnUse">
+          <rect width="72" height="20" fill="#fdfcf8" />
+          <rect width="72" height="1.5" fill="var(--color-brand)" />
+          <rect y="18.5" width="72" height="1.5" fill="var(--color-brand)" />
+          {/* the vine: one S-curve per repeat, so the repeats join seamlessly */}
+          <path
+            d="M0 10C9 4 27 4 36 10S63 16 72 10"
+            fill="none"
+            stroke="var(--color-brand)"
+            strokeWidth="1.3"
+            strokeLinecap="round"
+          />
+          {leaf(7, 5.4, 60)}
+          {leaf(29, 5.4, -60)}
+          {leaf(43, 14.6, -60)}
+          {leaf(65, 14.6, 60)}
+          {/* a flower inside each bend */}
+          {flower(18, 11.6)}
+          {flower(54, 8.6)}
         </pattern>
       </defs>
       <rect width="100%" height="100%" fill={`url(#${id})`} />
@@ -65,50 +61,40 @@ export function KashiBorder({ id, className = "" }: { id: string; className?: st
 }
 
 /**
- * Large paisley/floral watermark for the hero — a boteh (paisley) outline
- * with an inner floral spray and trailing dots. Rendered in white; the
- * parent controls opacity (keep it 5–8% so text contrast is untouched).
+ * The banner's one big motif: a round kashi tile (white glaze, cobalt
+ * rim) with an eight-fold rosette, cobalt petals holding turquoise hearts,
+ * turquoise petals between them and a gold centre. Original geometry in
+ * the style of the shrine tiles, no copied artwork. Sized by the parent.
  */
-export function KashiWatermark({ className = "" }: { className?: string }) {
+export function KashiMedallion({ className = "" }: { className?: string }) {
+  const big = "M100 82C84 68 84 42 100 26C116 42 116 68 100 82Z";
+  const bigHeart = "M100 72C93 62 93 47 100 37C107 47 107 62 100 72Z";
+  const small = "M100 80C91 70 91 56 100 47C109 56 109 70 100 80Z";
+  const bud = "M100 30C95 25 95 18 100 13C105 18 105 25 100 30Z";
   return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 200 240"
-      fill="none"
-      className={className}
-      role="presentation"
-    >
-      {/* boteh outline, curling tip */}
-      <path
-        d="M100 8C52 40 30 92 34 140c4 46 34 84 66 88 32-4 62-42 66-88 2.5-30-5-62-24-88 14 4 24 14 30 26-2-22-16-40-38-48C118 22 108 14 100 8Z"
-        stroke="currentColor"
-        strokeWidth="3"
-      />
-      {/* inner petal lattice */}
-      <path
-        d="M100 44c-28 22-42 54-39 84 3 30 20 54 39 58 19-4 36-28 39-58 3-30-11-62-39-84Z"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
-      {/* central flower */}
-      <circle cx="100" cy="128" r="10" stroke="currentColor" strokeWidth="2" />
-      <circle cx="100" cy="128" r="3" fill="currentColor" />
-      {[0, 60, 120, 180, 240, 300].map((deg) => (
-        <ellipse
-          key={deg}
+    <svg aria-hidden="true" viewBox="0 0 200 200" className={className} role="presentation">
+      <circle cx="100" cy="100" r="97" fill="#fdfcf8" stroke="var(--color-brand)" strokeWidth="5" />
+      <circle cx="100" cy="100" r="86" fill="none" stroke="var(--color-turq)" strokeWidth="1.5" />
+      {Array.from({ length: 32 }, (_, i) => (
+        <circle
+          key={i}
           cx="100"
-          cy="106"
-          rx="6"
-          ry="13"
-          stroke="currentColor"
-          strokeWidth="2"
-          transform={`rotate(${deg} 100 128)`}
+          cy="8.5"
+          r="1.7"
+          fill="var(--color-brand)"
+          transform={`rotate(${i * 11.25} 100 100)`}
         />
       ))}
-      {/* trailing dots along the spine */}
-      {[168, 184, 200].map((y, i) => (
-        <circle key={y} cx="100" cy={y} r={3 - i * 0.7} fill="currentColor" />
+      {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => (
+        <g key={deg}>
+          <path d={small} fill="var(--color-turq)" transform={`rotate(${deg + 22.5} 100 100)`} />
+          <path d={bud} fill="var(--color-brand)" transform={`rotate(${deg + 22.5} 100 100)`} />
+          <path d={big} fill="var(--color-brand)" transform={`rotate(${deg} 100 100)`} />
+          <path d={bigHeart} fill="var(--color-turq)" transform={`rotate(${deg} 100 100)`} />
+        </g>
       ))}
+      <circle cx="100" cy="100" r="15" fill="#fdfcf8" stroke="var(--color-brand)" strokeWidth="3" />
+      <circle cx="100" cy="100" r="8" fill="var(--color-gold)" />
     </svg>
   );
 }

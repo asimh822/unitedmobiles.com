@@ -1,4 +1,4 @@
-import { KashiWatermark } from "@/components/KashiMotifs";
+import { KashiMedallion } from "@/components/KashiMotifs";
 import { ADVANCE_PERCENT, PAYMENT } from "@/lib/payment";
 
 const TRUST_LINES = [
@@ -17,12 +17,11 @@ const TRUST_LINES = [
 export default function Hero() {
   return (
     <section className="bg-drift relative flex min-h-[190px] flex-col justify-center overflow-hidden rounded-3xl bg-gradient-to-br from-brand via-[#2a63b8] to-brand-dark px-5 py-4 text-white sm:h-[28vh] sm:px-10 sm:py-5">
-      {/* kashi-kari paisley watermark — decorative, kept below 8% opacity */}
-      <KashiWatermark className="pointer-events-none absolute -right-6 -top-8 h-[130%] text-white opacity-[0.07] sm:right-8" />
-      <div
-        aria-hidden="true"
-        className="float-y pointer-events-none absolute -bottom-20 right-20 h-40 w-40 rounded-full bg-turq/25"
-      />
+      {/* One big kashi tile. Below lg the text runs the full width, so the
+          tile sits faint behind it, half off the edge (contrast stays AA);
+          from lg up there is room beside the text and it shows in full glaze. */}
+      <KashiMedallion className="pointer-events-none absolute -right-16 top-1/2 h-[150%] -translate-y-1/2 opacity-[0.12] lg:hidden" />
+      <KashiMedallion className="pointer-events-none absolute right-8 top-1/2 hidden h-[112%] -translate-y-1/2 drop-shadow-xl lg:block" />
 
       <div className="relative max-w-3xl">
         <h1 className="text-2xl font-extrabold leading-tight sm:text-3xl">
