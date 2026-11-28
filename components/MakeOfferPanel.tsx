@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { formatConditionScore, type Product } from "@/lib/types";
 import { formatPrice } from "@/lib/format";
@@ -15,13 +16,23 @@ import { buildBestPriceLink, buildOfferLink, shortRef, type OfferPhone } from "@
  *    the low-commitment path for a buyer who is unsure about naming a price.
  *  - "Make an offer": the buyer types any amount. NO price floor and no preset
  *    amounts, on purpose: presets get the lowest one tapped every time, and
- *    even a silly offer is a conversation. A very low or at-list amount only
- *    gets a quiet note, never a block.
+ *    even a silly offer is a conversation. A very low amount only gets a
+ *    quiet note. The one block is the CEILING: an offer at or above the
+ *    listed price is not an offer, so Send is swapped for Buy Now (owner,
+ *    28/11/2026).
  *
  * Each tap is logged anonymously (app/api/offer, table offers) before
  * WhatsApp opens, so the shop also sees offers that were never sent.
  */
-export default function MakeOfferPanel({ product, price }: { product: Product; price: number }) {
+export default function MakeOfferPanel({
+  product,
+  price,
+  buyHref,
+}: {
+  product: Product;
+  price: number;
+  buyHref: string;
+}) {
   const [open, setOpen] = useState(false);
   const [raw, setRaw] = useState("");
 
@@ -102,10 +113,17 @@ export default function MakeOfferPanel({ product, price }: { product: Product; p
           )}
           {atList && (
             <p className="text-[13px] text-emerald-700">
-              That&apos;s our listed price, so you can also just tap Buy Now.
+              No need to offer more than our price of {formatPrice(price)}. You can buy it at that price now.
             </p>
           )}
-          {amount > 0 ? (
+          {atList ? (
+            <Link
+              href={buyHref}
+              className="flex w-full items-center justify-center rounded-xl bg-brand px-5 py-3 text-base font-extrabold text-white transition active:scale-[.99]"
+            >
+              Buy Now at {formatPrice(price)} →
+            </Link>
+          ) : amount > 0 ? (
             <a
               href={buildOfferLink(phone, amount)}
               target="_blank"

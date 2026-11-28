@@ -34,7 +34,10 @@ export async function POST(req: Request) {
     typeof b.productId === "string" && UUID.test(b.productId) &&
     (b.eposRef == null || (typeof b.eposRef === "string" && REF.test(b.eposRef))) &&
     typeof b.name === "string" && b.name.length > 0 && b.name.length <= 120 &&
-    money(b.asking);
+    money(b.asking) &&
+    // An offer at or above the listed price is not an offer (the page shows
+    // Buy Now instead), so it is never logged as one.
+    (kind !== "offer" || (b.amount as number) < (b.asking as number));
   if (!valid) return NextResponse.json({ error: "invalid" }, { status: 400 });
 
   // Table missing (migration 009 not run yet) or any other failure: stay quiet.
