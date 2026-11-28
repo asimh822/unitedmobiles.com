@@ -62,6 +62,7 @@ export function mapProduct(row: any): Product {
       .map(mapVariant),
     createdAt: row.created_at ?? new Date().toISOString(),
     source: row.source ?? "manual",
+    eposRef: row.epos_ref ?? null,
     conditionScore: row.condition_score != null ? Number(row.condition_score) : null,
     warrantyUntil: row.warranty_until ?? null,
     color: row.color ?? null,

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import KeyHighlights from "@/components/KeyHighlights";
+import MakeOfferPanel from "@/components/MakeOfferPanel";
 import PriceTag from "@/components/PriceTag";
 import SpecsTable from "@/components/SpecsTable";
 import TrustBadges from "@/components/TrustBadges";
@@ -266,6 +267,8 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
             })()}
           </p>
           <p className="text-center text-xs text-stone-400">{PAYMENT.reason}</p>
+          {/* Every EPOS handset is unique, so its price is open to a WhatsApp chat. */}
+          {product.source === "epos" && inStock && <MakeOfferPanel product={product} price={payNow} />}
           {(product.category === "New Phones" || product.category === "Used" || product.category === "Kits") && (
             <Link
               href="/build"

@@ -201,3 +201,9 @@ All secrets/config values must live in `.env` — never hardcoded in source:
 - Shelf = New Phones + Pre-Owned (`lib/build-data.ts`); KeyPad and Tabs are left out. Matching, picks and WhatsApp text: `lib/build-match.ts`. Spec parsing: `lib/match-specs.ts` (no `@/` imports, because `scripts/parse-match-specs.mjs` imports it directly).
 - Migration 007: `screen_in, battery_mah, main_cam_mp, lens_count, ram_gb, storage_gb` on products (override/cache; nulls are parsed live) and the anonymous `build_logs` table (written only by `app/api/build-log`, no personal data).
 - Pre-Owned rows have no spec sheet: screen/battery/camera come from the same model in New Phones (`findDonor`); RAM/storage only ever the handset's own.
+
+## Offers on EPOS phones (28 Nov 2026)
+- Pre-Owned and Kits product pages (`source='epos'`, in stock) show a "Want a better price?" box under Buy Now (`components/MakeOfferPanel.tsx`): **"What's your best price?"** (one tap to WhatsApp, no number) and **"Make an offer"** (the customer TYPES any amount, then WhatsApp).
+- **No price floor and no preset amounts, on purpose (owner's call).** Presets get the lowest tapped every time, and any offer, even a silly one, is a conversation the shop takes over on WhatsApp. Below half the asking price only shows a quiet note; at or above it a "you can just Buy Now" note. Never block a send.
+- Messages (`lib/whatsapp.ts` `buildBestPriceLink` / `buildOfferLink`) are worded as a person asking, and carry the phone name, condition, asking price, short ref (`U-123` / `K-45` from `epos_ref` via `shortRef()`, never the IMEI) and the product URL.
+- Every tap is logged anonymously by `app/api/offer` (sendBeacon, then WhatsApp opens) into table `offers` (migration **009**, RLS on, no policies, no personal data). Until 009 is run the route stays quiet and the buttons still work.

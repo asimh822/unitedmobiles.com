@@ -63,6 +63,8 @@ export interface Product {
   createdAt: string;
   /** 'epos' = a used phone pushed by the shop EPOS (one row per handset). */
   source?: string;
+  /** EPOS rows: 'used-<stock_item_id>' or 'kit-<id>'. Never an IMEI. */
+  eposRef?: string | null;
   /** Used phones from the EPOS: condition out of 10, e.g. 8.5. */
   conditionScore?: number | null;
   /** Used phones from the EPOS: warranty end date (YYYY-MM-DD). */
